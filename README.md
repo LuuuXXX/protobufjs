@@ -1,7 +1,7 @@
 # protobuf
 
 #### 介绍
-protobuf 是适配openHarmony系统ETS简单的simple，主要适配版本是protobufjs@5.0.1。protobufjs主要功能是序列化和反序列化，更高效，序列化后的体积也很小，受到广大开发者的喜爱。
+protobuf 是适配openHarmony系统ETS简单的simple，主要适配版本是protobufjs@5.0.1 ,且protobufjs主要功能是序列化和反序列化，更高效，序列化后的体积也很小，受到广大开发者的喜爱。
 
 #### 软件架构
 
