@@ -1,7 +1,7 @@
-# ProtoBuf
+# protobuf
 
 #### 介绍
-ProtoBufETS 是适配openHarmony系统ETS简单的Simple，主要适配版本是protobufjs@5.0.1。protobufjs主要功能是序列化和反序列化，更高效，序列化后的体积也很小，受到广大开发者的喜爱。
+protobuf 是适配openHarmony系统ETS简单的simple，主要适配版本是protobufjs@5.0.1 ，且protobufjs主要功能是序列化和反序列化，更高效，序列化后的体积也很小，受到广大开发者的喜爱。
 
 #### 软件架构
 
@@ -21,7 +21,7 @@ npm install protobufjs@5.0.1
 ```
 2.在需要使用的页面导入protobufjs
 ```
-import ProtoBuf from 'protobufjs'
+import protobuf from 'protobufjs'
 ```
 
 #### 使用说明
@@ -36,8 +36,8 @@ const proto = " message Sample {" +
 ```
 2. 通过loadProto方法加载并解析协议
 ```
-var builder = ProtoBuf.newBuilder();
-    ProtoBuf.loadProto(proto,builder,"bench.proto");
+var builder = protobuf.newBuilder();
+    protobuf.loadProto(proto,builder,"bench.proto");
 ```
 3. 通过builder找到协议名后会产生Message，并创建一个相同协议结构的数据对象，放入已实例的Message
 ```
