@@ -1,18 +1,16 @@
 import router from '@system.router';
-import ProtoBuf from 'protobufjs'
+import protobuf from 'protobufjs'
 
 @Entry
 @Component
 struct Second {
-  @State bufferData : string ="";
-  @State decodeData : string ="";
-
-  @State textBufferData : string ="";
-  @State textDecodeData : string ="";
-
+  @State bufferData: string = "";
+  @State decodeData: string = "";
+  @State textBufferData: string = "";
+  @State textDecodeData: string = "";
   private content: string = "Second Page"
 
-  private aboutToAppear(){
+  private aboutToAppear() {
 
     const proto = " message Sample {" +
     "required uint32 id = 1;" +
@@ -20,8 +18,8 @@ struct Second {
     "required string password = 3;" +
     "}";
 
-    var builder = ProtoBuf.newBuilder();
-    ProtoBuf.loadProto(proto,builder,"bench.proto");
+    var builder = protobuf.newBuilder();
+    protobuf.loadProto(proto, builder, "bench.proto");
 
     var Sample = builder.build("Sample");
 
@@ -32,20 +30,20 @@ struct Second {
     };
 
     var msg = new Sample(sample);
-    console.log("msg:"+msg);
+    console.log("msg:" + msg);
 
     var arrayBuffer = msg.toArrayBuffer();
-    console.log("arrayBuffer:"+new Uint8Array(arrayBuffer));
+    console.log("arrayBuffer:" + new Uint8Array(arrayBuffer));
     this.bufferData = Array.prototype.toString.call(new Uint8Array(arrayBuffer));
 
     var decodeMsg = Sample.decode(arrayBuffer);
-    console.log("decode:"+JSON.stringify(decodeMsg));
-     this.decodeData = JSON.stringify(decodeMsg);
+    console.log("decode:" + JSON.stringify(decodeMsg));
+    this.decodeData = JSON.stringify(decodeMsg);
   }
 
   build() {
     Flex({ direction: FlexDirection.Column, alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center }) {
-      Text("原始数据："+{
+      Text("原始数据：" + {
         id: 1,
         name: "John123",
         password: "helloworld"
@@ -62,8 +60,9 @@ struct Second {
       })
       .backgroundColor('#0D9FFB')
       .onClick(() => {
-         this.textBufferData = this.bufferData;
+        this.textBufferData = this.bufferData;
       })
+
       Text(this.textBufferData)
         .fontSize(20)
         .fontWeight(FontWeight.Bold)
@@ -79,6 +78,7 @@ struct Second {
       .onClick(() => {
         this.textDecodeData = this.decodeData;
       })
+
       Text(this.textDecodeData)
         .fontSize(20)
         .fontWeight(FontWeight.Bold)
