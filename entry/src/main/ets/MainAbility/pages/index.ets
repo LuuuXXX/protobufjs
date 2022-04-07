@@ -1,16 +1,5 @@
 import router from '@system.router';
 
-async function routePage() {
-  let options = {
-    uri: 'pages/second'
-  }
-  try {
-    await router.push(options)
-  } catch (err) {
-    console.error(`fail callback, code: ${err.code}, msg: ${err.msg}`)
-  }
-}
-
 @Entry
 @Component
 struct Index {
@@ -29,7 +18,19 @@ struct Index {
       })
       .backgroundColor('#0D9FFB')
       .onClick(() => {
-        routePage()
+        router.push({uri: 'pages/serialized' })
+      });
+      Button() {
+        Text('buffer读写示例')
+          .fontSize(25)
+          .fontWeight(FontWeight.Bold)
+      }.type(ButtonType.Capsule)
+      .margin({
+        top: 20
+      })
+      .backgroundColor('#0D9FFB')
+      .onClick(() => {
+        router.push({uri: 'pages/writer_reader' })
       })
     }
     .width('100%')
