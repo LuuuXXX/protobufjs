@@ -1,7 +1,7 @@
 {
   "app": {
+    "vendor": "example",
     "bundleName": "com.protobufjs",
-    "vendor": "protobufjs",
     "version": {
       "code": 1000000,
       "name": "1.0.0"
@@ -9,19 +9,11 @@
   },
   "deviceConfig": {},
   "module": {
-    "package": "com.protobufjs",
-    "name": ".MyApplication",
     "mainAbility": ".MainAbility",
-    "srcPath": "",
     "deviceType": [
-      "phone"
+      "phone",
+      "tablet"
     ],
-    "distro": {
-      "deliveryWithInstall": true,
-      "moduleName": "entry",
-      "moduleType": "entry",
-      "installationFree": false
-    },
     "abilities": [
       {
         "skills": [
@@ -40,13 +32,22 @@
         "name": ".MainAbility",
         "srcLanguage": "ets",
         "icon": "$media:icon",
-        "description": "$string:description_mainability",
+        "description": "$string:MainAbility_desc",
         "formsEnabled": false,
-        "label": "$string:entry_MainAbility",
+        "label": "$string:MainAbility_label",
         "type": "page",
         "launchType": "standard"
       }
     ],
+    "distro": {
+      "moduleType": "entry",
+      "installationFree": false,
+      "deliveryWithInstall": true,
+      "moduleName": "entry"
+    },
+    "package": "com.example.entry",
+    "srcPath": "",
+    "name": ".entry",
     "js": [
       {
         "mode": {
@@ -55,7 +56,8 @@
         },
         "pages": [
           "pages/index",
-          "pages/serialized"
+          "pages/serialized",
+          "pages/writer_reader"
         ],
         "name": ".MainAbility",
         "window": {

@@ -3,7 +3,7 @@ import protobuf from 'protobufjs'
 
 @Entry
 @Component
-struct Second {
+struct Serialized {
   @State bufferData: string = "";
   @State decodeData: string = "";
   @State textBufferData: string = "";
@@ -43,11 +43,7 @@ struct Second {
 
   build() {
     Flex({ direction: FlexDirection.Column, alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center }) {
-      Text("原始数据：" + {
-        id: 1,
-        name: "John123",
-        password: "helloworld"
-      })
+      Text("原始数据：" + 'id: 1,name: "John123",password: "helloworld"')
         .fontSize(20)
         .fontWeight(FontWeight.Bold)
       Button() {
