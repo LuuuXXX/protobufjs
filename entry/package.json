@@ -1,17 +1,15 @@
 {
-  "name": "protobuf",
+  "name": "entry",
   "version": "1.0.0",
   "ohos": {
     "org": "huawei",
     "buildTool": "hvigor",
-    "directoryLevel": "project"
+    "directoryLevel": "module"
   },
   "description": "example description",
   "repository": {},
   "license": "ISC",
   "dependencies": {
-    "hypium": "^1.0.0",
-    "@ohos/hvigor": "1.0.6",
-    "@ohos/hvigor-ohos-plugin": "1.0.6"
+    "protobufjs": "^5.0.3"
   }
 }
