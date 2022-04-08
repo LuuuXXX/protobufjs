@@ -2,25 +2,14 @@
 
 #### 介绍
 
-protobuf 是OpenHarmony系统下使用protobufjs的示例，此处使用的版本是protobufjs@5.0.1 。protobufjs主要功能是序列化和反序列化，更高效，序列化后的体积也很小，受到广大开发者的喜爱。
+protobuf 是OpenHarmony系统下使用protobufjs的示例，此处使用的版本是protobufjs@5.0.3 。protobufjs主要功能是序列化和反序列化，更高效，序列化后的体积也很小，受到广大开发者的喜爱。
 
-#### 软件架构
+#### 下载安装
 
-```
-|-ets
-|   |-MainAbility
-|           |-page
-|               |-index.ets        #主页面 
-|               |-serialized.ets   #序列化和反序列化simple页面
+1.如果已经安装好nodejs后，输入以下命令
 
 ```
-
-#### 安装教程
-
-1.如果已经安装好nodejs后，输入以下命令protobufjs
-
-```
-npm install protobufjs@5.0.1
+npm install protobufjs@5.0.3
 ```
 
 2.在需要使用的页面导入protobufjs
@@ -71,6 +60,31 @@ var arrayBuffer = msg.toArrayBuffer();
 
 ```
  var decodeMsg = Sample.decode(arrayBuffer);
+```
+
+#### 接口说明
+
+1，.loadProto(proto, builder, "bench.proto"); 用于解析proto协议接口，proto:string类型协议，builder:newBuilder()对象，"bench.proto"
+：定义一个proto文件名称。
+
+2，.toArrayBuffer(); 将Message序列化
+
+3，.decode(buffer); 将buffer数据反序列化
+
+#### 兼容性
+
+支持OpenHarmony API Version 8 及以上版本。
+
+### 软件架构
+
+```
+|-ets
+|   |-MainAbility
+|           |-page
+|               |-index.ets        #主页面 
+|               |-serialized.ets   #序列化和反序列化simple页面
+|               |-writer_reader.ets   #序列化和反序列化simple页面
+
 ```
 
 #### 版本

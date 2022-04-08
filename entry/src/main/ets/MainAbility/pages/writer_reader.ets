@@ -13,40 +13,32 @@
  * limitations under the License.
  */
 
-import router from '@system.router';
+import ByteBuffer from 'bytebuffer'
 
 @Entry
 @Component
-struct Index {
+struct Writer_reader {
+  @State readIString: string = "";
+
+  private aboutToAppear() {
+
+    var byteBuffer = new ByteBuffer()
+      .writeIString("hello world")
+      .flip();
+
+    let logStr = "byteBuffer：" + byteBuffer.readIString() + "from bytebuffer.js"
+
+    this.readIString = logStr;
+
+    console.log(logStr);
+
+  }
+
   build() {
     Flex({ direction: FlexDirection.Column, alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center }) {
-      Text('Hello World')
-        .fontSize(50)
-        .fontWeight(FontWeight.Bold)
-      Button() {
-        Text('核心功能：序列化和反序列化')
-          .fontSize(25)
-          .fontWeight(FontWeight.Bold)
-      }.type(ButtonType.Capsule)
-      .margin({
-        top: 20
-      })
-      .backgroundColor('#0D9FFB')
-      .onClick(() => {
-        router.push({uri: 'pages/serialized' })
-      });
-      Button() {
-        Text('buffer读写示例')
-          .fontSize(25)
-          .fontWeight(FontWeight.Bold)
-      }.type(ButtonType.Capsule)
-      .margin({
-        top: 20
-      })
-      .backgroundColor('#0D9FFB')
-      .onClick(() => {
-        router.push({uri: 'pages/writer_reader' })
-      })
+      Text("readIString：" + this.readIString)
+        .fontSize(30)
+        .fontWeight(FontWeight.Bold);
     }
     .width('100%')
     .height('100%')
