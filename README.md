@@ -89,16 +89,14 @@ var arrayBuffer = msg.toArrayBuffer();
 
 ```
 
-### 版本日志
+### 版本
 
 当前版本：
 ```
 1.1.0
 ```
 
-1.0.0版本，样例适配的系统版本是OpenHarmony API Version 5~7。
-
-1.1.0版本，样例适配的系统版本是OpenHarmony API Version 8+，且将原来工程转为hvigor工程。
+版本日志请查看[CHANGELOG.md](https://gitee.com/openharmony-tpc/protobuf/blob/master/CHANGELOG.md)
 
 
 ### 贡献代码
