@@ -34,9 +34,9 @@ struct Serialized {
     "}";
 
     var builder = protobuf.newBuilder();
-    protobuf.loadProto(proto, builder, "bench.proto");
+    var root = protobuf.loadProto(proto, builder, "bench.proto");
 
-    var Sample = builder.build("Sample");
+    var Sample = root.build("Sample");
 
     const sample = {
       id: 1,
