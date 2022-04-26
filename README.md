@@ -83,9 +83,11 @@ var arrayBuffer = msg.toArrayBuffer();
 |-ets
 |   |-MainAbility
 |           |-page
-|               |-index.ets        #主页面 
-|               |-serialized.ets   #序列化和反序列化simple页面
-|               |-writer_reader.ets   #序列化和反序列化simple页面
+|               |-index.ets          #主页面 
+|               |-serialized.ets     #序列化和反序列化simple页面
+|               |-writer_reader.ets  #buffer的读写
+|               |-rpc.ets            #rpc接口协议示例
+|               |-websocket.ets      #websocket配合使用示例
 
 ```
 
@@ -93,7 +95,7 @@ var arrayBuffer = msg.toArrayBuffer();
 
 当前版本：
 ```
-1.1.0
+1.1.1
 ```
 
 版本日志请查看[CHANGELOG.md](https://gitee.com/openharmony-tpc/protobuf/blob/master/CHANGELOG.md)

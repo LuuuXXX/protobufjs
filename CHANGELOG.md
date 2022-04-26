@@ -1,3 +1,6 @@
+### 1.1.1
+1.新增rpc和websocket使用样例
+
 ### 1.1.0
 
 1.样例适配的系统版本是OpenHarmony API Version 8+，且将原来工程转为hvigor工程。
