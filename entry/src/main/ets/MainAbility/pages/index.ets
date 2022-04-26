@@ -46,6 +46,30 @@ struct Index {
       .backgroundColor('#0D9FFB')
       .onClick(() => {
         router.push({uri: 'pages/writer_reader' })
+      });
+      Button() {
+        Text('rpc支持样例')
+          .fontSize(25)
+          .fontWeight(FontWeight.Bold)
+      }.type(ButtonType.Capsule)
+      .margin({
+        top: 20
+      })
+      .backgroundColor('#0D9FFB')
+      .onClick(() => {
+        router.push({uri: 'pages/rpc' })
+      });
+      Button() {
+        Text('websocket配合使用样例')
+          .fontSize(25)
+          .fontWeight(FontWeight.Bold)
+      }.type(ButtonType.Capsule)
+      .margin({
+        top: 20
+      })
+      .backgroundColor('#0D9FFB')
+      .onClick(() => {
+        router.push({uri: 'pages/websocket' })
       })
     }
     .width('100%')
