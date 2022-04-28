@@ -106,3 +106,4 @@ var arrayBuffer = msg.toArrayBuffer();
 
 ### 开源协议
 本项目基于 [BSD 3-Clause License](https://gitee.com/openharmony-tpc/protobuf/blob/master/LICENSE) ，请自由地享受和参与开源
+
