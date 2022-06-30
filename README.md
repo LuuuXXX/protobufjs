@@ -77,17 +77,20 @@ var arrayBuffer = msg.toArrayBuffer();
 
 库版本兼容性：由于系统兼容性目前仅支持到protobufjs@5.0.3。
 
-### 软件架构
+### 目录结构
 
 ```
-|-ets
-|   |-MainAbility
-|           |-page
-|               |-index.ets          #主页面 
-|               |-serialized.ets     #序列化和反序列化simple页面
-|               |-writer_reader.ets  #buffer的读写
-|               |-rpc.ets            #rpc接口协议示例
-|               |-websocket.ets      #websocket配合使用示例
+|-entry	#protobuf 示例代码
+|	|-src
+|		|-main
+|			|-ets
+|   			|-MainAbility
+|           		|-page
+|               		|-index.ets          #主页面 
+|               		|-serialized.ets     #序列化和反序列化simple页面
+|               		|-writer_reader.ets  #buffer的读写
+|               		|-rpc.ets            #rpc接口协议示例
+|               		|-websocket.ets      #websocket配合使用示例
 
 ```
 
