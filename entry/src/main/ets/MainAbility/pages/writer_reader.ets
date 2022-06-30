@@ -27,9 +27,7 @@ struct Writer_reader {
       .flip();
 
     let logStr = "byteBuffer：" + byteBuffer.readIString() + "from bytebuffer.js"
-
     this.readIString = logStr;
-
     console.log(logStr);
 
   }
