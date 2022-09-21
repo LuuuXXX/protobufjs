@@ -1,3 +1,6 @@
+###1.2.0
+1，新增protobuf模块，以protobufjs为基础进行OpenHarmony适配研发，对外提供核心功能接口。
+
 ### 1.1.1
 1.新增rpc和websocket使用样例
 
