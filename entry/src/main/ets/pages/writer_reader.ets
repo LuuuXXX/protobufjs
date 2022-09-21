@@ -18,23 +18,47 @@ import ByteBuffer from 'bytebuffer'
 @Entry
 @Component
 struct Writer_reader {
-  @State readIString: string = "";
+  @State logStr: string = "";
 
-  private aboutToAppear() {
+   aboutToAppear() {
+    console.log("1");
+    var byteBufferInt64 = new ByteBuffer()
+      .writeInt64(188888888,1)
+      .flip();
 
-    var byteBuffer = new ByteBuffer()
+    var byteBufferUint64 = new ByteBuffer()
+      .writeUint64(366,2)
+      .flip();
+
+    var byteBufferDouble = new ByteBuffer()
+      .writeDouble(1.344,6)
+      .flip();
+
+    var byteBufferStr = new ByteBuffer()
       .writeIString("hello world")
       .flip();
 
-    let logStr = "byteBuffer：" + byteBuffer.readIString() + "from bytebuffer.js"
-    this.readIString = logStr;
+
+    console.log("2");
+    let Int64 = byteBufferInt64.readInt64(1);
+    let Uint64 = byteBufferUint64.readUint64(2);
+    let Double = byteBufferDouble.readDouble(6);
+    let IString = byteBufferStr.readIString();
+
+    let logStr = " Int64:"+Int64+" Uint64:"+Uint64+" Double:"+Double+" IString:"+IString;
+
+    this.logStr = logStr;
+
     console.log(logStr);
 
   }
 
   build() {
     Flex({ direction: FlexDirection.Column, alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center }) {
-      Text("readIString：" + this.readIString)
+      Text("writeBuffer："+"188888888--"+"--366"+"--1.344"+"--hello world")
+        .fontSize(30)
+        .fontWeight(FontWeight.Bold);
+      Text("readBuffer：" + this.logStr)
         .fontSize(30)
         .fontWeight(FontWeight.Bold);
     }

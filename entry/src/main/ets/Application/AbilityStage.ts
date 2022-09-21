@@ -12,11 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export default {
-  onCreate() {
-    console.info('Application onCreate')
-  },
-  onDestroy() {
-    console.info('Application onDestroy')
-  },
+import AbilityStage from "@ohos.application.AbilityStage"
+
+export default class MyAbilityStage extends AbilityStage {
+    onCreate() {
+        console.log("[Demo] MyAbilityStage onCreate")
+    }
 }

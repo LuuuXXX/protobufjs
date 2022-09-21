@@ -12,7 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+/**
+ * 这里仅仅提供protobufjs中如何定义rpc的协议和方法使用，至于服务端和客户端需要根据自己需求去实现
+ */
 import protobuf from 'protobufjs'
 
 @Entry
@@ -21,7 +23,7 @@ struct Rpc {
   @State responseData: string = "";
   @State requestData: string = "";
 
-  private aboutToAppear() {
+   aboutToAppear() {
 
     const protoStr = 'syntax = "proto3";service MyService {rpc MyMethod (MyRequest) returns (MyResponse);} message MyRequest {string data = 1;} message MyResponse {int32 status = 2;}';
     var newBuild = protobuf.newBuilder();
@@ -41,28 +43,25 @@ struct Rpc {
     }
 
     var service = new MyService(rpc);
-    service.MyMethod(new MyRequest({
-      data: "I am rpcServiceImpl"
-    }), function (err, response) {
+    var myRequest = new MyRequest({ data: "I am rpcServiceImpl" });
+
+    service.MyMethod(
+    myRequest.toArrayBuffer(),
+      function (err, res) {
       if (err) {
         return err.message;
       }
-      that.responseData = response.status;
-      console.log("rpc-request:" + response.status);
+        console.log("res:"+res.status);
     });
   }
 
   build() {
     Flex({ direction: FlexDirection.Column, alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center }) {
-      Text("response:数据：" + this.responseData)
+      Text("request:数据：" + this.requestData)
         .fontSize(20)
         .margin({ top: 10 })
         .fontWeight(FontWeight.Bold);
-      Text("response:数据：" + this.responseData)
-        .fontSize(20)
-        .margin({ top: 10 })
-        .fontWeight(FontWeight.Bold);
-      Text("这里仅仅提供protobufjs中如何定义rpc的协议和方法使用，至于服务端和客户端需要根据自己需求去实现")
+      Text("按照功能要求，这里仅仅提供protobufjs中如何定义rpc的协议接口，至于服务端和客户端具体实现请参考grpc-node")
         .fontSize(20)
         .margin({ top: 10 })
         .fontWeight(FontWeight.Bold);

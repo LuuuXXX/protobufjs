@@ -12,8 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import http from '@ohos.net.http'
+/**
+ * 该simple仅仅是提供protobuf如何配合webSocket使用案例
+ */
 import webSocket from '@ohos.net.webSocket';
 import protobuf from 'protobufjs'
 
@@ -23,7 +24,7 @@ struct WebSocket {
   @State responseData: string = "";
   @State requestData: string = "";
 
-  private aboutToAppear() {
+   aboutToAppear() {
 
     const protoStr = 'syntax = "proto3";message Message {required string text = 1;}';
 
@@ -77,7 +78,11 @@ struct WebSocket {
 
   build() {
     Flex({ direction: FlexDirection.Column, alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center }) {
-      Text("链接能够通信的服务器地址，查看链接结果请看log，如果没有有效的服务器地址，会打印出connect fail,err:{'code':202,'data':WebSocketPlugin#:url is invalid}")
+      Text("该simple仅仅是protobuf如何配合webSocket使用案例，无需测验服务器地址")
+        .fontSize(20)
+        .margin({ top: 10 })
+        .fontWeight(FontWeight.Bold);
+      Text("链接能够通信的服务器地址，查看链接结果请看log，如果没有有效的服务器地址，会打印出connect fail,err:{'code':202,'data':WebSocketPlugin#:url is invalid} 否则会打印：connect success")
         .fontSize(20)
         .margin({ top: 10 })
         .fontWeight(FontWeight.Bold);
