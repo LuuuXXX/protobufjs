@@ -21,6 +21,10 @@
           ]
         }
       ]
+    },
+    {
+      "name": "protobufjs",
+      "srcPath": "./protobufjs"
     }
   ]
 }
