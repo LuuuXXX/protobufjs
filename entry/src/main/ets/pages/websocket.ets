@@ -16,7 +16,7 @@
  * 该simple仅仅是提供protobuf如何配合webSocket使用案例
  */
 import webSocket from '@ohos.net.webSocket';
-import protobuf from 'protobufjs'
+import Protobuf from '@ohos/protobufjs'
 
 @Entry
 @Component
@@ -28,8 +28,8 @@ struct WebSocket {
 
     const protoStr = 'syntax = "proto3";message Message {required string text = 1;}';
 
-    var newBuild = protobuf.newBuilder();
-    var root = protobuf.loadProto(protoStr, newBuild, "websocket.proto");
+    var newBuild = Protobuf.newBuilder();
+    var root = Protobuf.loadProto(protoStr, newBuild, "websocket.proto");
     var Message = root.build("Message");
 
     var defaultIpAddr = "https://localhost:8080/"

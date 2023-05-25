@@ -15,7 +15,7 @@
 /**
  * 这里仅仅提供protobufjs中如何定义rpc的协议和方法使用，至于服务端和客户端需要根据自己需求去实现
  */
-import protobuf from 'protobufjs'
+import Protobuf from '@ohos/protobufjs'
 
 @Entry
 @Component
@@ -26,8 +26,8 @@ struct Rpc {
    aboutToAppear() {
 
     const protoStr = 'syntax = "proto3";service MyService {rpc MyMethod (MyRequest) returns (MyResponse);} message MyRequest {string data = 1;} message MyResponse {int32 status = 2;}';
-    var newBuild = protobuf.newBuilder();
-    var root = protobuf.loadProto(protoStr, newBuild, "rpc.proto");
+    var newBuild = Protobuf.newBuilder();
+    var root = Protobuf.loadProto(protoStr, newBuild, "rpc.proto");
     var MyService = root.build("MyService");
     var MyRequest = root.build("MyRequest");
     var MyResponse = root.build("MyResponse");

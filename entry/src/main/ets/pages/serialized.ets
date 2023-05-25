@@ -13,14 +13,14 @@
  * limitations under the License.
  */
 
-import protobuf from 'protobufjs'
+import Protobuf from '@ohos/protobufjs'
 
 /**
  * 如果需要使用loadProtoFile或loadJsonFile这两个接口，则需要在protobuf引入之后，
  * 需要执行一次protobuf.Util.fetch = function (path, callback) {……}方法以此来适配fs的系统方案
  */
 import { MyFs } from './MyFs'
-protobuf.Util.fetch = function (path, callback) {
+Protobuf.Util.fetch = function (path, callback) {
   if (callback && typeof callback != 'function')
   callback = null;
   if (callback) {
@@ -99,7 +99,7 @@ struct Serialized {
    * @param path proto file path，当前不能直接读取项目目录路径，path只能先将文件存入内存后的路径
    */
   testSynchronouslyLoadProtoFile(path: string): void{
-    var root = protobuf.loadProtoFile(path);
+    var root = Protobuf.loadProtoFile(path);
     //读取完文件的数据后清理掉，避免二次进入页面数据重复存储导致错误
     FileUtils.getInstance().clearFile(path);
 
@@ -129,8 +129,8 @@ struct Serialized {
    * @param path proto file path，当前不能直接读取项目目录路径，path只能先将文件存入内存后的路径
    */
   testAsynchronouslyLoadProtoFile(path: string): void{
-    var builder = protobuf.newBuilder();
-    protobuf.loadProtoFile(path, (err, root) => {
+    var builder = Protobuf.newBuilder();
+    Protobuf.loadProtoFile(path, (err, root) => {
       //读取完文件的数据后清理掉，避免二次进入页面数据重复存储导致错误
       FileUtils.getInstance().clearFile(path);
 
@@ -163,10 +163,10 @@ struct Serialized {
    * @param fileName fileName The corresponding file name if known, mey any Name ,but no same
    */
   testMethodLoadProto(proto: string, fileName: string): void{
-    var builder = protobuf.newBuilder();
+    var builder = Protobuf.newBuilder();
 
 
-    var root = protobuf.loadProto(proto, builder, fileName);
+    var root = Protobuf.loadProto(proto, builder, fileName);
 
     var UserLoginResponse = root.build("com.user.UserLoginResponse");
    console.log("root"+UserLoginResponse)
@@ -213,8 +213,8 @@ struct Serialized {
    * @param fileName filename The corresponding file name if known, mey any Name ,but no same
    */
   testMethodLoadJson(json: string, fileName: string): void{
-    var builder = protobuf.newBuilder();
-    var root = protobuf.loadJson(json, builder, fileName);
+    var builder = Protobuf.newBuilder();
+    var root = Protobuf.loadJson(json, builder, fileName);
 
     var UserLoginResponse = root.build("com.user.UserLoginResponse");
     console.log("arrayBuffer:" + protoJson);
@@ -259,7 +259,7 @@ struct Serialized {
    * @param path filename The corresponding file name if known, mey any Name ,but no same
    */
   testSynchronouslyLoadJsonFile(path: string): void{
-    var root = protobuf.loadJsonFile(path);
+    var root = Protobuf.loadJsonFile(path);
     //读取完文件的数据后清理掉，避免二次进入页面数据重复存储导致错误
     FileUtils.getInstance().clearFile(path);
 
@@ -289,8 +289,8 @@ struct Serialized {
   * @param path proto file path，当前不能直接读取项目目录路径，path只能先将文件存入内存后的路径
   */
   testAsynchronouslyLoadJsonFile(path: string): void{
-    var builder = protobuf.newBuilder();
-    protobuf.loadJsonFile(path, (err, root) => {
+    var builder = Protobuf.newBuilder();
+    Protobuf.loadJsonFile(path, (err, root) => {
       //读取完文件的数据后清理掉，避免二次进入页面数据重复存储导致错误
       FileUtils.getInstance().clearFile(path);
 

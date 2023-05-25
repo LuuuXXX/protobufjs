@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import ByteBuffer from 'bytebuffer'
+import {ByteBuffer} from '@ohos/protobufjs'
 
 @Entry
 @Component

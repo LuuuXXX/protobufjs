@@ -5263,3 +5263,5 @@
 
     return ProtoBuf;
 });
+
+export default ProtoBuf
