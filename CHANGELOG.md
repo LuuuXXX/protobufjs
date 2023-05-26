@@ -1,7 +1,15 @@
-###1.2.1
+
+### 1.3.0
+1.基于protobufjs 5.0.3源码侵入式修改，包管理工具切换为OHPM 
+
+2.protofile文件修改为从rawfile里读取 
+
+3.包名更改为@ohos/protobufjs
+
+### 1.2.1
 1.适配DevEco Studio 3.1 Beta1版本
 
-###1.2.0
+### 1.2.0
 1.适配api9
 
 ### 1.1.1

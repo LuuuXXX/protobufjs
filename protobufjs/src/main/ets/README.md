@@ -8,9 +8,10 @@ including a .proto parser, message class building and simple encoding and decodi
 required, it's super easy to use and it works out of the box on .proto files!
 
 Local build
-1."npm install“
-2.pelase change code in src~! do not change dist directlty.
-3.“npm run build” to generate code to dist 
+---------------
+* **Step 1:** "npm install“
+* **Step 2:** pelase change code in src~! do not change dist directlty.
+* **Step 3:** npm run build” to generate code to dist 
 
 Getting started
 ---------------
