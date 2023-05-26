@@ -7,6 +7,11 @@ in communications protocols, data storage, and more, originally designed at Goog
 including a .proto parser, message class building and simple encoding and decoding. There is no compilation step
 required, it's super easy to use and it works out of the box on .proto files!
 
+Local build
+1."npm install“
+2.pelase change code in src~! do not change dist directlty.
+3.“npm run build” to generate code to dist 
+
 Getting started
 ---------------
 * **Step 1:** Become familar with [Google's Protocol Buffers (protobuf)](https://developers.google.com/protocol-buffers/docs/overview)

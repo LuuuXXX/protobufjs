@@ -19,19 +19,10 @@
  * Released under the Apache License, Version 2.0
  * see: https://github.com/dcodeIO/protobuf.js for details
  */
-(function(global, factory) {
+import fs from '@ohos.file.fs';
+import ByteBuffer from './bytebuffer'
+import resourceManager from '@ohos.resourceManager';
+import buffer from '@ohos.buffer';
 
-    /* AMD */ if (typeof define === 'function' && define["amd"])
-        define(["bytebuffer"], factory);
-    /* CommonJS */ else if (typeof require === "function" && typeof module === "object" && module && module["exports"])
-        module["exports"] = factory(require("bytebuffer"), true);
-    /* Global */ else
-        (global["dcodeIO"] = global["dcodeIO"] || {})["ProtoBuf"] = factory(global["dcodeIO"]["ByteBuffer"]);
-
-})(this, function(ByteBuffer, isCommonJS) {
-    "use strict";
-
-    //? include("protobuf.js");
-
-    return ProtoBuf;
-});
+//? include("protobuf.js");
+export default ProtoBuf

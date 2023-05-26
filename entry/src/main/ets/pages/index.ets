@@ -14,10 +14,13 @@
  */
 import router from '@ohos.router';
 
+import { Protobuf } from "@ohos/protobufjs"
+
 @Entry
 @Component
 struct Index {
   @State message: string = 'Hello World'
+  private readonly TAG: string = 'protobufjsinfo'
 
   build() {
     Row() {
@@ -31,8 +34,43 @@ struct Index {
           top: 20
         })
         .backgroundColor('#0D9FFB')
-        .onClick(() => {
-          router.pushUrl({url: 'pages/serialized' })
+        .onClick(async (event?: ClickEvent) => {
+          // router.pushUrl({url: 'pages/serialized' })
+
+          console.info(this.TAG, "start loadProtoFile ")
+          let builder = await Protobuf.loadProtoFile("inner.proto", null, null, getContext(this).resourceManager)
+
+          try {
+            // @ts-ignore
+            let JS = builder.build("js.ResultResponse");
+            console.info(this.TAG, " builder:" + JS)
+
+            let json = {
+              result: [{
+                url: "1111",
+                title: "title1111",
+                spinner: ["arr11", "arr12"]
+              }, {
+                url: "2222",
+                title: "title2222",
+                spinner: ["arr21", "arr22"]
+              }]
+            }
+
+            console.info(this.TAG, "origin json = " + JSON.stringify(json))
+
+            let encode = JS.encode(json)
+
+            console.info(this.TAG, "encode = " + encode.toBuffer())
+
+
+            let decode = JS.decode(encode)
+
+            console.info(this.TAG, "decode = " + JSON.stringify(decode))
+
+          } catch (e) {
+            console.error(this.TAG, "error:" + e)
+          }
         });
         Button() {
           Text('buffer读写示例')
@@ -44,7 +82,7 @@ struct Index {
         })
         .backgroundColor('#0D9FFB')
         .onClick(() => {
-          router.pushUrl({url: 'pages/writer_reader' })
+          router.pushUrl({ url: 'pages/writer_reader' })
         });
         Button() {
           Text('rpc接口样例')
@@ -56,7 +94,7 @@ struct Index {
         })
         .backgroundColor('#0D9FFB')
         .onClick(() => {
-          router.pushUrl({url: 'pages/rpc' })
+          router.pushUrl({ url: 'pages/rpc' })
         });
         Button() {
           Text('websocket配合使用样例')
@@ -68,7 +106,7 @@ struct Index {
         })
         .backgroundColor('#0D9FFB')
         .onClick(() => {
-          router.pushUrl({url: 'pages/websocket' })
+          router.pushUrl({ url: 'pages/websocket' })
         })
       }
       .width('100%')

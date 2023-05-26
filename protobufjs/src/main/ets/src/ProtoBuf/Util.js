@@ -2,7 +2,7 @@
  * @alias ProtoBuf.Util
  * @expose
  */
-ProtoBuf.Util = (function() {
+ProtoBuf.Util = (function () {
     "use strict";
 
     /**
@@ -16,10 +16,10 @@ ProtoBuf.Util = (function() {
      * Flag if running in node or not.
      * @type {boolean}
      * @const
-     * @expose
+    * @expose
      */
     Util.IS_NODE = !!(
-        typeof process === 'object' && process+'' === '[object process]' && !process['browser']
+        typeof process === 'object' && process + '' === '[object process]' && !process['browser']
     );
 
     /**
@@ -28,19 +28,31 @@ ProtoBuf.Util = (function() {
      * @throws {Error} If XMLHttpRequest is not supported
      * @expose
      */
-    Util.XHR = function() {
+    Util.XHR = function () {
         // No dependencies please, ref: http://www.quirksmode.org/js/xmlhttp.html
         var XMLHttpFactories = [
-            function () {return new XMLHttpRequest()},
-            function () {return new ActiveXObject("Msxml2.XMLHTTP")},
-            function () {return new ActiveXObject("Msxml3.XMLHTTP")},
-            function () {return new ActiveXObject("Microsoft.XMLHTTP")}
+            function () {
+                return new XMLHttpRequest()
+            },
+            function () {
+                return new ActiveXObject("Msxml2.XMLHTTP")
+            },
+            function () {
+                return new ActiveXObject("Msxml3.XMLHTTP")
+            },
+            function () {
+                return new ActiveXObject("Microsoft.XMLHTTP")
+            }
         ];
         /** @type {?XMLHttpRequest} */
         var xhr = null;
-        for (var i=0;i<XMLHttpFactories.length;i++) {
-            try { xhr = XMLHttpFactories[i](); }
-            catch (e) { continue; }
+        for (var i = 0;i < XMLHttpFactories.length; i++) {
+            try {
+                xhr = XMLHttpFactories[i]();
+            }
+            catch (e) {
+                continue;
+            }
             break;
         }
         if (!xhr)
@@ -56,48 +68,65 @@ ProtoBuf.Util = (function() {
      * @return {?string|undefined} Resource contents if callback is omitted (null if the request failed), else undefined.
      * @expose
      */
-    Util.fetch = function(path, callback) {
-        if (callback && typeof callback != 'function')
+    Util.fetch = async function (path, callback) {
+        if (callback && typeof callback != 'function') {
             callback = null;
-        if (Util.IS_NODE) {
-            var fs = require("fs");
-            if (callback) {
-                fs.readFile(path, function(err, data) {
-                    if (err)
-                        callback(null);
-                    else
-                        callback(""+data);
-                });
-            } else
-                try {
-                    return fs.readFileSync(path);
-                } catch (e) {
-                    return null;
-                }
-        } else {
-            var xhr = Util.XHR();
-            xhr.open('GET', path, callback ? true : false);
-            // xhr.setRequestHeader('User-Agent', 'XMLHTTP/1.0');
-            xhr.setRequestHeader('Accept', 'text/plain');
-            if (typeof xhr.overrideMimeType === 'function') xhr.overrideMimeType('text/plain');
-            if (callback) {
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState != 4) return;
-                    if (/* remote */ xhr.status == 200 || /* local */ (xhr.status == 0 && typeof xhr.responseText === 'string'))
-                        callback(xhr.responseText);
-                    else
-                        callback(null);
-                };
-                if (xhr.readyState == 4)
-                    return;
-                xhr.send(null);
-            } else {
-                xhr.send(null);
-                if (/* remote */ xhr.status == 200 || /* local */ (xhr.status == 0 && typeof xhr.responseText === 'string'))
-                    return xhr.responseText;
-                return null;
-            }
         }
+        if (!ProtoBuf.resourceManager) {
+            return;
+        }
+
+        let value = await ProtoBuf.resourceManager.getRawFd(path)
+
+        console.log(ProtoBuf.TAG, "getRawFd =" + JSON.stringify(value))
+        let buf = new ArrayBuffer(value.length)
+        let num = fs.readSync(value.fd, buf)
+        console.log(ProtoBuf.TAG, "readSync length =" + num)
+
+        console.log(ProtoBuf.TAG, "file content = " + buffer.from(buf).toString("utf-8"))
+
+        return buffer.from(buf).toString("utf-8")
+
+
+        // if (Util.IS_NODE) {
+        //     var fs = require("fs");
+        //     if (callback) {
+        //         fs.readFile(path, function(err, data) {
+        //             if (err)
+        //                 callback(null);
+        //             else
+        //                 callback(""+data);
+        //         });
+        //     } else
+        //         try {
+        //             return fs.readFileSync(path);
+        //         } catch (e) {
+        //             return null;
+        //         }
+        // } else {
+        //     var xhr = Util.XHR();
+        //     xhr.open('GET', path, callback ? true : false);
+        //     // xhr.setRequestHeader('User-Agent', 'XMLHTTP/1.0');
+        //     xhr.setRequestHeader('Accept', 'text/plain');
+        //     if (typeof xhr.overrideMimeType === 'function') xhr.overrideMimeType('text/plain');
+        //     if (callback) {
+        //         xhr.onreadystatechange = function() {
+        //             if (xhr.readyState != 4) return;
+        //             if (/* remote */ xhr.status == 200 || /* local */ (xhr.status == 0 && typeof xhr.responseText === 'string'))
+        //                 callback(xhr.responseText);
+        //             else
+        //                 callback(null);
+        //         };
+        //         if (xhr.readyState == 4)
+        //             return;
+        //         xhr.send(null);
+        //     } else {
+        //         xhr.send(null);
+        //         if (/* remote */ xhr.status == 200 || /* local */ (xhr.status == 0 && typeof xhr.responseText === 'string'))
+        //             return xhr.responseText;
+        //         return null;
+        //     }
+        // }
     };
 
     /**
@@ -106,11 +135,11 @@ ProtoBuf.Util = (function() {
      * @returns {string}
      * @expose
      */
-    Util.toCamelCase = function(str) {
+    Util.toCamelCase = function (str) {
         return str.replace(/_([a-zA-Z])/g, function ($0, $1) {
             return $1.toUpperCase();
         });
     };
-    
+
     return Util;
 })();

@@ -5,7 +5,21 @@
     "products": [
       {
         "name": "default",
-        "signingConfig": "default",
+        "signingConfig": "default"
+      }
+    ],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "material": {
+          "certpath": "C:\\Users\\HUAWEI\\.ohos\\config\\openharmony\\auto_ohos_default_protobuf_com.protobufjs.cer",
+          "storePassword": "0000001B45E98DCC3A4AD6ECA9A8549EAC2066016A19039E37CCFC20C166442DA370C282BD5C95D0F4BC6F",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B98CA61700302571AAF90E291846E767CDA1C9B3D1D896B02CA6FAFCFC9547931CBA538C8F217D6",
+          "profile": "C:\\Users\\HUAWEI\\.ohos\\config\\openharmony\\auto_ohos_default_protobuf_com.protobufjs.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "C:\\Users\\HUAWEI\\.ohos\\config\\openharmony\\auto_ohos_default_protobuf_com.protobufjs.p12"
+        }
       }
     ]
   },

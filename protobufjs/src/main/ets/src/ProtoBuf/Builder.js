@@ -357,7 +357,7 @@ ProtoBuf.Builder = (function(ProtoBuf, Lang, Reflect) {
      * @throws {Error} If the definition or file cannot be imported
      * @expose
      */
-    BuilderPrototype["import"] = function(json, filename) {
+    BuilderPrototype["import"] = async function(json, filename) {
         var delim = '/';
 
         // Make sure to skip duplicate imports
@@ -427,28 +427,28 @@ ProtoBuf.Builder = (function(ProtoBuf, Lang, Reflect) {
                     var importFilename = json['imports'][i];
                     if (importFilename === "google/protobuf/descriptor.proto")
                         continue; // Not needed and therefore not used
-                    if (ProtoBuf.Util.IS_NODE)
-                        importFilename = require("path")['join'](importRoot, importFilename);
-                    else
+                    if (!ProtoBuf.resourceManager)
+                    //     importFilename = require("path")['join'](importRoot, importFilename);
+                    // else
                         importFilename = importRoot + delim + importFilename;
                     if (this.files[importFilename] === true)
                         continue; // Already imported
                     if (/\.proto$/i.test(importFilename) && !ProtoBuf.DotProto)       // If this is a light build
                         importFilename = importFilename.replace(/\.proto$/, ".json"); // always load the JSON file
-                    var contents = ProtoBuf.Util.fetch(importFilename);
+                    var contents = await ProtoBuf.Util.fetch(importFilename);
                     if (contents === null)
                         throw Error("failed to import '"+importFilename+"' in '"+filename+"': file not found");
                     if (/\.json$/i.test(importFilename)) // Always possible
-                        this["import"](JSON.parse(contents+""), importFilename); // May throw
+                        await this["import"](JSON.parse(contents+""), importFilename); // May throw
                     else
-                        this["import"](ProtoBuf.DotProto.Parser.parse(contents), importFilename); // May throw
+                        await this["import"](ProtoBuf.DotProto.Parser.parse(contents), importFilename); // May throw
                 } else // Import structure
                     if (!filename)
                         this["import"](json['imports'][i]);
                     else if (/\.(\w+)$/.test(filename)) // With extension: Append _importN to the name portion to make it unique
-                        this["import"](json['imports'][i], filename.replace(/^(.+)\.(\w+)$/, function($0, $1, $2) { return $1+"_import"+i+"."+$2; }));
+                        await this["import"](json['imports'][i], filename.replace(/^(.+)\.(\w+)$/, function($0, $1, $2) { return $1+"_import"+i+"."+$2; }));
                     else // Without extension: Append _importN to make it unique
-                        this["import"](json['imports'][i], filename+"_import"+i);
+                        await this["import"](json['imports'][i], filename+"_import"+i);
             }
             if (resetRoot) // Reset import root override when all imports are done
                 this.importRoot = null;

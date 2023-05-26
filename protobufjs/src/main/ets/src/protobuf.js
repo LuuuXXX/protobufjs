@@ -6,6 +6,8 @@
  */
 var ProtoBuf = {};
 
+ProtoBuf.TAG = "protobufjsinfo";
+
 /**
  * @type {!function(new: ByteBuffer, ...[*])}
  * @expose
@@ -310,26 +312,27 @@ ProtoBuf.protoFromString = ProtoBuf.loadProto; // Legacy
  *   request has failed), else undefined
  * @expose
  */
-ProtoBuf.loadProtoFile = function(filename, callback, builder) {
+ProtoBuf.loadProtoFile = async function(filename, callback, builder, resourceManager) {
+    ProtoBuf.resourceManager = resourceManager;
     if (callback && typeof callback === 'object')
         builder = callback,
         callback = null;
     else if (!callback || typeof callback !== 'function')
         callback = null;
     if (callback)
-        return ProtoBuf.Util.fetch(typeof filename === 'string' ? filename : filename["root"]+"/"+filename["file"], function(contents) {
+        return ProtoBuf.Util.fetch(typeof filename === 'string' ? filename : filename["root"]+"/"+filename["file"], async function(contents) {
             if (contents === null) {
                 callback(Error("Failed to fetch file"));
                 return;
             }
             try {
-                callback(null, ProtoBuf.loadProto(contents, builder, filename));
+                callback(null, await ProtoBuf.loadProto(contents, builder, filename));
             } catch (e) {
                 callback(e);
             }
         });
-    var contents = ProtoBuf.Util.fetch(typeof filename === 'object' ? filename["root"]+"/"+filename["file"] : filename);
-    return contents === null ? null : ProtoBuf.loadProto(contents, builder, filename);
+    var contents = await ProtoBuf.Util.fetch(typeof filename === 'object' ? filename["root"]+"/"+filename["file"] : filename);
+    return contents === null ? null : await ProtoBuf.loadProto(contents, builder, filename);
 };
 
 /**
@@ -373,7 +376,7 @@ ProtoBuf.newBuilder = function(options) {
  * @throws {Error} If the definition cannot be parsed or built
  * @expose
  */
-ProtoBuf.loadJson = function(json, builder, filename) {
+ProtoBuf.loadJson = async function(json, builder, filename) {
     if (typeof builder === 'string' || (builder && typeof builder["file"] === 'string' && typeof builder["root"] === 'string'))
         filename = builder,
         builder = null;
@@ -381,7 +384,7 @@ ProtoBuf.loadJson = function(json, builder, filename) {
         builder = ProtoBuf.newBuilder();
     if (typeof json === 'string')
         json = JSON.parse(json);
-    builder["import"](json, filename);
+    await builder["import"](json, filename);
     builder.resolveAll();
     return builder;
 };
@@ -419,3 +422,4 @@ ProtoBuf.loadJsonFile = function(filename, callback, builder) {
     var contents = ProtoBuf.Util.fetch(typeof filename === 'object' ? filename["root"]+"/"+filename["file"] : filename);
     return contents === null ? null : ProtoBuf.loadJson(JSON.parse(contents), builder, filename);
 };
+
