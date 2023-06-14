@@ -13,7 +13,7 @@
   "main": "index.ets",
   "repository": "https://gitee.com/openharmony-tpc/protobuf",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.3.0",
   "dependencies": {
 
   },
