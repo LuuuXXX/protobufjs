@@ -19,10 +19,9 @@
  * Released under the Apache License, Version 2.0
  * see: https://github.com/dcodeIO/protobuf.js for details
  */
-import fs from '@ohos.file.fs';
 import ByteBuffer from './bytebuffer'
 import resourceManager from '@ohos.resourceManager';
-import buffer from '@ohos.buffer';
+import util from '@ohos.util';
 
 /**
  * The ProtoBuf namespace.
@@ -362,17 +361,31 @@ ProtoBuf.Util = (function () {
             return;
         }
 
-        let value = await ProtoBuf.resourceManager.getRawFd(path)
-
-        console.log(ProtoBuf.TAG, "getRawFd =" + JSON.stringify(value))
-        let buf = new ArrayBuffer(value.length)
-        let num = fs.readSync(value.fd, buf)
-        console.log(ProtoBuf.TAG, "readSync length =" + num)
-
-        console.log(ProtoBuf.TAG, "file content = " + buffer.from(buf).toString("utf-8"))
-
-        return buffer.from(buf).toString("utf-8")
-
+        if (callback) {
+            try {
+                ProtoBuf.resourceManager.getRawFileContent(path).then(value => {
+                    let textDecoder = util.TextDecoder.create("utf-8", { ignoreBOM: true });
+                    let retStr = textDecoder.decodeWithStream(value, { stream: false });
+                    callback(retStr);
+                }).catch(error => {
+                    console.error("getRawFileContent promise error is " + error);
+                    callback(null)
+                });
+            } catch (error) {
+                console.error(`promise getRawFileContent failed, error code: ${error.code}, message: ${error.message}.`)
+                callback(null)
+            }
+        } else {
+            try {
+                var fileUint8Array = await ProtoBuf.resourceManager.getRawFileContent(path);
+                let textDecoder = util.TextDecoder.create("utf-8", { ignoreBOM: false });
+                let retStr = textDecoder.decodeWithStream(fileUint8Array, { stream: false });
+                return retStr;
+            } catch (err) {
+                console.error("read file data failed with error message: " + err.message + ", error code: " + err.code);
+                return null;
+            }
+        }
 
         // if (Util.IS_NODE) {
         //     var fs = require("fs");
@@ -4748,7 +4761,7 @@ ProtoBuf.Builder = (function(ProtoBuf, Lang, Reflect) {
                         await this["import"](ProtoBuf.DotProto.Parser.parse(contents), importFilename); // May throw
                 } else // Import structure
                     if (!filename)
-                        this["import"](json['imports'][i]);
+                        await this["import"](json['imports'][i]);
                     else if (/\.(\w+)$/.test(filename)) // With extension: Append _importN to the name portion to make it unique
                         await this["import"](json['imports'][i], filename.replace(/^(.+)\.(\w+)$/, function($0, $1, $2) { return $1+"_import"+i+"."+$2; }));
                     else // Without extension: Append _importN to make it unique
@@ -5264,26 +5277,27 @@ ProtoBuf.loadJson = async function(json, builder, filename) {
  *   request has failed), else undefined
  * @expose
  */
-ProtoBuf.loadJsonFile = function(filename, callback, builder) {
+ProtoBuf.loadJsonFile = async function (filename, callback, builder, resourceManager) {
+    ProtoBuf.resourceManager = resourceManager;
     if (callback && typeof callback === 'object')
         builder = callback,
         callback = null;
     else if (!callback || typeof callback !== 'function')
         callback = null;
     if (callback)
-        return ProtoBuf.Util.fetch(typeof filename === 'string' ? filename : filename["root"]+"/"+filename["file"], function(contents) {
+        return ProtoBuf.Util.fetch(typeof filename === 'string' ? filename : filename["root"] + "/" + filename["file"], async function (contents) {
             if (contents === null) {
                 callback(Error("Failed to fetch file"));
                 return;
             }
             try {
-                callback(null, ProtoBuf.loadJson(JSON.parse(contents), builder, filename));
+                callback(null, await ProtoBuf.loadJson(JSON.parse(contents), builder, filename));
             } catch (e) {
                 callback(e);
             }
         });
-    var contents = ProtoBuf.Util.fetch(typeof filename === 'object' ? filename["root"]+"/"+filename["file"] : filename);
+    var contents = await ProtoBuf.Util.fetch(typeof filename === 'object' ? filename["root"] + "/" + filename["file"] : filename, resourceManager);
     return contents === null ? null : ProtoBuf.loadJson(JSON.parse(contents), builder, filename);
 };
 
-export default ProtoBuf
+export default ProtoBuf;

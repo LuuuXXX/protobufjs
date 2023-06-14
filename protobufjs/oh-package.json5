@@ -1,10 +1,26 @@
 {
-  "license": "Apache-2.0",
-  "devDependencies": {},
-  "author": "",
-  "name": "@ohos/protobufjs",
-  "version": "1.3.0",
-  "description": "Protocol Buffers for JavaScript. Finally.",
+  "types": "",
+  "keywords": [
+    "OpenHarmony",
+    "HarmonyOS",
+    "protobufjs"
+  ],
+  "author": "ohos_tpc",
+  "description": "Its easy to use,blazingly fast and works out of the box with .proto files.",
+  "ohos": {
+    "org": "opensource"
+  },
   "main": "index.ets",
-  "dependencies": {}
+  "repository": "https://gitee.com/openharmony-tpc/protobuf",
+  "type": "module",
+  "version": "1.0.0",
+  "dependencies": {
+
+  },
+  "tags": [
+    "Tool"
+  ],
+  "license": "Apache License 2.0",
+  "devDependencies": {},
+  "name": "@ohos/protobufjs"
 }
