@@ -76,17 +76,31 @@ ProtoBuf.Util = (function () {
             return;
         }
 
-        let value = await ProtoBuf.resourceManager.getRawFd(path)
-
-        console.log(ProtoBuf.TAG, "getRawFd =" + JSON.stringify(value))
-        let buf = new ArrayBuffer(value.length)
-        let num = fs.readSync(value.fd, buf)
-        console.log(ProtoBuf.TAG, "readSync length =" + num)
-
-        console.log(ProtoBuf.TAG, "file content = " + buffer.from(buf).toString("utf-8"))
-
-        return buffer.from(buf).toString("utf-8")
-
+        if (callback) {
+            try {
+                ProtoBuf.resourceManager.getRawFileContent(path).then(value => {
+                    let textDecoder = util.TextDecoder.create("utf-8", { ignoreBOM: true });
+                    let retStr = textDecoder.decodeWithStream(value, { stream: false });
+                    callback(retStr);
+                }).catch(error => {
+                    console.error("getRawFileContent promise error is " + error);
+                    callback(null)
+                });
+            } catch (error) {
+                console.error(`promise getRawFileContent failed, error code: ${error.code}, message: ${error.message}.`)
+                callback(null)
+            }
+        } else {
+            try {
+                var fileUint8Array = await ProtoBuf.resourceManager.getRawFileContent(path);
+                let textDecoder = util.TextDecoder.create("utf-8", { ignoreBOM: false });
+                let retStr = textDecoder.decodeWithStream(fileUint8Array, { stream: false });
+                return retStr;
+            } catch (err) {
+                console.error("read file data failed with error message: " + err.message + ", error code: " + err.code);
+                return null;
+            }
+        }
 
         // if (Util.IS_NODE) {
         //     var fs = require("fs");

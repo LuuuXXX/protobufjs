@@ -12,105 +12,239 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import router from '@ohos.router';
-
-import { Protobuf } from "@ohos/protobufjs"
+import protobuf from '@ohos/protobufjs'
+import hilog from '@ohos.hilog';
 
 @Entry
 @Component
 struct Index {
-  @State message: string = 'Hello World'
-  private readonly TAG: string = 'protobufjsinfo'
+  @State bufferData: string = "";
+  @State decodeData: string = "";
+  private TAG: string = 'protobuf'
+  private userLoginData = {
+    sessionId: "testAsynchronouslyLoadProtoFile",
+    userPrivilege: "John123",
+    isTokenType: false,
+    formatTimestamp: "12342222"
+  };
+  private innerData = {
+    result: [
+      {
+        url: 'url55555555555',
+        title: "title666666666666666",
+        spinner: ["array111", "array2222"]
+      },
+      {
+        url: 'url55555555555',
+        title: "title666666666666666",
+        spinner: ["array111", "array2222"]
+      }]
+  }
+  private test1Data = {
+    a: 150
+  }
+  private test2Data = {
+    b: 'this is test2 666666666666666'
+  }
+  private test3Data = {
+    test1: { a: 150 },
+    test2: { b: 'this is test2 666666666666666' }
+  }
 
   build() {
     Row() {
-      Column() {
-        Button() {
-          Text('核心功能：序列化和反序列化')
-            .fontSize(25)
-            .fontWeight(FontWeight.Bold)
-        }.type(ButtonType.Capsule)
-        .margin({
-          top: 20
-        })
-        .backgroundColor('#0D9FFB')
-        .onClick(async (event?: ClickEvent) => {
-          // router.pushUrl({url: 'pages/serialized' })
+      Column({ space: 10 }) {
+        Text("序列化数据：" + this.bufferData)
+          .fontSize(13)
+          .margin({ top: 10, left: 10 })
+        Text("反序列化数据：" + this.decodeData)
+          .fontSize(13)
+          .margin({ top: 5, left: 10 })
 
-          console.info(this.TAG, "start loadProtoFile ")
-          let builder = await Protobuf.loadProtoFile("inner.proto", null, null, getContext(this).resourceManager)
-
-          try {
-            // @ts-ignore
-            let JS = builder.build("js.ResultResponse");
-            console.info(this.TAG, " builder:" + JS)
-
-            let json = {
-              result: [{
-                url: "1111",
-                title: "title1111",
-                spinner: ["arr11", "arr12"]
-              }, {
-                url: "2222",
-                title: "title2222",
-                spinner: ["arr21", "arr22"]
-              }]
+        Button("同步：单个proto文件")
+          .width('80%')
+          .type(ButtonType.Capsule)
+          .backgroundColor('#0D9FFB')
+          .onClick(async () => {
+            try {
+              var builder = await protobuf.loadProtoFile('userproto.proto', null, null, globalThis.resourceMana);
+              this.codecSingleFile(builder);
+            } catch (error) {
+              this.bufferData = "";
+              this.decodeData = "";
+              hilog.error(0x0000, this.TAG, '%{public}s', ' single file catch error: ' + error);
             }
+          });
 
-            console.info(this.TAG, "origin json = " + JSON.stringify(json))
+        Button('同步：import导入其他proto文件')
+          .width('80%')
+          .backgroundColor('#0D9FFB')
+          .onClick(async () => {
+            try {
+              let builder = await protobuf.loadProtoFile('imports.proto', null, null, globalThis.resourceMana);
+              this.codecImportsFile(builder);
+            } catch (error) {
+              this.bufferData = "";
+              this.decodeData = "";
+              hilog.error(0x0000, this.TAG, '%{public}s', 'import nest file catch error: ' + error);
+            }
+          });
 
-            let encode = JS.encode(json)
+        Button('同步：内部嵌套')
+          .backgroundColor('#0D9FFB')
+          .width('80%')
+          .onClick(async () => {
+            try {
+              var builder = await protobuf.loadProtoFile('inner.proto', null, null, globalThis.resourceMana);
+              this.codecInnerNestFiles(builder);
+            } catch (error) {
+              this.bufferData = "";
+              this.decodeData = "";
+              hilog.error(0x0000, this.TAG, '%{public}s', ' inner nest file catch error: ' + error);
+            }
+          })
 
-            console.info(this.TAG, "encode = " + encode.toBuffer())
+        Button("异步：单个proto文件")
+          .width('80%')
+          .type(ButtonType.Capsule)
+          .backgroundColor('#0D9FFB')
+          .onClick(() => {
+            try {
+              protobuf.loadProtoFile('userproto.proto', (error, builder) => {
+                if (error) {
+                  hilog.error(0x0000, this.TAG, '%{public}s', ' codec catch error: ' + error);
+                  return;
+                }
+                this.codecSingleFile(builder);
+              }, null, globalThis.resourceMana);
+            } catch (error) {
+              this.bufferData = "";
+              this.decodeData = "";
+              hilog.error(0x0000, this.TAG, '%{public}s', ' single file catch error: ' + error);
+            }
+          });
 
 
-            let decode = JS.decode(encode)
+        Button('异步：import导入其他proto文件')
+          .width('80%')
+          .backgroundColor('#0D9FFB')
+          .onClick(() => {
+            try {
+              protobuf.loadProtoFile('imports.proto', (error, builder) => {
+                if (error) {
+                  hilog.error(0x0000, this.TAG, '%{public}s', ' codec catch error: ' + error);
+                  return;
+                }
+                this.codecImportsFile(builder);
+              }, null, globalThis.resourceMana);
+            } catch (error) {
+              this.bufferData = "";
+              this.decodeData = "";
+              console.info('protobuf import nest file catch error: ' + error)
+            }
+          });
 
-            console.info(this.TAG, "decode = " + JSON.stringify(decode))
-
-          } catch (e) {
-            console.error(this.TAG, "error:" + e)
-          }
-        });
-        Button() {
-          Text('buffer读写示例')
-            .fontSize(25)
-            .fontWeight(FontWeight.Bold)
-        }.type(ButtonType.Capsule)
-        .margin({
-          top: 20
-        })
-        .backgroundColor('#0D9FFB')
-        .onClick(() => {
-          router.pushUrl({ url: 'pages/writer_reader' })
-        });
-        Button() {
-          Text('rpc接口样例')
-            .fontSize(25)
-            .fontWeight(FontWeight.Bold)
-        }.type(ButtonType.Capsule)
-        .margin({
-          top: 20
-        })
-        .backgroundColor('#0D9FFB')
-        .onClick(() => {
-          router.pushUrl({ url: 'pages/rpc' })
-        });
-        Button() {
-          Text('websocket配合使用样例')
-            .fontSize(25)
-            .fontWeight(FontWeight.Bold)
-        }.type(ButtonType.Capsule)
-        .margin({
-          top: 20
-        })
-        .backgroundColor('#0D9FFB')
-        .onClick(() => {
-          router.pushUrl({ url: 'pages/websocket' })
-        })
+        Button('异步：内部嵌套')
+          .width('80%')
+          .backgroundColor('#0D9FFB')
+          .onClick(() => {
+            try {
+              protobuf.loadProtoFile('inner.proto', (error, builder) => {
+                if (error) {
+                  hilog.error(0x0000, this.TAG, '%{public}s', ' codec catch error: ' + error);
+                  return;
+                }
+                this.codecInnerNestFiles(builder);
+              }, null, globalThis.resourceMana);
+            } catch (error) {
+              this.bufferData = "";
+              this.decodeData = "";
+              console.info('protobuf inner nest file catch error: ' + error)
+            }
+          })
       }
       .width('100%')
     }
     .height('100%')
+  }
+
+  /**
+   * 单文件序列化
+   * @param builder protobuf序列化构建器
+   */
+  private codecSingleFile(builder) {
+    if (!builder) {
+      hilog.error(0x0000, this.TAG, '%{public}s', ' codec error: builder is null|undefined.');
+      return;
+    }
+    var UserLoginResponse = builder.build("com.user.UserLoginResponse");
+    var msg = new UserLoginResponse(this.userLoginData);
+
+    var arrayBuffer = msg.toArrayBuffer();
+    this.bufferData = Array.prototype.toString.call(new Uint8Array(arrayBuffer));
+    hilog.info(0x0000, this.TAG, '%{public}s', ' arrayBuffer: ' + new Uint8Array(arrayBuffer));
+
+    var arrayBuffer2 = UserLoginResponse.encode(this.userLoginData).toBuffer()
+    hilog.info(0x0000, this.TAG, '%{public}s', ' arrayBuffer2: ' + new Uint8Array(arrayBuffer2));
+
+    var decodeMsg = UserLoginResponse.decode(arrayBuffer);
+    hilog.info(0x0000, this.TAG, '%{public}s', ' decode: ' + JSON.stringify(decodeMsg));
+    this.decodeData = JSON.stringify(decodeMsg);
+  }
+
+  /**
+   * 引入外部文件的proto文件序列化
+   * @param builder protobuf序列化构建器
+   */
+  private codecImportsFile(builder) {
+    if (!builder) {
+      hilog.error(0x0000, this.TAG, '%{public}s', ' codec: builder is null|undefined.');
+      return;
+    }
+    var test1Entity = builder.build('Test1')
+    var test2Entity = builder.build('Test2')
+    var test3Entity = builder.build('js.Test3')
+
+    var messageTest1 = new test1Entity(this.test1Data);
+    var test1ArrayBuffer = messageTest1.toArrayBuffer();
+    hilog.info(0x0000, this.TAG, '%{public}s', ' test1ArrayBuffer: ' + new Uint8Array(test1ArrayBuffer));
+
+    var decodeTest1Msg = test1Entity.decode(test1ArrayBuffer);
+    hilog.info(0x0000, this.TAG, '%{public}s', ' decodeTest1Msg: ' + JSON.stringify(decodeTest1Msg));
+
+    var messageTest2 = new test2Entity(this.test2Data);
+    var test2ArrayBuffer = messageTest2.toArrayBuffer();
+    hilog.info(0x0000, this.TAG, '%{public}s', ' test1ArrayBuffer: ' + new Uint8Array(test2ArrayBuffer));
+    var decodeTest2Msg = test2Entity.decode(test2ArrayBuffer);
+    hilog.info(0x0000, this.TAG, '%{public}s', ' decodeTest2Msg: ' + JSON.stringify(decodeTest2Msg));
+
+    var messageTest3 = new test3Entity(this.test3Data)
+    hilog.info(0x0000, this.TAG, '%{public}s', ' messageTest3: ' + JSON.stringify(messageTest3));
+    var test3ArrayBuffer = messageTest3.toArrayBuffer();
+    hilog.info(0x0000, this.TAG, '%{public}s', ' test3ArrayBuffer: ' + new Uint8Array(test3ArrayBuffer));
+    this.bufferData = Array.prototype.toString.call(new Uint8Array(test3ArrayBuffer));
+    var decodeTest3Msg = test3Entity.decode(test3ArrayBuffer);
+    hilog.info(0x0000, this.TAG, '%{public}s', ' decodeTest3Msg: ' + JSON.stringify(decodeTest3Msg));
+    this.decodeData = JSON.stringify(decodeTest3Msg);
+  }
+
+  /**
+   * 文件内部嵌套结构体的proto文件序列化
+   * @param builder protobuf序列化构建器
+   */
+  private codecInnerNestFiles(builder) {
+    if (!builder) {
+      hilog.error(0x0000, this.TAG, '%{public}s', ' codec: builder is null|undefined.');
+      return;
+    }
+    var InnerEntity = builder.build('js.ResultResponse');
+    var resultMessage = new InnerEntity(this.innerData);
+    var arrayBufferResult = resultMessage.toArrayBuffer();
+    hilog.info(0x0000, this.TAG, '%{public}s', ' inner ArrayBuffer: ' + new Uint8Array(arrayBufferResult));
+    this.bufferData = Array.prototype.toString.call(new Uint8Array(arrayBufferResult));
+
+    var decodeInnerMsg = InnerEntity.decode(arrayBufferResult);
+    hilog.info(0x0000, this.TAG, '%{public}s', ' inner decode: ' + JSON.stringify(decodeInnerMsg));
+    this.decodeData = JSON.stringify(decodeInnerMsg);
   }
 }
