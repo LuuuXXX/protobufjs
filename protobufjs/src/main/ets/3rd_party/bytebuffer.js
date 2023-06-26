@@ -21,7 +21,7 @@
  * see: https://github.com/dcodeIO/bytebuffer.js for details
  */
 
-import Long from './Long'
+import Long from 'long'
 
 "use strict";
 

@@ -23,6 +23,7 @@ import fs from '@ohos.file.fs';
 import ByteBuffer from './bytebuffer'
 import resourceManager from '@ohos.resourceManager';
 import buffer from '@ohos.buffer';
+import util from '@ohos.util';
 
 //? include("protobuf.js");
-export default ProtoBuf
+export default ProtoBuf;
