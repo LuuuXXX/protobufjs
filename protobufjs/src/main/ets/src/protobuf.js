@@ -401,25 +401,26 @@ ProtoBuf.loadJson = async function(json, builder, filename) {
  *   request has failed), else undefined
  * @expose
  */
-ProtoBuf.loadJsonFile = function(filename, callback, builder) {
+ProtoBuf.loadJsonFile = async function (filename, callback, builder, resourceManager) {
+    ProtoBuf.resourceManager = resourceManager;
     if (callback && typeof callback === 'object')
         builder = callback,
         callback = null;
     else if (!callback || typeof callback !== 'function')
         callback = null;
     if (callback)
-        return ProtoBuf.Util.fetch(typeof filename === 'string' ? filename : filename["root"]+"/"+filename["file"], function(contents) {
+        return ProtoBuf.Util.fetch(typeof filename === 'string' ? filename : filename["root"] + "/" + filename["file"], async function (contents) {
             if (contents === null) {
                 callback(Error("Failed to fetch file"));
                 return;
             }
             try {
-                callback(null, ProtoBuf.loadJson(JSON.parse(contents), builder, filename));
+                callback(null, await ProtoBuf.loadJson(JSON.parse(contents), builder, filename));
             } catch (e) {
                 callback(e);
             }
         });
-    var contents = ProtoBuf.Util.fetch(typeof filename === 'object' ? filename["root"]+"/"+filename["file"] : filename);
+    var contents = await ProtoBuf.Util.fetch(typeof filename === 'object' ? filename["root"] + "/" + filename["file"] : filename, resourceManager);
     return contents === null ? null : ProtoBuf.loadJson(JSON.parse(contents), builder, filename);
 };
 

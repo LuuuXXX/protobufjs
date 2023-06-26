@@ -10,7 +10,7 @@
     },
     {
       "name": "MainAbility_label",
-      "value": "protobuf"
+      "value": "protobufjs"
     }
   ]
 }

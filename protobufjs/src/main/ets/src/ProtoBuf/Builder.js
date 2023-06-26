@@ -444,7 +444,7 @@ ProtoBuf.Builder = (function(ProtoBuf, Lang, Reflect) {
                         await this["import"](ProtoBuf.DotProto.Parser.parse(contents), importFilename); // May throw
                 } else // Import structure
                     if (!filename)
-                        this["import"](json['imports'][i]);
+                        await this["import"](json['imports'][i]);
                     else if (/\.(\w+)$/.test(filename)) // With extension: Append _importN to the name portion to make it unique
                         await this["import"](json['imports'][i], filename.replace(/^(.+)\.(\w+)$/, function($0, $1, $2) { return $1+"_import"+i+"."+$2; }));
                     else // Without extension: Append _importN to make it unique
