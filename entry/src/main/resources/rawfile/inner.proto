@@ -1,0 +1,11 @@
+syntax = "proto3";
+package js;
+
+message ResultResponse {
+    message Result{
+        string url = 1;
+        string title = 2;
+        repeated string spinner = 3;
+    }
+    repeated Result result = 4 ;
+}

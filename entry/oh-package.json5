@@ -1,0 +1,12 @@
+{
+  "license": "Apache License 2.0",
+  "devDependencies": {},
+  "name": "entry",
+  "description": "example description",
+  "repository": {},
+  "version": "1.0.0",
+  "dependencies": {
+    "@ohos/protobufjs": "file:../protobufjs",
+    "long": "5.2.3"
+  }
+}
