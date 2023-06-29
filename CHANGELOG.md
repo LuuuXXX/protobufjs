@@ -1,30 +1,13 @@
-
-### 1.3.0
-1.基于protobufjs 5.0.3源码侵入式修改，包管理工具切换为OHPM 
-
-2.protofile文件修改为从rawfile里读取 
-
-3.包名更改为@ohos/protobufjs
-
-### 1.2.1
-1.适配DevEco Studio 3.1 Beta1版本
-
-### 1.2.0
-1.适配api9
-
-### 1.1.1
-1.新增rpc和websocket使用样例
-
-### 1.1.0
-1.样例适配的系统版本是OpenHarmony API Version 8，且将原来工程转为hvigor工程。
-
 ### 1.0.0
+1.基于protobufjs 5.0.3源码侵入式修改，包管理工具切换为OHPM
 
-1.样例适配的系统版本是OpenHarmony API Version 5~7。
+2.protofile文件修改为从rawfile里读取
 
-2.使用三方库protobufjs版本支持@5.0.3
+3.组件发布包名为@ohos/protobufjs
 
-3.支持序列化和反序列化的样例
+4.适配DevEco Studio: 3.1 Beta2(3.1.0.400)
 
-4.支持buffer读写的样例
+5.适配SDK：API9 Release(3.2.11.9)
+
+6.支持proto字符串、proto json、proto文件、json文件的编解码
 

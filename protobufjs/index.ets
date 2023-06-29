@@ -1,6 +1,6 @@
 import Protobuf from './src/main/ets/dist/protobuf';
-import Long from './src/main/ets/dist/Long';
-import ByteBuffer from './src/main/ets/dist/byteBuffer';
+import Long from 'long';
+import ByteBuffer from './src/main/ets/3rd_party/byteBuffer';
 
 export default Protobuf
 

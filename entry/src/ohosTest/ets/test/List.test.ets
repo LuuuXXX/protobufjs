@@ -12,10 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import writerReaderTest from './writerreader.test'
 import serializedTest from './serialized.test'
+import longFunctionTest from './LongFunction.test'
 
 export default function testsuite() {
   writerReaderTest();
   serializedTest();
+  longFunctionTest();
 }
