@@ -1,6 +1,6 @@
 ﻿## protobuf单元测试用例
 
-该测试用例基于OpenHarmony系统下，采用[原库测试用例](https://gitee.com/link?target=https%3A%2F%2Fgithub.com%2Fkpdecker%2Fjsdiff%2Ftree%2Fmaster%2Ftest) 进行单元测试
+该测试用例基于OpenHarmony系统下，采用[原库测试用例](https://github.com/protobufjs/protobuf.js/tree/5.0.3/tests) 进行单元测试
 
 **单元测试用例覆盖情况**
 
@@ -63,7 +63,7 @@
 | loadJson                        | pass     |      |
 | loadJsonFile                    | pass     |      |
 
-### Long
+### long
 
 | 接口名              | 是否通过 | 备注 |
 | ------------------- |------| ---- |
