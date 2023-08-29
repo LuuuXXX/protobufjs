@@ -1,3 +1,10 @@
+### 1.0.1
+1.修改组件运行时为OpenHarmony
+
+2.修改bytebuffer文件导出时区分大小写
+
+3.更新组件版本约束：DevEco Studio: 4.0 Release(4.0.3.413), SDK: API10 (4.0.10.3)
+
 ### 1.0.0
 1.基于protobufjs 5.0.3源码侵入式修改，包管理工具切换为OHPM
 
