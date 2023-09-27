@@ -10,10 +10,10 @@
   "ohos": {
     "org": "opensource"
   },
-  "main": "index.ets",
+  "main": "index.ts",
   "repository": "https://gitee.com/openharmony-tpc/protobuf",
   "type": "module",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "dependencies": {
     "long": "5.2.1"
   },
