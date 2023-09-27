@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,13 +13,25 @@
  * limitations under the License.
  */
 
+export class GlobalContext {
+  private static instance: GlobalContext;
+  private objectMaps = new Map<string, Object>();
 
-import writerReaderTest from './writerreader.test'
-import longFunctionTest from './LongFunction.test'
-import serializedTest from './serialized.test'
+  private constructor() {
+  }
 
-export default function testsuite() {
-  writerReaderTest();
-  longFunctionTest();
-  serializedTest();
+  public static getContext(): GlobalContext {
+    if (!GlobalContext.instance) {
+      GlobalContext.instance = new GlobalContext();
+    }
+    return GlobalContext.instance;
+  }
+
+  getObject(value: string): Object {
+    return this.objectMaps.get(value);
+  }
+
+  setObject(key: string, objectClass: Object): void {
+    this.objectMaps.set(key, objectClass);
+  }
 }

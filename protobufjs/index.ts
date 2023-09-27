@@ -12,14 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import Protobuf from './src/main/ets/dist/protobuf';
 
+import Long from 'long';
+import ByteBuffer from './src/main/ets/3rd_party/bytebuffer';
 
-import writerReaderTest from './writerreader.test'
-import longFunctionTest from './LongFunction.test'
-import serializedTest from './serialized.test'
+export default Protobuf
 
-export default function testsuite() {
-  writerReaderTest();
-  longFunctionTest();
-  serializedTest();
+export {
+  Protobuf, Long, ByteBuffer
 }

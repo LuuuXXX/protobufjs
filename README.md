@@ -230,11 +230,11 @@ Button("同步方式进行proto文件编解码")
   .onClick(async () => {
     try {
     	// 读取文件需要借助全球化资源子系统中的ResourceManager来进行，支持多种方式获取
-    	// 方式一： 通过globalThis对象保存ability上下文中的resourceManager对象
-    	// EntryAbility.ts->onCreate()：globalThis.resourceMana = this.context.resourceManager;
+    	// 方式一： 通过GlobalContext对象保存ability上下文中的resourceManager对象
     	// 方式二： 通过getContext()方式获取
     	// 在pages页面中获取: getContext(this).resourceManager
-        var builder = await protobuf.loadProtoFile('userproto.proto', null, null, globalThis.resourceMana);
+    	let context: Context = GlobalContext.getContext().getObject("context") as Context;
+        var builder = await protobuf.loadProtoFile('userproto.proto', null, null, context.resourceManager);
         if (!builder) {
           console.error('protobuf codec: builder is null|undefined.');
           return;
@@ -261,6 +261,7 @@ Button("异步方式进行proto文件编解码")
   .backgroundColor('#0D9FFB')
   .onClick(() => {
     try {
+      let context: Context = GlobalContext.getContext().getObject("context") as Context;
       protobuf.loadProtoFile('userproto.proto', (error, builder) => {
         if (error) {
           console.error('protobuf codec catch error: ' + error);
@@ -279,7 +280,7 @@ Button("异步方式进行proto文件编解码")
         var decodeMsg = UserLoginResponse.decode(arrayBuffer);
         console.log("protobuf decode:" + JSON.stringify(decodeMsg));
         this.decodeData = JSON.stringify(decodeMsg);
-      }, null, globalThis.resourceMana);
+      }, null, context.resourceManager);
     } catch (error) {
       console.info('protobuf single file catch error: ' + error)
     }
@@ -853,7 +854,8 @@ static decodeDelimited(buffer: ByteBuffer | ArrayBuffer | Buffer | string, enc?:
 ## 约束与限制
 在下述版本验证通过：
 
-DevEco Studio: 4.0 Release(4.0.3.413), SDK: API10 (4.0.10.3)
+- DevEco Studio: 4.0 (4.0.3.512), SDK: API10 (4.0.10.9)
+- DevEco Studio: 4.0 Release(4.0.3.413), SDK: API10 (4.0.10.3)
 
 ## 目录结构
 

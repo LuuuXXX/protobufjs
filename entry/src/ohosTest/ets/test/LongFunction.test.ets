@@ -14,20 +14,14 @@
 
 // Interprets the given numbers as the bits of a 32-bit int.  In particular,
 // this takes care of the 32-bit being interpretted as the sign.
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium'
+import { describe, expect, it } from '@ohos/hypium'
 import { Long } from '@ohos/protobufjs'
 
 export default function longFunctionTest() {
-  describe('LongFunctionTest', function () {
-
-    function toInt32s(arr) {
-      for (var i = 0; i < arr.length; ++i) {
-        arr[i] = arr[i] & 0xFFFFFFFF;
-      }
-    }
+  describe('LongFunctionTest', () => {
 
     // Note that these are in numerical order.
-    var TEST_BITS = [
+    let TEST_BITS = [
       0x80000000, 0x00000000, 0xb776d5f5, 0x5634e2db, 0xffefffff, 0xffffffff,
       0xfff00000, 0x00000000, 0xfffeffff, 0xffffffff, 0xffff0000, 0x00000000,
       0xfffffffe, 0xffffffff, 0xffffffff, 0x00000000, 0xffffffff, 0xfeffffff,
@@ -41,9 +35,12 @@ export default function longFunctionTest() {
       0x00010000, 0x00000000, 0x000fffff, 0xffffffff, 0x00100000, 0x00000000,
       0x5634e2db, 0xb776d5f5, 0x7fffffff, 0xffffffff
     ];
-    toInt32s(TEST_BITS);
 
-    var TEST_ADD_BITS = [
+    for (let i = 0; i < TEST_BITS.length; ++i) {
+      TEST_BITS[i] = TEST_BITS[i] & 0xFFFFFFFF;
+    }
+
+    let TEST_ADD_BITS = [
       0x3776d5f5, 0x5634e2db, 0x7fefffff, 0xffffffff, 0xb766d5f5, 0x5634e2da,
       0x7ff00000, 0x00000000, 0xb766d5f5, 0x5634e2db, 0xffdfffff, 0xffffffff,
       0x7ffeffff, 0xffffffff, 0xb775d5f5, 0x5634e2da, 0xffeeffff, 0xfffffffe,
@@ -244,9 +241,12 @@ export default function longFunctionTest() {
       0x8000ffff, 0xffffffff, 0x800fffff, 0xfffffffe, 0x800fffff, 0xffffffff,
       0xd634e2db, 0xb776d5f4
     ];
-    toInt32s(TEST_ADD_BITS);
 
-    var TEST_SUB_BITS = [
+    for (let i = 0; i < TEST_ADD_BITS.length; ++i) {
+      TEST_ADD_BITS[i] = TEST_ADD_BITS[i] & 0xFFFFFFFF;
+    }
+
+    let TEST_SUB_BITS = [
       0x00000000, 0x00000000, 0xc8892a0a, 0xa9cb1d25, 0x80100000, 0x00000001,
       0x80100000, 0x00000000, 0x80010000, 0x00000001, 0x80010000, 0x00000000,
       0x80000001, 0x00000001, 0x80000001, 0x00000000, 0x80000000, 0x01000001,
@@ -657,9 +657,12 @@ export default function longFunctionTest() {
       0x7ff00000, 0x00000000, 0x7fefffff, 0xffffffff, 0x29cb1d24, 0x48892a0a,
       0x00000000, 0x00000000
     ];
-    toInt32s(TEST_SUB_BITS);
 
-    var TEST_MUL_BITS = [
+    for (let i = 0; i < TEST_SUB_BITS.length; ++i) {
+      TEST_SUB_BITS[i] = TEST_SUB_BITS[i] & 0xFFFFFFFF;
+    }
+
+    let TEST_MUL_BITS = [
       0x80000000, 0x00000000, 0x80000000, 0x00000000, 0x1ad92a0a, 0xa9cb1d25,
       0x00000000, 0x00000000, 0xd2500000, 0x00000000, 0x00100000, 0x00000000,
       0x80000000, 0x00000000, 0x65ae2a0a, 0xa9cb1d25, 0x00110000, 0x00000001,
@@ -860,9 +863,12 @@ export default function longFunctionTest() {
       0xffff0000, 0x00000000, 0x7ff00000, 0x00000001, 0xfff00000, 0x00000000,
       0x29cb1d24, 0x48892a0b
     ];
-    toInt32s(TEST_MUL_BITS);
 
-    var TEST_DIV_BITS = [
+    for (let i = 0; i < TEST_MUL_BITS.length; ++i) {
+      TEST_MUL_BITS[i] = TEST_MUL_BITS[i] & 0xFFFFFFFF;
+    }
+
+    let TEST_DIV_BITS = [
       0x00000000, 0x00000001, 0x00000000, 0x00000001, 0x00000000, 0x000007ff,
       0x00000000, 0x00000800, 0x00000000, 0x00007fff, 0x00000000, 0x00008000,
       0x00000000, 0x7fffffff, 0x00000000, 0x80000000, 0x0000007f, 0xffff8000,
@@ -1261,9 +1267,10 @@ export default function longFunctionTest() {
       0x00000000, 0x00007fff, 0x00000000, 0x00000800, 0x00000000, 0x000007ff,
       0x00000000, 0x00000001, 0x00000000, 0x00000001
     ];
-    toInt32s(TEST_DIV_BITS);
-
-    var TEST_STRINGS = [
+    for (let i = 0; i < TEST_DIV_BITS.length; ++i) {
+      TEST_DIV_BITS[i] = TEST_DIV_BITS[i] & 0xFFFFFFFF;
+    }
+    let TEST_STRINGS = [
       '-9223372036854775808',
       '-5226755067826871589',
       '-4503599627370497',
@@ -1301,7 +1308,7 @@ export default function longFunctionTest() {
       '9223372036854775807'
     ];
 
-    it('testSealingDoesntMakeLazyInitializersUndefined', 0, function () {
+    it('testSealingDoesntMakeLazyInitializersUndefined', 0, () => {
       expect(Long.ZERO != null).assertTrue()
       expect(Long.ONE != null).assertTrue()
       expect(Long.NEG_ONE != null).assertTrue()
@@ -1309,37 +1316,37 @@ export default function longFunctionTest() {
       expect(Long.MIN_VALUE != null).assertTrue()
     })
 
-    it('testToFromBits', 0, function () {
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        var val = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
+    it('testToFromBits', 0, () => {
+      for (let i = 0; i < TEST_BITS.length; i += 2) {
+        let val = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
         expect(TEST_BITS[i]).assertEqual(val.getHighBits());
         expect(TEST_BITS[i + 1]).assertEqual(val.getLowBits());
       }
     })
 
-    it('testToFromInt', 0, function () {
-      for (var i = 0; i < TEST_BITS.length; i += 1) {
-        var val = Long.fromInt(TEST_BITS[i], false);
+    it('testToFromInt', 0, () => {
+      for (let i = 0; i < TEST_BITS.length; i += 1) {
+        let val = Long.fromInt(TEST_BITS[i], false);
         expect(TEST_BITS[i]).assertEqual(val.toInt());
       }
     })
 
-    it('testToFromNumber', 0, function () {
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        var num = TEST_BITS[i] * Math.pow(2, 32) + TEST_BITS[i + 1] >= 0 ?
+    it('testToFromNumber', 0, () => {
+      for (let i = 0; i < TEST_BITS.length; i += 2) {
+        let num = TEST_BITS[i] * Math.pow(2, 32) + TEST_BITS[i + 1] >= 0 ?
         TEST_BITS[i + 1] : Math.pow(2, 32) + TEST_BITS[i + 1];
-        var val = Long.fromNumber(num, false);
+        let val = Long.fromNumber(num, false);
         expect(num).assertEqual(val.toNumber());
       }
 
-      expect(Long.ZERO).assertEqual(Long.fromNumber(NaN, false));
-      expect(Long.MAX_VALUE).assertEqual(Long.fromNumber(Infinity, false));
-      expect(Long.MIN_VALUE).assertEqual(Long.fromNumber(-Infinity, false));
+      expect(Long.ZERO).assertEqual(Long.fromNumber(Number.NaN, false));
+      expect(Long.MAX_VALUE).assertEqual(Long.fromNumber(Number.POSITIVE_INFINITY, false));
+      expect(Long.MIN_VALUE).assertEqual(Long.fromNumber(Number.NEGATIVE_INFINITY, false));
     })
 
     // Make sure we are not leaking longs by incorrect caching of decimal numbers
     // and failing-fast in debug mode.
-    it('testFromDecimalCachedValues', 0, function () {
+    it('testFromDecimalCachedValues', 0, () => {
       expect(Long.ZERO).assertEqual(Long.fromInt(0.1, false));
       expect(Long.fromInt(0).eqz()).assertTrue();
       expect(Long.fromNumber(0).eqz()).assertTrue();
@@ -1350,160 +1357,152 @@ export default function longFunctionTest() {
       expect(Long.ONE).assertEqual(Long.fromInt(1.1, false));
     })
 
-    it('testIsZero', 0, function () {
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        var val = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
+    it('testIsZero', 0, () => {
+      for (let i = 0; i < TEST_BITS.length; i += 2) {
+        let val = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
         expect(TEST_BITS[i] == 0 && TEST_BITS[i + 1] == 0).assertEqual(val.isZero());
       }
     })
 
-    it('testIsNegative', 0, function () {
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        var val = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
+    it('testIsNegative', 0, () => {
+      for (let i = 0; i < TEST_BITS.length; i += 2) {
+        let val = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
         expect((TEST_BITS[i] >> 31) != 0).assertEqual(val.isNegative());
       }
     })
 
-    it('testIsOdd', 0, function () {
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        var val = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
+    it('testIsOdd', 0, () => {
+      for (let i = 0; i < TEST_BITS.length; i += 2) {
+        let val = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
         expect((TEST_BITS[i + 1] & 1) != 0).assertEqual(val.isOdd());
       }
     })
 
-    it('testIsPositive', 0, function () {
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        var val = Long.fromInt(TEST_BITS[i], false);
+    it('testIsPositive', 0, () => {
+      for (let i = 0; i < TEST_BITS.length; i += 2) {
+        let val = Long.fromInt(TEST_BITS[i], false);
         expect(val.unsigned || val.high >= 0).assertEqual(val.isPositive());
       }
     })
 
-    it('testIsEven', 0, function () {
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        var val = Long.fromInt(TEST_BITS[i], false);
+    it('testIsEven', 0, () => {
+      for (let i = 0; i < TEST_BITS.length; i += 2) {
+        let val = Long.fromInt(TEST_BITS[i], false);
         expect((val.low & 1) === 0).assertEqual(val.isEven());
       }
     })
 
-    it('testCompare', 0, function () {
-      for (var i = 0; i < TEST_BITS.length; i += 1) {
-        var val = Long.fromInt(TEST_BITS[i], false);
+    it('testCompare', 0, () => {
+      for (let i = 0; i < TEST_BITS.length; i += 1) {
+        let val = Long.fromInt(TEST_BITS[i], false);
         expect(val.compare(Long.MAX_VALUE) == -1).assertTrue();
         expect(val.comp(Long.MAX_VALUE) == -1).assertTrue();
       }
     })
 
-    function createTestComparisons(i) {
-      var vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
-      for (var j = 0; j < TEST_BITS.length; j += 2) {
-        var vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
-        expect(i == j).assertEqual(vi.equals(vj));
-        expect(i == j).assertEqual(vi.eq(vj));
-        expect(i != j).assertEqual(vi.notEquals(vj));
-        expect(i != j).assertEqual(vi.neq(vj));
-        expect(i != j).assertEqual(vi.ne(vj));
-        expect(i < j).assertEqual(vi.lessThan(vj));
-        expect(i < j).assertEqual(vi.lt(vj));
-        expect(i <= j).assertEqual(vi.lessThanOrEqual(vj));
-        expect(i <= j).assertEqual(vi.lte(vj));
-        expect(i <= j).assertEqual(vi.le(vj));
-        expect(i > j).assertEqual(vi.greaterThan(vj));
-        expect(i > j).assertEqual(vi.gt(vj));
-        expect(i >= j).assertEqual(vi.greaterThanOrEqual(vj));
-        expect(i >= j).assertEqual(vi.gte(vj));
-        expect(i >= j).assertEqual(vi.ge(vj));
-      }
-    }
-
     // Here and below, we translate one conceptual test (e.g., "testComparisons")
     // into a number of test functions that will be run separately by jsunit. This
     // is necessary because, in some testing configurations, the full combined test
     // can take so long that it times out. These smaller tests run much faster.
-    it('testCreateTestComparisons', 0, function () {
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        createTestComparisons(i);
-      }
-    })
-
-    function createTestBitOperations(i) {
-
-      var vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
-      expect(~TEST_BITS[i]).assertEqual(vi.not().getHighBits());
-      expect(~TEST_BITS[i + 1]).assertEqual(vi.not().getLowBits());
-
-      for (var j = 0; j < TEST_BITS.length; j += 2) {
-        var vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
-        expect(TEST_BITS[i] & TEST_BITS[j]).assertEqual(vi.and(vj).getHighBits());
-        expect(TEST_BITS[i + 1] & TEST_BITS[j + 1]).assertEqual(vi.and(vj).getLowBits());
-        expect(TEST_BITS[i] | TEST_BITS[j]).assertEqual(vi.or(vj).getHighBits());
-        expect(TEST_BITS[i + 1] | TEST_BITS[j + 1]).assertEqual(vi.or(vj).getLowBits());
-        expect(TEST_BITS[i] ^ TEST_BITS[j]).assertEqual(vi.xor(vj).getHighBits());
-        expect(TEST_BITS[i + 1] ^ TEST_BITS[j + 1]).assertEqual(vi.xor(vj).getLowBits());
-      }
-
-      expect(TEST_BITS[i]).assertEqual(vi.shiftLeft(0).getHighBits());
-      expect(TEST_BITS[i]).assertEqual(vi.shl(0).getHighBits());
-      expect(TEST_BITS[i + 1]).assertEqual(vi.shiftLeft(0).getLowBits());
-      expect(TEST_BITS[i + 1]).assertEqual(vi.shl(0).getLowBits());
-      expect(TEST_BITS[i]).assertEqual(vi.shiftRight(0).getHighBits());
-      expect(TEST_BITS[i]).assertEqual(vi.shr(0).getHighBits());
-      expect(TEST_BITS[i + 1]).assertEqual(vi.shiftRight(0).getLowBits());
-      expect(TEST_BITS[i + 1]).assertEqual(vi.shr(0).getLowBits());
-      expect(TEST_BITS[i]).assertEqual(vi.shiftRightUnsigned(0).getHighBits());
-      expect(TEST_BITS[i]).assertEqual(vi.shru(0).getHighBits());
-      expect(TEST_BITS[i]).assertEqual(vi.shr_u(0).getHighBits());
-      expect(TEST_BITS[i + 1]).assertEqual(vi.shiftRightUnsigned(0).getLowBits());
-      expect(TEST_BITS[i + 1]).assertEqual(vi.shru(0).getLowBits());
-      expect(TEST_BITS[i + 1]).assertEqual(vi.shr_u(0).getLowBits());
-
-      for (var len = 1; len < 64; ++len) {
-        if (len < 32) {
-          expect((TEST_BITS[i] << len) | (TEST_BITS[i + 1] >>> (32 - len))).assertEqual(
-            vi.shiftLeft(len).getHighBits());
-          expect(TEST_BITS[i + 1] << len).assertEqual(vi.shiftLeft(len).getLowBits());
-
-          expect(TEST_BITS[i] >> len).assertEqual(vi.shiftRight(len).getHighBits());
-          expect((TEST_BITS[i + 1] >>> len) | (TEST_BITS[i] << (32 - len))).assertEqual(
-            vi.shiftRight(len).getLowBits());
-
-          expect(TEST_BITS[i] >>> len).assertEqual(vi.shiftRightUnsigned(len).getHighBits());
-          expect((TEST_BITS[i + 1] >>> len) | (TEST_BITS[i] << (32 - len))).assertEqual(
-            vi.shiftRightUnsigned(len).getLowBits());
-        } else {
-          expect(TEST_BITS[i + 1] << (len - 32)).assertEqual(vi.shiftLeft(len).getHighBits());
-          expect(0).assertEqual(vi.shiftLeft(len).getLowBits());
-
-          expect(TEST_BITS[i] >= 0 ? 0 : -1).assertEqual(vi.shiftRight(len).getHighBits());
-          expect(TEST_BITS[i] >> (len - 32)).assertEqual(vi.shiftRight(len).getLowBits());
-
-          expect(0).assertEqual(vi.shiftRightUnsigned(len).getHighBits());
-          if (len == 32) {
-            expect(TEST_BITS[i]).assertEqual(vi.shiftRightUnsigned(len).getLowBits());
-          } else {
-            expect(
-              TEST_BITS[i] >>> (len - 32)).assertEqual(
-              vi.shiftRightUnsigned(len).getLowBits());
-          }
+    it('testCreateTestComparisons', 0, () => {
+      for (let i = 0; i < TEST_BITS.length; i += 2) {
+        let vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
+        for (let j = 0; j < TEST_BITS.length; j += 2) {
+          let vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
+          expect(i == j).assertEqual(vi.equals(vj));
+          expect(i == j).assertEqual(vi.eq(vj));
+          expect(i != j).assertEqual(vi.notEquals(vj));
+          expect(i != j).assertEqual(vi.neq(vj));
+          expect(i != j).assertEqual(vi.ne(vj));
+          expect(i < j).assertEqual(vi.lessThan(vj));
+          expect(i < j).assertEqual(vi.lt(vj));
+          expect(i <= j).assertEqual(vi.lessThanOrEqual(vj));
+          expect(i <= j).assertEqual(vi.lte(vj));
+          expect(i <= j).assertEqual(vi.le(vj));
+          expect(i > j).assertEqual(vi.greaterThan(vj));
+          expect(i > j).assertEqual(vi.gt(vj));
+          expect(i >= j).assertEqual(vi.greaterThanOrEqual(vj));
+          expect(i >= j).assertEqual(vi.gte(vj));
+          expect(i >= j).assertEqual(vi.ge(vj));
         }
       }
+    })
 
-      expect(TEST_BITS[i]).assertEqual(vi.shiftLeft(64).getHighBits());
-      expect(TEST_BITS[i + 1]).assertEqual(vi.shiftLeft(64).getLowBits());
-      expect(TEST_BITS[i]).assertEqual(vi.shiftRight(64).getHighBits());
-      expect(TEST_BITS[i + 1]).assertEqual(vi.shiftRight(64).getLowBits());
-      expect(TEST_BITS[i]).assertEqual(vi.shiftRightUnsigned(64).getHighBits());
-      expect(TEST_BITS[i + 1]).assertEqual(vi.shiftRightUnsigned(64).getLowBits());
-    }
+    it('testcreateTestBitOperations', 0, () => {
+      for (let i:number = 0; i < TEST_BITS.length; i += 2) {
+        let vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
+        expect(~TEST_BITS[i]).assertEqual(vi.not().getHighBits());
+        expect(~TEST_BITS[i + 1]).assertEqual(vi.not().getLowBits());
 
-    it('testcreateTestBitOperations', 0, function () {
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        createTestBitOperations(i);
+        for (let j = 0; j < TEST_BITS.length; j += 2) {
+          let vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
+          expect(TEST_BITS[i] & TEST_BITS[j]).assertEqual(vi.and(vj).getHighBits());
+          expect(TEST_BITS[i + 1] & TEST_BITS[j + 1]).assertEqual(vi.and(vj).getLowBits());
+          expect(TEST_BITS[i] | TEST_BITS[j]).assertEqual(vi.or(vj).getHighBits());
+          expect(TEST_BITS[i + 1] | TEST_BITS[j + 1]).assertEqual(vi.or(vj).getLowBits());
+          expect(TEST_BITS[i] ^ TEST_BITS[j]).assertEqual(vi.xor(vj).getHighBits());
+          expect(TEST_BITS[i + 1] ^ TEST_BITS[j + 1]).assertEqual(vi.xor(vj).getLowBits());
+        }
+
+        expect(TEST_BITS[i]).assertEqual(vi.shiftLeft(0).getHighBits());
+        expect(TEST_BITS[i]).assertEqual(vi.shl(0).getHighBits());
+        expect(TEST_BITS[i + 1]).assertEqual(vi.shiftLeft(0).getLowBits());
+        expect(TEST_BITS[i + 1]).assertEqual(vi.shl(0).getLowBits());
+        expect(TEST_BITS[i]).assertEqual(vi.shiftRight(0).getHighBits());
+        expect(TEST_BITS[i]).assertEqual(vi.shr(0).getHighBits());
+        expect(TEST_BITS[i + 1]).assertEqual(vi.shiftRight(0).getLowBits());
+        expect(TEST_BITS[i + 1]).assertEqual(vi.shr(0).getLowBits());
+        expect(TEST_BITS[i]).assertEqual(vi.shiftRightUnsigned(0).getHighBits());
+        expect(TEST_BITS[i]).assertEqual(vi.shru(0).getHighBits());
+        expect(TEST_BITS[i]).assertEqual(vi.shr_u(0).getHighBits());
+        expect(TEST_BITS[i + 1]).assertEqual(vi.shiftRightUnsigned(0).getLowBits());
+        expect(TEST_BITS[i + 1]).assertEqual(vi.shru(0).getLowBits());
+        expect(TEST_BITS[i + 1]).assertEqual(vi.shr_u(0).getLowBits());
+
+        for (let len = 1; len < 64; ++len) {
+          if (len < 32) {
+            expect((TEST_BITS[i] << len) | (TEST_BITS[i + 1] >>> (32 - len))).assertEqual(
+              vi.shiftLeft(len).getHighBits());
+            expect(TEST_BITS[i + 1] << len).assertEqual(vi.shiftLeft(len).getLowBits());
+
+            expect(TEST_BITS[i] >> len).assertEqual(vi.shiftRight(len).getHighBits());
+            expect((TEST_BITS[i + 1] >>> len) | (TEST_BITS[i] << (32 - len))).assertEqual(
+              vi.shiftRight(len).getLowBits());
+
+            expect(TEST_BITS[i] >>> len).assertEqual(vi.shiftRightUnsigned(len).getHighBits());
+            expect((TEST_BITS[i + 1] >>> len) | (TEST_BITS[i] << (32 - len))).assertEqual(
+              vi.shiftRightUnsigned(len).getLowBits());
+          } else {
+            expect(TEST_BITS[i + 1] << (len - 32)).assertEqual(vi.shiftLeft(len).getHighBits());
+            expect(0).assertEqual(vi.shiftLeft(len).getLowBits());
+
+            expect(TEST_BITS[i] >= 0 ? 0 : -1).assertEqual(vi.shiftRight(len).getHighBits());
+            expect(TEST_BITS[i] >> (len - 32)).assertEqual(vi.shiftRight(len).getLowBits());
+
+            expect(0).assertEqual(vi.shiftRightUnsigned(len).getHighBits());
+            if (len == 32) {
+              expect(TEST_BITS[i]).assertEqual(vi.shiftRightUnsigned(len).getLowBits());
+            } else {
+              expect(
+                TEST_BITS[i] >>> (len - 32)).assertEqual(
+                vi.shiftRightUnsigned(len).getLowBits());
+            }
+          }
+        }
+
+        expect(TEST_BITS[i]).assertEqual(vi.shiftLeft(64).getHighBits());
+        expect(TEST_BITS[i + 1]).assertEqual(vi.shiftLeft(64).getLowBits());
+        expect(TEST_BITS[i]).assertEqual(vi.shiftRight(64).getHighBits());
+        expect(TEST_BITS[i + 1]).assertEqual(vi.shiftRight(64).getLowBits());
+        expect(TEST_BITS[i]).assertEqual(vi.shiftRightUnsigned(64).getHighBits());
+        expect(TEST_BITS[i + 1]).assertEqual(vi.shiftRightUnsigned(64).getLowBits());
+
       }
     })
 
-    it('testNegation', 0, function () {
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        var vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
+    it('testNegation', 0, () => {
+      for (let i = 0; i < TEST_BITS.length; i += 2) {
+        let vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
         if (TEST_BITS[i + 1] == 0) {
           expect((~TEST_BITS[i] + 1) | 0).assertEqual(vi.negate().getHighBits());
           expect((~TEST_BITS[i] + 1) | 0).assertEqual(vi.neg().getHighBits());
@@ -1518,13 +1517,13 @@ export default function longFunctionTest() {
       }
     })
 
-    it('test_add', 0, function () {
-      var count = 0;
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        var vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
-        for (var j = 0; j < i; j += 2) {
-          var vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
-          var result = vi.add(vj);
+    it('test_add', 0, () => {
+      let count = 0;
+      for (let i = 0; i < TEST_BITS.length; i += 2) {
+        let vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
+        for (let j = 0; j < i; j += 2) {
+          let vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
+          let result = vi.add(vj);
           expect(TEST_ADD_BITS[count++]).assertEqual(result.getHighBits());
           expect(TEST_ADD_BITS[count++]).assertEqual(result.getLowBits());
         }
@@ -1532,212 +1531,201 @@ export default function longFunctionTest() {
     })
 
 
-    it('testSub', 0, function () {
-      var count = 0;
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        var vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
-        for (var j = 0; j < TEST_BITS.length; j += 2) {
-          var vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
-          var result = vi.sub(vj);
+    it('testSub', 0, () => {
+      let count = 0;
+      for (let i = 0; i < TEST_BITS.length; i += 2) {
+        let vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
+        for (let j = 0; j < TEST_BITS.length; j += 2) {
+          let vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
+          let result = vi.sub(vj);
           expect(TEST_SUB_BITS[count++]).assertEqual(result.getHighBits());
           expect(TEST_SUB_BITS[count++]).assertEqual(result.getLowBits());
         }
       }
     })
 
-    it('testSubtract', 0, function () {
-      var count = 0;
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        var vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
-        for (var j = 0; j < TEST_BITS.length; j += 2) {
-          var vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
-          var result = vi.subtract(vj);
+    it('testSubtract', 0, () => {
+      let count = 0;
+      for (let i = 0; i < TEST_BITS.length; i += 2) {
+        let vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
+        for (let j = 0; j < TEST_BITS.length; j += 2) {
+          let vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
+          let result = vi.subtract(vj);
           expect(TEST_SUB_BITS[count++]).assertEqual(result.getHighBits());
           expect(TEST_SUB_BITS[count++]).assertEqual(result.getLowBits());
         }
       }
     })
 
-    it('testMultiply', 0, function () {
-      var count = 0;
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        var vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
-        for (var j = 0; j < i; j += 2) {
-          var vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
-          var result = vi.multiply(vj);
+    it('testMultiply', 0, () => {
+      let count = 0;
+      for (let i = 0; i < TEST_BITS.length; i += 2) {
+        let vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
+        for (let j = 0; j < i; j += 2) {
+          let vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
+          let result = vi.multiply(vj);
           expect(TEST_MUL_BITS[count++]).assertEqual(result.getHighBits());
           expect(TEST_MUL_BITS[count++]).assertEqual(result.getLowBits());
         }
       }
     })
 
-    it('testMul', 0, function () {
-      var count = 0;
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        var vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
-        for (var j = 0; j < i; j += 2) {
-          var vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
-          var result = vi.mul(vj);
+    it('testMul', 0, () => {
+      let count = 0;
+      for (let i = 0; i < TEST_BITS.length; i += 2) {
+        let vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i], false);
+        for (let j = 0; j < i; j += 2) {
+          let vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
+          let result = vi.mul(vj);
           expect(TEST_MUL_BITS[count++]).assertEqual(result.getHighBits());
           expect(TEST_MUL_BITS[count++]).assertEqual(result.getLowBits());
         }
       }
     })
 
-    function createTestDivModulo(i, count) {
-      var vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i]);
-      for (var j = 0; j < TEST_BITS.length; j += 2) {
-        var vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j]);
-        if (!vj.isZero()) {
-          var divResult = vi.div(vj);
-          expect(TEST_DIV_BITS[count++]).assertEqual(divResult.getHighBits());
-          expect(TEST_DIV_BITS[count++]).assertEqual(divResult.getLowBits());
-
-          var modResult = vi.modulo(vj);
-          var combinedResult = divResult.multiply(vj).add(modResult);
-          expect(vi.equals(combinedResult)).assertTrue();
-        }
-      }
-    }
-
-    function createTestDivMod(i, count) {
-      var vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i]);
-      for (var j = 0; j < TEST_BITS.length; j += 2) {
-        var vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j]);
-        if (!vj.isZero()) {
-          var divResult = vi.divide(vj);
-          expect(TEST_DIV_BITS[count++]).assertEqual(divResult.getHighBits());
-          expect(TEST_DIV_BITS[count++]).assertEqual(divResult.getLowBits());
-
-          var modResult = vi.mod(vj);
-          var combinedResult = divResult.mul(vj).add(modResult);
-          expect(vi.equals(combinedResult)).assertTrue();
-        }
-      }
-    }
-
-    function createTestDivRem(i, count) {
-      var vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i]);
-      for (var j = 0; j < TEST_BITS.length; j += 2) {
-        var vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j]);
-        if (!vj.isZero()) {
-          var divResult = vi.divide(vj);
-          expect(TEST_DIV_BITS[count++]).assertEqual(divResult.getHighBits());
-          expect(TEST_DIV_BITS[count++]).assertEqual(divResult.getLowBits());
-
-          var modResult = vi.rem(vj);
-          var combinedResult = divResult.mul(vj).add(modResult);
-          expect(vi.equals(combinedResult)).assertTrue();
-        }
-      }
-    }
-
-    it('testCreateTestDivModulo', 0, function () {
-      var countPerDivModCall = 0;
-      for (var j = 0; j < TEST_BITS.length; j += 2) {
-        var vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
+    it('testCreateTestDivModulo', 0, () => {
+      let countPerDivModCall = 0;
+      for (let j = 0; j < TEST_BITS.length; j += 2) {
+        let vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
         if (!vj.isZero()) {
           countPerDivModCall += 2;
         }
       }
 
-      var countDivMod = 0;
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        createTestDivModulo(i, countDivMod);
+      let countDivMod = 0;
+      for (let i = 0; i < TEST_BITS.length; i += 2) {
+        let count:number = countDivMod;
+        let vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i]);
+        for (let j = 0; j < TEST_BITS.length; j += 2) {
+          let vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j]);
+          if (!vj.isZero()) {
+            let divResult = vi.div(vj);
+            expect(TEST_DIV_BITS[count++]).assertEqual(divResult.getHighBits());
+            expect(TEST_DIV_BITS[count++]).assertEqual(divResult.getLowBits());
+
+            let modResult = vi.modulo(vj);
+            let combinedResult = divResult.multiply(vj).add(modResult);
+            expect(vi.equals(combinedResult)).assertTrue();
+          }
+        }
         countDivMod += countPerDivModCall;
       }
     })
 
-    it('testCreateTestDivMod', 0, function () {
-      var countPerDivModCall = 0;
-      for (var j = 0; j < TEST_BITS.length; j += 2) {
-        var vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
+    it('testCreateTestDivMod', 0, () => {
+      let countPerDivModCall = 0;
+      for (let j = 0; j < TEST_BITS.length; j += 2) {
+        let vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
         if (!vj.isZero()) {
           countPerDivModCall += 2;
         }
       }
 
-      var countDivMod = 0;
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        createTestDivMod(i, countDivMod);
+      let countDivMod = 0;
+      for (let i = 0; i < TEST_BITS.length; i += 2) {
+        let count:number = countDivMod;
+        let vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i]);
+        for (let j = 0; j < TEST_BITS.length; j += 2) {
+          let vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j]);
+          if (!vj.isZero()) {
+            let divResult = vi.divide(vj);
+            expect(TEST_DIV_BITS[count++]).assertEqual(divResult.getHighBits());
+            expect(TEST_DIV_BITS[count++]).assertEqual(divResult.getLowBits());
+
+            let modResult = vi.mod(vj);
+            let combinedResult = divResult.mul(vj).add(modResult);
+            expect(vi.equals(combinedResult)).assertTrue();
+          }
+        }
+
         countDivMod += countPerDivModCall;
       }
     })
 
-    it('testCreateTestDivRem', 0, function () {
-      var countPerDivModCall = 0;
-      for (var j = 0; j < TEST_BITS.length; j += 2) {
-        var vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
+    it('testCreateTestDivRem', 0, () => {
+      let countPerDivModCall = 0;
+      for (let j = 0; j < TEST_BITS.length; j += 2) {
+        let vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j], false);
         if (!vj.isZero()) {
           countPerDivModCall += 2;
         }
       }
 
-      var countDivMod = 0;
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        createTestDivRem(i, countDivMod);
+      let countDivMod = 0;
+      for (let i = 0; i < TEST_BITS.length; i += 2) {
+        let count: number = countDivMod;
+        let vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i]);
+        for (let j = 0; j < TEST_BITS.length; j += 2) {
+          let vj = Long.fromBits(TEST_BITS[j + 1], TEST_BITS[j]);
+          if (!vj.isZero()) {
+            let divResult = vi.divide(vj);
+            expect(TEST_DIV_BITS[count++]).assertEqual(divResult.getHighBits());
+            expect(TEST_DIV_BITS[count++]).assertEqual(divResult.getLowBits());
+
+            let modResult = vi.rem(vj);
+            let combinedResult = divResult.mul(vj).add(modResult);
+            expect(vi.equals(combinedResult)).assertTrue();
+          }
+        }
+
         countDivMod += countPerDivModCall;
       }
     })
 
-    function createTestToFromString(i) {
-      var vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i]);
-      var str = vi.toString(10);
-      expect(TEST_STRINGS[i / 2]).assertEqual(str);
-      expect(
-        TEST_BITS[i]).assertEqual(
-        Long.fromString(str, 10).getHighBits()
-      );
-      expect(
-        TEST_BITS[i + 1]).assertEqual(
-        Long.fromString(str, 10).getLowBits()
-      );
-
-      for (var radix = 2; radix <= 36; ++radix) {
-        var result = vi.toString(radix);
+    it('testCreateTestToFromString', 0, () => {
+      for (let i: number = 0; i < TEST_BITS.length; i += 2) {
+        let vi = Long.fromBits(TEST_BITS[i + 1], TEST_BITS[i]);
+        let str = vi.toString(10);
+        expect(TEST_STRINGS[i / 2]).assertEqual(str);
         expect(
           TEST_BITS[i]).assertEqual(
-          Long.fromString(result, radix).getHighBits()
+          Long.fromString(str, 10).getHighBits()
         );
         expect(
           TEST_BITS[i + 1]).assertEqual(
-          Long.fromString(result, radix).getLowBits()
+          Long.fromString(str, 10).getLowBits()
         );
-      }
-    }
 
-    it('testCreateTestToFromString', 0, function () {
-      for (var i = 0; i < TEST_BITS.length; i += 2) {
-        createTestToFromString(i);
+        for (let radix = 2; radix <= 36; ++radix) {
+          let result = vi.toString(radix);
+          expect(
+            TEST_BITS[i]).assertEqual(
+            Long.fromString(result, radix).getHighBits()
+          );
+
+          expect(TEST_BITS[i + 1]).assertEqual(
+            Long.fromString(result, radix).getLowBits()
+          );
+        }
       }
     })
 
-    it('testIsStringInRange', 0, function () {
-      var string1 = '9223372036854775808';
-      var string2 = '1000000000000000000000000';
-      var string3 = '-9223372036854775809';
-      var string4 = '-1000000000000000000000000';
+    it('testIsStringInRange', 0, () => {
+      let string1 = '9223372036854775808';
+      let string2 = '1000000000000000000000000';
+      let string3 = '-9223372036854775809';
+      let string4 = '-1000000000000000000000000';
       // expect(false).assertEqual(Long.isStringInRange(string1, 10));
       // expect(false).assertEqual(Long.isStringInRange(string2, 10));
       // expect(false).assertEqual(Long.isStringInRange(string3, 10));
       // expect(false).assertEqual(Long.isStringInRange(string4, 10));
       //
-      // for (var i = 0; i < TEST_STRINGS.length; i++) {
+      // for (let i = 0; i < TEST_STRINGS.length; i++) {
       //   expect(true).assertEqual(Long.isStringInRange(TEST_STRINGS[i], 10));
       // }
     })
 
     // Regression test for
     // https://github.com/google/closure-library/pull/498
-    it('testBase36ToString', 0, function () {
+    it('testBase36ToString', 0, () => {
       expect('zzzzzz').assertEqual(Long.fromString('zzzzzz', false, 36).toString(36));
     })
-    it('testClzAndCtz', 0, function () {
-      var longVal0 = Long.fromBits(0, 0);
-      var longVal1 = Long.fromBits(1, 0);
-      var longVal2 = Long.fromBits(0, 1);
-      var longVal3 = Long.fromBits(1, 1);
-      var longVal4 = Long.fromBits(1, 2);
+    it('testClzAndCtz', 0, () => {
+      let longVal0 = Long.fromBits(0, 0);
+      let longVal1 = Long.fromBits(1, 0);
+      let longVal2 = Long.fromBits(0, 1);
+      let longVal3 = Long.fromBits(1, 1);
+      let longVal4 = Long.fromBits(1, 2);
 
       expect(longVal0.clz()).assertDeepEquals(64);
       expect(longVal1.clz()).assertDeepEquals(63);
@@ -1763,16 +1751,16 @@ export default function longFunctionTest() {
     })
 
 
-    it('testRotateLeft', 0, function () {
-      var longVal = Long.fromBits(0x01234567, 0x89abcdef);
-      var longVal8 = Long.fromBits(0x23456789, 0xabcdef01);
-      var longVal16 = Long.fromBits(0x456789AB, 0xcdef0123);
-      var longValL = Long.fromBits(0x12345678, 0x9abcdef0);
-      var longValR = Long.fromBits(0xf0123456, 0x789abcde);
-      var longValS = Long.fromBits(0x89abcdef, 0x01234567);
+    it('testRotateLeft', 0, () => {
+      let longVal = Long.fromBits(0x01234567, 0x89abcdef);
+      let longVal8 = Long.fromBits(0x23456789, 0xabcdef01);
+      let longVal16 = Long.fromBits(0x456789AB, 0xcdef0123);
+      let longValL = Long.fromBits(0x12345678, 0x9abcdef0);
+      let longValR = Long.fromBits(0xf0123456, 0x789abcde);
+      let longValS = Long.fromBits(0x89abcdef, 0x01234567);
 
       // little rotate
-      var v = longVal.rotateLeft(4);
+      let v = longVal.rotateLeft(4);
       expect(v).assertDeepEquals(longValL);
 
       v = longVal.rotl(4);
@@ -1805,51 +1793,51 @@ export default function longFunctionTest() {
       expect(v).assertDeepEquals(longValS);
     })
 
-    it('testRotateRight', 0, function () {
-      var longVal = Long.fromBits(0x01234567, 0x89abcdef);
-      var longVal8 = Long.fromBits(0xef012345, 0x6789abcd);
-      var longVal16 = Long.fromBits(0xcdef0123, 0x456789ab);
-      var longValL = Long.fromBits(0x12345678, 0x9abcdef0);
-      var longValR = Long.fromBits(0xf0123456, 0x789abcde);
-      var longValS = Long.fromBits(0x89abcdef, 0x01234567);
+    it('testRotateRight', 0, () => {
+      let longVal = Long.fromBits(0x01234567, 0x89abcdef);
+      let longVal8 = Long.fromBits(0xef012345, 0x6789abcd);
+      let longVal16 = Long.fromBits(0xcdef0123, 0x456789ab);
+      let longValL = Long.fromBits(0x12345678, 0x9abcdef0);
+      let longValR = Long.fromBits(0xf0123456, 0x789abcde);
+      let longValS = Long.fromBits(0x89abcdef, 0x01234567);
       // little rotate
-      var v = longVal.rotateRight(4);
-      expect(v).assertDeepEquals(longValR);
-      v = longVal.rotr(4);
-      expect(v).assertDeepEquals(longValR);
+      let v4 = longVal.rotateRight(4);
+      expect(v4).assertDeepEquals(longValR);
+      v4 = longVal.rotr(4);
+      expect(v4).assertDeepEquals(longValR);
 
 
-      var v = longVal.rotateRight(8);
-      expect(v).assertDeepEquals(longVal8);
-      v = longVal.rotr(8);
-      expect(v).assertDeepEquals(longVal8);
+      let v8 = longVal.rotateRight(8);
+      expect(v8).assertDeepEquals(longVal8);
+      v8 = longVal.rotr(8);
+      expect(v8).assertDeepEquals(longVal8);
 
-      var v = longVal.rotateRight(16);
-      expect(v).assertDeepEquals(longVal16);
-      v = longVal.rotr(16);
-      expect(v).assertDeepEquals(longVal16);
+      let v16 = longVal.rotateRight(16);
+      expect(v16).assertDeepEquals(longVal16);
+      v16 = longVal.rotr(16);
+      expect(v16).assertDeepEquals(longVal16);
 
       // big rotate
-      v = longVal.rotateRight(60);
-      expect(v).assertDeepEquals(longValL);
-      v = longVal.rotr(60);
-      expect(v).assertDeepEquals(longValL);
+      let v60 = longVal.rotateRight(60);
+      expect(v60).assertDeepEquals(longValL);
+      v60 = longVal.rotr(60);
+      expect(v60).assertDeepEquals(longValL);
 
       // swap
-      v = longVal.rotateRight(32);
-      expect(v).assertDeepEquals(longValS);
-      v = longVal.rotr(32);
-      expect(v).assertDeepEquals(longValS);
+      let v32 = longVal.rotateRight(32);
+      expect(v32).assertDeepEquals(longValS);
+      v32 = longVal.rotr(32);
+      expect(v32).assertDeepEquals(longValS);
     })
 
-    it('testToBytes', 0, function () {
-      var longVal = Long.fromBits(0x01234567, 0x12345678);
+    it('testToBytes', 0, () => {
+      let longVal = Long.fromBits(0x01234567, 0x12345678);
       expect(Long.fromBytes(longVal.toBytes())).assertDeepEquals(longVal);
-      var longValu = Long.fromBits(0x01234567, 0x12345678, true);
+      let longValu = Long.fromBits(0x01234567, 0x12345678, true);
       expect(longVal.toSigned().toInt() == longVal.toInt()).assertTrue();
       expect(longValu.toUnsigned().toInt() == longValu.toInt()).assertTrue();
-      var longValLE = Long.fromBytesLE([0x67, 0x45, 0x23, 0x01, 0x78, 0x56, 0x34, 0x12], false);
-      var longValBE = Long.fromBytesBE([0x12, 0x34, 0x56, 0x78, 0x01, 0x23, 0x45, 0x67], false);
+      let longValLE = Long.fromBytesLE([0x67, 0x45, 0x23, 0x01, 0x78, 0x56, 0x34, 0x12], false);
+      let longValBE = Long.fromBytesBE([0x12, 0x34, 0x56, 0x78, 0x01, 0x23, 0x45, 0x67], false);
       expect(
         longVal.toBytesBE()).assertDeepEquals(
         [0x12, 0x34, 0x56, 0x78, 0x01, 0x23, 0x45, 0x67]
@@ -1865,14 +1853,14 @@ export default function longFunctionTest() {
       expect(longValBE).assertDeepEquals(longVal)
     })
 
-    it('testToBytes2', 0, function () {
-      var longVal = Long.fromBits(0x23456789, 0xabcdef01);
-      var longValu = Long.fromBits(0x23456789, 0xabcdef01, true);
+    it('testToBytes2', 0, () => {
+      let longVal = Long.fromBits(0x23456789, 0xabcdef01);
+      let longValu = Long.fromBits(0x23456789, 0xabcdef01, true);
       expect(Long.fromBytes(longVal.toBytes())).assertDeepEquals(longVal);
       expect(longVal.toSigned().toInt() == longVal.toInt()).assertTrue();
       expect(longValu.toUnsigned().toInt() == longValu.toInt()).assertTrue();
-      var longValLE = Long.fromBytesLE([0x89, 0x67, 0x45, 0x23, 0x01, 0xef, 0xcd, 0xab], false);
-      var longValBE = Long.fromBytesBE([0xab, 0xcd, 0xef, 0x01, 0x23, 0x45, 0x67, 0x89], false);
+      let longValLE = Long.fromBytesLE([0x89, 0x67, 0x45, 0x23, 0x01, 0xef, 0xcd, 0xab], false);
+      let longValBE = Long.fromBytesBE([0xab, 0xcd, 0xef, 0x01, 0x23, 0x45, 0x67, 0x89], false);
 
       expect(
         longVal.toBytesLE()).assertDeepEquals(
@@ -1889,14 +1877,14 @@ export default function longFunctionTest() {
       expect(longValBE).assertDeepEquals(longVal)
     })
 
-    it('testToBytes3', 0, function () {
-      var longVal = Long.fromBits(0x456789AB, 0xcdef0123);
-      var longValu = Long.fromBits(0x456789AB, 0xcdef0123, true);
+    it('testToBytes3', 0, () => {
+      let longVal = Long.fromBits(0x456789AB, 0xcdef0123);
+      let longValu = Long.fromBits(0x456789AB, 0xcdef0123, true);
       expect(Long.fromBytes(longVal.toBytes())).assertDeepEquals(longVal);
       expect(longVal.toSigned().toInt() == longVal.toInt()).assertTrue();
       expect(longValu.toUnsigned().toInt() == longValu.toInt()).assertTrue();
-      var longValLE = Long.fromBytesLE([0xAB, 0x89, 0x67, 0x45, 0x23, 0x01, 0xef, 0xcd], false);
-      var longValBE = Long.fromBytesBE([0xcd, 0xef, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB], false);
+      let longValLE = Long.fromBytesLE([0xAB, 0x89, 0x67, 0x45, 0x23, 0x01, 0xef, 0xcd], false);
+      let longValBE = Long.fromBytesBE([0xcd, 0xef, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB], false);
       expect(
         longVal.toBytesBE()).assertDeepEquals(
         [0xcd, 0xef, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB]
@@ -1912,14 +1900,14 @@ export default function longFunctionTest() {
       expect(longValBE).assertDeepEquals(longVal)
     })
 
-    it('testToBytes4', 0, function () {
-      var longValL = Long.fromBits(0x12345678, 0x9abcdef0);
-      var longValLu = Long.fromBits(0x12345678, 0x9abcdef0, true);
+    it('testToBytes4', 0, () => {
+      let longValL = Long.fromBits(0x12345678, 0x9abcdef0);
+      let longValLu = Long.fromBits(0x12345678, 0x9abcdef0, true);
       expect(Long.fromBytes(longValL.toBytes())).assertDeepEquals(longValL);
       expect(longValL.toSigned().toInt() == longValL.toInt()).assertTrue();
       expect(longValLu.toUnsigned().toInt() == longValLu.toInt()).assertTrue();
-      var longValLLE = Long.fromBytesLE([0x78, 0x56, 0x34, 0x12, 0xf0, 0xde, 0xbc, 0x9a], false);
-      var longValLBE = Long.fromBytesBE([0x9a, 0xbc, 0xde, 0xf0, 0x12, 0x34, 0x56, 0x78], false);
+      let longValLLE = Long.fromBytesLE([0x78, 0x56, 0x34, 0x12, 0xf0, 0xde, 0xbc, 0x9a], false);
+      let longValLBE = Long.fromBytesBE([0x9a, 0xbc, 0xde, 0xf0, 0x12, 0x34, 0x56, 0x78], false);
       expect(
         longValL.toBytesBE()).assertDeepEquals(
         [0x9a, 0xbc, 0xde, 0xf0, 0x12, 0x34, 0x56, 0x78]
@@ -1935,14 +1923,14 @@ export default function longFunctionTest() {
       expect(longValLBE).assertDeepEquals(longValL)
     })
 
-    it('testToBytes5', 0, function () {
-      var longValR = Long.fromBits(0xf0123456, 0x789abcde);
-      var longValRu = Long.fromBits(0xf0123456, 0x789abcde, true);
+    it('testToBytes5', 0, () => {
+      let longValR = Long.fromBits(0xf0123456, 0x789abcde);
+      let longValRu = Long.fromBits(0xf0123456, 0x789abcde, true);
       expect(Long.fromBytes(longValR.toBytes())).assertDeepEquals(longValR);
       expect(longValR.toSigned().toInt() == longValR.toInt()).assertTrue();
       expect(longValRu.toUnsigned().toInt() == longValRu.toInt()).assertTrue();
-      var longValRLE = Long.fromBytesLE([0x56, 0x34, 0x12, 0xf0, 0xde, 0xbc, 0x9a, 0x78], false);
-      var longValRBE = Long.fromBytesBE([0x78, 0x9a, 0xbc, 0xde, 0xf0, 0x12, 0x34, 0x56], false);
+      let longValRLE = Long.fromBytesLE([0x56, 0x34, 0x12, 0xf0, 0xde, 0xbc, 0x9a, 0x78], false);
+      let longValRBE = Long.fromBytesBE([0x78, 0x9a, 0xbc, 0xde, 0xf0, 0x12, 0x34, 0x56], false);
       expect(
         longValR.toBytesBE()).assertDeepEquals(
         [0x78, 0x9a, 0xbc, 0xde, 0xf0, 0x12, 0x34, 0x56]
@@ -1958,15 +1946,15 @@ export default function longFunctionTest() {
       expect(longValRBE).assertDeepEquals(longValR)
     })
 
-    it('testToBytes6', 0, function () {
-      var longValS = Long.fromBits(0x89abcdef, 0x01234567);
-      var longValSu = Long.fromBits(0x89abcdef, 0x01234567, true);
+    it('testToBytes6', 0, () => {
+      let longValS = Long.fromBits(0x89abcdef, 0x01234567);
+      let longValSu = Long.fromBits(0x89abcdef, 0x01234567, true);
       expect(Long.fromBytes(longValS.toBytes())).assertDeepEquals(longValS);
       expect(longValS.toSigned().toInt() == longValS.toInt()).assertTrue();
       expect(longValSu.toUnsigned().toInt() == longValSu.toInt()).assertTrue();
 
-      var longValSLE = Long.fromBytesLE([0xef, 0xcd, 0xab, 0x89, 0x67, 0x45, 0x23, 0x01], false);
-      var longValSBE = Long.fromBytesBE([0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef], false);
+      let longValSLE = Long.fromBytesLE([0xef, 0xcd, 0xab, 0x89, 0x67, 0x45, 0x23, 0x01], false);
+      let longValSBE = Long.fromBytesBE([0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef], false);
       expect(
         longValS.toBytesBE()).assertDeepEquals(
         [0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef]
@@ -1982,9 +1970,9 @@ export default function longFunctionTest() {
       expect(longValSBE).assertDeepEquals(longValS)
     })
 
-    it('testFromBytes', 0, function () {
-      var longVal = Long.fromBits(0x01234567, 0x12345678);
-      var ulongVal = Long.fromBits(0x01234567, 0x12345678, true);
+    it('testFromBytes', 0, () => {
+      let longVal = Long.fromBits(0x01234567, 0x12345678);
+      let ulongVal = Long.fromBits(0x01234567, 0x12345678, true);
       expect(Long.fromBytes(longVal.toBytes())).assertDeepEquals(longVal);
       expect(
         Long.fromBytes([0x12, 0x34, 0x56, 0x78, 0x01, 0x23, 0x45, 0x67])).assertDeepEquals(
@@ -2016,8 +2004,8 @@ export default function longFunctionTest() {
       );
     })
 
-    it('testUnsignedToSignedUnsigned', 0, function () {
-      var longVal = Long.fromNumber(-1, false);
+    it('testUnsignedToSignedUnsigned', 0, () => {
+      let longVal = Long.fromNumber(-1, false);
       expect(longVal.toNumber() == -1).assertTrue();
       longVal = longVal.toUnsigned();
       expect(longVal.toNumber() == 0xffffffffffffffff).assertTrue();
@@ -2026,23 +2014,23 @@ export default function longFunctionTest() {
       expect(longVal.toNumber() == -1).assertTrue();
     })
 
-    it('testUnsignedDivNegSigned', 0, function () {
-      var a = Long.MAX_UNSIGNED_VALUE;
-      var b = Long.fromInt(-2);
+    it('testUnsignedDivNegSigned', 0, () => {
+      let a = Long.MAX_UNSIGNED_VALUE;
+      let b = Long.fromInt(-2);
       expect(
         b.toUnsigned().toString() ==
         Long.MAX_UNSIGNED_VALUE.sub(1).toString()
       ).assertTrue();
-      var longVal = a.div(b);
+      let longVal = a.div(b);
       expect(longVal.toString() == "1").assertTrue();
     })
 
-    it('basic', 0, function () {
-      var longVal = new Long(0xFFFFFFFF, 0x7FFFFFFF, false);
+    it('basic', 0, () => {
+      let longVal = new Long(0xFFFFFFFF, 0x7FFFFFFF, false);
       expect(longVal.toNumber()).assertEqual(9223372036854775807);
       expect(longVal.toString()).assertEqual("9223372036854775807");
 
-      var longVal2 = Long.fromValue(longVal, false);
+      let longVal2 = Long.fromValue(longVal, false);
       expect(longVal2.toNumber()).assertEqual(9223372036854775807);
       expect(longVal2.toString()).assertEqual("9223372036854775807");
       expect(longVal2.unsigned).assertEqual(longVal.unsigned);
@@ -2061,8 +2049,8 @@ export default function longFunctionTest() {
       expect(longVal2.toNumber()).assertEqual(9223372036854776000);
     })
 
-    it('isLong', 0, function () {
-      var longVal = new Long(0xFFFFFFFF, 0x7FFFFFFF, false);
+    it('isLong', 0, () => {
+      let longVal = new Long(0xFFFFFFFF, 0x7FFFFFFF, false);
       expect(Long.isLong(longVal)).assertTrue()
 
       longVal = new Long(0xFFFFFFFF, 0x7FFFFFFF, true);
@@ -2073,18 +2061,12 @@ export default function longFunctionTest() {
 
       longVal = new Long(0x01234567, 0x77777777, true);
       expect(Long.isLong(longVal)).assertTrue()
-
-      longVal = {
-        // @ts-ignore
-        "__isLong__": true
-      };
-      expect(Long.isLong(longVal)).assertTrue();
     })
 
     // Let's assume goog.math.Long has been tested properly and focus on our extensions:
 
-    it('toString', 0, function () {
-      var longVal = Long.fromBits(0xFFFFFFFF, 0xFFFFFFFF, true);
+    it('toString', 0, () => {
+      let longVal = Long.fromBits(0xFFFFFFFF, 0xFFFFFFFF, true);
       // #10
       expect(longVal.toString(16)).assertEqual("ffffffffffffffff");
       expect(longVal.toString(10)).assertEqual("18446744073709551615");
@@ -2094,9 +2076,9 @@ export default function longFunctionTest() {
       expect(Long.fromString("-zzzzzz", false, 36).toString(36)).assertEqual("-zzzzzz");
     })
 
-    it('fromBytes', 0, function () {
-      var longVal = Long.fromBits(0x01234567, 0x12345678);
-      var ulongVal = Long.fromBits(0x01234567, 0x12345678, true);
+    it('fromBytes', 0, () => {
+      let longVal = Long.fromBits(0x01234567, 0x12345678);
+      let ulongVal = Long.fromBits(0x01234567, 0x12345678, true);
 
       expect(Long.fromBytes(longVal.toBytes())).assertDeepEquals(longVal);
       expect(
@@ -2129,8 +2111,8 @@ export default function longFunctionTest() {
       );
     })
 
-    it('toBytes', 0, function () {
-      var longVal = Long.fromBits(0x01234567, 0x12345678, false);
+    it('toBytes', 0, () => {
+      let longVal = Long.fromBits(0x01234567, 0x12345678, false);
 
       expect(longVal.toBytesBE()).assertDeepEquals([
         0x12, 0x34, 0x56, 0x78,
@@ -2142,14 +2124,14 @@ export default function longFunctionTest() {
       ]);
     })
 
-    it('min_max', 0, function () {
+    it('min_max', 0, () => {
       expect(Long.MIN_VALUE.toString()).assertEqual("-9223372036854775808");
       expect(Long.MAX_VALUE.toString()).assertEqual("9223372036854775807");
       expect(Long.MAX_UNSIGNED_VALUE.toString()).assertEqual("18446744073709551615");
     })
 
-    it('construct_negint', 0, function () {
-      var longVal = Long.fromInt(-1, true);
+    it('construct_negint', 0, () => {
+      let longVal = Long.fromInt(-1, true);
       expect(longVal.toNumber()).assertEqual(4294967295);
       expect(longVal.toString()).assertEqual("4294967295");
       expect(longVal.low).assertEqual(-1);
@@ -2157,8 +2139,8 @@ export default function longFunctionTest() {
       expect(longVal.unsigned).assertEqual(true);
     })
 
-    it('construct_highlow', 0, function () {
-      var longVal = new Long(0xFFFFFFFF, 0xFFFFFFFF, true);
+    it('construct_highlow', 0, () => {
+      let longVal = new Long(0xFFFFFFFF, 0xFFFFFFFF, true);
       expect(longVal.low).assertEqual(-1);
       expect(longVal.high).assertEqual(-1);
       expect(longVal.unsigned).assertEqual(true);
@@ -2166,8 +2148,8 @@ export default function longFunctionTest() {
       expect(longVal.toString()).assertEqual("18446744073709551615");
     })
 
-    it('construct_number', 0, function () {
-      var longVal = Long.fromNumber(0xFFFFFFFFFFFFFFFF, true);
+    it('construct_number', 0, () => {
+      let longVal = Long.fromNumber(0xFFFFFFFFFFFFFFFF, true);
       expect(longVal.low).assertEqual(-1);
       expect(longVal.high).assertEqual(-1);
       expect(longVal.unsigned).assertEqual(true);
@@ -2175,8 +2157,8 @@ export default function longFunctionTest() {
       expect(longVal.toString()).assertEqual("18446744073709551615");
     })
 
-    it('toSigned_Unsigned', 0, function () {
-      var longVal = Long.fromNumber(-1, false);
+    it('toSigned_Unsigned', 0, () => {
+      let longVal = Long.fromNumber(-1, false);
       expect(longVal.toNumber()).assertEqual(-1);
       longVal = longVal.toUnsigned();
       expect(longVal.toNumber()).assertEqual(0xFFFFFFFFFFFFFFFF);
@@ -2185,16 +2167,15 @@ export default function longFunctionTest() {
       expect(longVal.toNumber()).assertEqual(-1);
     })
 
-    it('max_unsigned_sub_max_signed', 0, function () {
-      var longVal = Long.MAX_UNSIGNED_VALUE.subtract(Long.MAX_VALUE).subtract(Long.ONE);
+    it('max_unsigned_sub_max_signed', 0, () => {
+      let longVal = Long.MAX_UNSIGNED_VALUE.subtract(Long.MAX_VALUE).subtract(Long.ONE);
       expect(longVal.toNumber()).assertEqual(Long.MAX_VALUE.toNumber());
       expect(longVal.toString()).assertEqual(Long.MAX_VALUE.toString());
     })
 
-    it('max_sub_max', 0, function () {
-      var longVal = Long.MAX_UNSIGNED_VALUE.subtract(Long.MAX_UNSIGNED_VALUE);
-      // @ts-ignore
-      expect(longVal == 0).assertTrue();
+    it('max_sub_max', 0, () => {
+      let longVal = Long.MAX_UNSIGNED_VALUE.subtract(Long.MAX_UNSIGNED_VALUE);
+      expect(longVal.toNumber() == 0).assertTrue();
       expect(longVal.low).assertEqual(0);
       expect(longVal.high).assertEqual(0);
       expect(longVal.unsigned).assertEqual(true);
@@ -2203,8 +2184,8 @@ export default function longFunctionTest() {
     })
 
 
-    it('zero_sub_signed', 0, function () {
-      var longVal = Long.fromInt(0, true).add(Long.fromInt(-1, false));
+    it('zero_sub_signed', 0, () => {
+      let longVal = Long.fromInt(0, true).add(Long.fromInt(-1, false));
       expect(longVal.low).assertEqual(-1);
       expect(longVal.high).assertEqual(-1);
       expect(longVal.unsigned).assertEqual(true);
@@ -2213,45 +2194,45 @@ export default function longFunctionTest() {
     })
 
 
-    it('max_unsigned_div_max_signed', 0, function () {
-      var longVal = Long.MAX_UNSIGNED_VALUE.div(Long.MAX_VALUE);
+    it('max_unsigned_div_max_signed', 0, () => {
+      let longVal = Long.MAX_UNSIGNED_VALUE.div(Long.MAX_VALUE);
       expect(longVal.toNumber()).assertEqual(2);
       expect(longVal.toString()).assertEqual("2");
     })
 
-    it('max_unsigned_div_max_unsigned', 0, function () {
-      var longVal = Long.MAX_UNSIGNED_VALUE;
+    it('max_unsigned_div_max_unsigned', 0, () => {
+      let longVal = Long.MAX_UNSIGNED_VALUE;
       expect(longVal.div(longVal).toString()).assertEqual("1")
       expect(longVal.divide(longVal).toString()).assertEqual("1")
     })
 
-    it('max_unsigned_div_neg_signed', 0, function () {
-      var a = Long.MAX_UNSIGNED_VALUE;
-      var b = Long.fromInt(-2, false);
+    it('max_unsigned_div_neg_signed', 0, () => {
+      let a = Long.MAX_UNSIGNED_VALUE;
+      let b = Long.fromInt(-2, false);
       expect(b.toUnsigned().toString()).assertEqual(Long.MAX_UNSIGNED_VALUE.sub(1).toString());
-      var longVal = a.div(b);
+      let longVal = a.div(b);
       expect(longVal.toString()).assertEqual('1');
     })
 
-    it('min_signed_div_one', 0, function () {
-      var longVal = Long.MIN_VALUE.div(Long.ONE);
+    it('min_signed_div_one', 0, () => {
+      let longVal = Long.MIN_VALUE.div(Long.ONE);
       expect(longVal.toString()).assertEqual(Long.MIN_VALUE.toString());
     })
 
 
-    it('msb_unsigned', 0, function () {
-      var longVal = Long.UONE.shiftLeft(63);
+    it('msb_unsigned', 0, () => {
+      let longVal = Long.UONE.shiftLeft(63);
       expect(longVal.notEquals(Long.MIN_VALUE)).assertTrue();
       expect(longVal.toString()).assertEqual("9223372036854775808");
       expect(Long.fromString("9223372036854775808", true, 0).toString()).assertEqual("9223372036854775808");
     })
 
-    it('issue31', 0, function () {
-      var a = new Long(0, 8, true);
-      var b = Long.fromNumber(2656901066, true);
+    it('issue31', 0, () => {
+      let a = new Long(0, 8, true);
+      let b = Long.fromNumber(2656901066, true);
       expect(a.unsigned).assertEqual(true);
       expect(b.unsigned).assertEqual(true);
-      var x = a.div(b);
+      let x = a.div(b);
       expect(x.toString()).assertEqual('12');
       expect(x.unsigned).assertEqual(true);
     })
