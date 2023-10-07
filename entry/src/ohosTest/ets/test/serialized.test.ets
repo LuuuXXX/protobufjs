@@ -689,7 +689,8 @@ export default function serializedTest() {
 
     it('options_parse', 0, async () => {
       try {
-        let parser: ESObject = new protobuf.DotProto.Parser(await protobuf.Util.fetch("options.proto"));
+        let value: ESObject = await protobuf.Util.fetch("options.proto");
+        let parser: ESObject = new protobuf.DotProto.Parser(value);
         let root: ESObject = parser.parse();
         expect(root["package"]).assertEqual("My");
         expect(root["options"]["(toplevel_1)"] === 10).assertTrue();
@@ -732,7 +733,8 @@ export default function serializedTest() {
 
     it('comments', 0, async () => {
       try {
-        let tn: ESObject = new protobuf.DotProto.Tokenizer(await protobuf.Util.fetch('comments.proto'));
+        let value: ESObject = await protobuf.Util.fetch('comments.proto');
+        let tn: ESObject = new protobuf.DotProto.Tokenizer(value);
         let token: ESObject, tokens: Array<ESObject> = [];
         do {
           token = tn.next();
@@ -873,10 +875,11 @@ export default function serializedTest() {
         let Outer: ESObject = root.Outer;
         let TOuter: ESObject = builder.ns.getChild("Outer");
         let TInner: ESObject = TOuter.getChild("MyInner");
-        expect(TInner instanceof protobuf.Reflect.Message).assertTrue();
+        let reflectMessage: ESObject = protobuf.Reflect.Message;
+        expect(TInner instanceof reflectMessage).assertTrue();
         expect(TInner.isGroup === true).assertTrue();
         let Tinner: ESObject = TOuter.getChild("myinner");
-        expect(Tinner instanceof protobuf.Reflect.Message.Field).assertTrue();
+        expect(Tinner instanceof reflectMessage.Field).assertTrue();
         expect(Tinner.id === 2).assertTrue();
         expect(Tinner.options).assertDeepEquals({
           "deprecated": true
@@ -1181,7 +1184,8 @@ message Bar {
     }
 }
 `;
-        let ast: ESObject = new protobuf.DotProto.Parser(extendProto).parse();
+        let extendObject: ESObject = new protobuf.DotProto.Parser(extendProto);
+        let ast: ESObject = extendObject.parse();
         expect(ast).assertDeepEquals({
           package: null,
           messages:
@@ -1253,10 +1257,11 @@ message Bar {
         );
         let context: Context = GlobalContext.getContext().getObject("context") as Context;
         let builder: ESObject = await protobuf.loadProtoFile("extend.proto", null, null, context.resourceManager);
+        let reflectMessage: ESObject = protobuf.Reflect.Message;
         let TFoo: ESObject = builder.lookup(".Foo"),
           TBar: ESObject = builder.lookup(".Bar"),
           TBarFoo: ESObject = builder.lookup(".Bar.Foo"),
-          fields: ESObject = TFoo.getChildren(protobuf.Reflect.Message.Field);
+          fields: ESObject = TFoo.getChildren(reflectMessage.Field);
         expect(fields.length === 2).assertTrue();
         expect(fields[0].name === ".bar").assertTrue();
         expect(fields[0].id === 2).assertTrue();
@@ -1265,7 +1270,7 @@ message Bar {
         expect(TFoo.extensions).assertDeepEquals([[2, protobuf.ID_MAX]]); // explicitly defined
         expect(TBar.extensions === undefined).assertTrue(); // none defined
         expect(TBar.getChild("foo") == '.Bar.foo').assertTrue();
-        expect(TBar.getChildren(protobuf.Reflect.Message.Field).length === 0).assertTrue();
+        expect(TBar.getChildren(reflectMessage.Field).length === 0).assertTrue();
         let root: ESObject = builder.build();
         expect(TFoo.getChild(".Bar.foo").resolvedType).assertEqual(TBarFoo); // .Bar.Foo, not .Foo
         let foo: ESObject = new root.Foo(),
@@ -1282,7 +1287,8 @@ message Bar {
     // victorr (https://github.com/victorr)
     it('customOptions', 0, async () => {
       try {
-        let parser: ESObject = new protobuf.DotProto.Parser(await protobuf.Util.fetch("custom-options.proto"));
+        let value: ESObject = await protobuf.Util.fetch("custom-options.proto");
+        let parser: ESObject = new protobuf.DotProto.Parser(value);
         let root: ESObject = parser.parse();
         expect(root["options"]["(my_file_option)"]).assertEqual("Hello world!");
         expect(root["messages"][7]["options"]["(my_message_option)"]).assertEqual(1234);
@@ -1322,7 +1328,8 @@ message Bar {
 
     it('services', 0, async () => {
       try {
-        let parser: ESObject = new protobuf.DotProto.Parser(await protobuf.Util.fetch("custom-options.proto"));
+        let value: ESObject = await protobuf.Util.fetch("custom-options.proto");
+        let parser: ESObject = new protobuf.DotProto.Parser(value);
         let root: ESObject = parser.parse();
         expect(root["services"]).assertDeepEquals([{
           "name": "MyService",
@@ -1437,19 +1444,20 @@ message Bar {
       try {
         let builder: ESObject = await protobuf.loadProto("message Position { required int32 x = 1; required int64 y = 2; }");
         let Position: ESObject = builder.build("Position");
-        let position: ESObject = new Position(1, protobuf.Long.fromNumber(2));
+        let protobufLong: ESObject = protobuf.Long
+        let position: ESObject = new Position(1, protobufLong.fromNumber(2));
         let json: string = JSON.stringify(position);
         expect(json === '{"x":1,"y":{"low":2,"high":0,"unsigned":false}}').assertTrue();
         position = new Position(JSON.parse(json));
         expect(position.x === 1).assertTrue();
-        expect(position.y instanceof protobuf.Long).assertTrue();
+        expect(position.y instanceof protobufLong).assertTrue();
         let positionValue: PositionValue = {
           low: 2, high: 0, unsigned: false
         }
         expect(JSON.stringify(position.y)).assertDeepEquals(JSON.stringify(positionValue));
         // Also test if this encodes and decodes properly
         position = Position.decode(position.encode());
-        expect(position.y instanceof protobuf.Long).assertTrue();
+        expect(position.y instanceof protobufLong).assertTrue();
 
         expect(JSON.stringify(position.y)).assertDeepEquals(JSON.stringify(positionValue));
       } catch (e) {
@@ -1838,9 +1846,10 @@ message Bar {
 
       try {
         let proto: string = "message Foo { optional uint32 foo_bar = 1; }";
-        let builder: ESObject = await protobuf.newBuilder({
+        let convertField: ConvertField = {
           convertFieldsToCamelCase: true
-        });
+        }
+        let builder: ESObject = await protobuf.newBuilder(convertField);
         await protobuf.loadProto(proto, builder, "tests/builderOptions.proto");
         let Foo: ESObject = builder.build("Foo");
         expect(protobuf.convertFieldsToCamelCase === false).assertTrue();
@@ -2048,7 +2057,8 @@ message Bar {
       map_int64_string = new protobuf.Map(builder.lookup("Test.map_int64_string"), mapInt64Value);
       expect(map_int64_string.size === 1).assertTrue();
       let i64: ESObject = map_int64_string.keys().next().value;
-      expect(i64 instanceof protobuf.Long).assertTrue();
+      let protobufLong: ESObject = protobuf.Long
+      expect(i64 instanceof protobufLong).assertTrue();
       expect(i64.toString() === "9223372036854775807").assertTrue();
     })
 
@@ -2176,16 +2186,17 @@ message Bar {
         Enum: ESObject = builder.build('Enum');
 
       let testMsg: ESObject = new Test();
+      let protobufByteBuffer: ESObject = protobuf.ByteBuffer;
       testMsg.optional_int32 = 1;
       testMsg.optional_int64 = "12345678901234";
       testMsg.optional_string = "hello";
-      testMsg.optional_bytes = protobuf.ByteBuffer.fromBinary("\x00\xFF\x80");
+      testMsg.optional_bytes = protobufByteBuffer.fromBinary("\x00\xFF\x80");
       testMsg.optional_bool = true;
       testMsg.optional_enum = Enum.A;
       testMsg.repeated_int32.push(1);
       testMsg.repeated_int64.push("12345678901234");
       testMsg.repeated_string.push("hello");
-      testMsg.repeated_bytes.push(protobuf.ByteBuffer.fromBinary("\x00\xFF\x80"));
+      testMsg.repeated_bytes.push(protobufByteBuffer.fromBinary("\x00\xFF\x80"));
       testMsg.repeated_bool.push(true);
       testMsg.repeated_enum.push(Enum.A);
       testMsg.map_string_int32.set("a", 1);
@@ -2265,7 +2276,8 @@ message Bar {
 
     it('Tokenizer', 0, async () => {
       try {
-        let tn: ESObject = new protobuf.DotProto.Tokenizer(await protobuf.Util.fetch('comments.proto'));
+        let value: ESObject = await protobuf.Util.fetch("comments.proto");
+        let tn: ESObject = new protobuf.DotProto.Tokenizer(value);
         let token: ESObject, tokens: Array<ESObject> = [];
         let result: Array<string> = getResult();
         let count: number = 0;
@@ -2282,7 +2294,8 @@ message Bar {
     })
     it('Message_isMessage', 0, async () => {
       try {
-        let tn: ESObject = new protobuf.DotProto.Tokenizer(await protobuf.Util.fetch('comments.proto'));
+        let value: ESObject = await protobuf.Util.fetch("comments.proto");
+        let tn: ESObject = new protobuf.DotProto.Tokenizer(value);
         let token: ESObject, tokens: Array<ESObject> = [];
         let result = getResult();
         let count = 0;
@@ -2371,4 +2384,8 @@ interface ResourceValue {
   bundleName: string,
   moduleName: string,
   id: number
+}
+
+interface ConvertField {
+  convertFieldsToCamelCase: boolean
 }
