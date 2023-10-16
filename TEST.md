@@ -147,9 +147,9 @@
 
 ### bytebuffer
 
-| 接口名              | 是否通过 | 备注 |
-| ------------------- | -------- | ---- |
-| contructor          | pass     |      |
+| 接口名                 | 是否通过 | 备注 |
+|---------------------| -------- | ---- |
+| constructor         | pass     |      |
 | accessor            | pass     |      |
 | allocate            | pass     |      |
 | concat              | pass     |      |
