@@ -15,7 +15,7 @@ Local build
 
 Getting started
 ---------------
-* **Step 1:** Become familar with [Google's Protocol Buffers (protobuf)](https://developers.google.com/protocol-buffers/docs/overview)
+* **Step 1:** Become familiar with [Google's Protocol Buffers (protobuf)](https://developers.google.com/protocol-buffers/docs/overview)
 * **Step 2:** Read on or head straight to [our wiki](https://github.com/dcodeIO/protobuf.js/wiki) for additional information
 * **Step 3:** Build something cool! :-)
 
