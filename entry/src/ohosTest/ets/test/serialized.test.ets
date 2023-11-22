@@ -2287,7 +2287,7 @@ message Bar {
           tokens.push(token);
           count++;
         } while (token !== null);
-        expect(tn.toString()).assertEqual('Tokenizer (165/165 at line 10)')
+        expect(tn.toString()).assertEqual(`Tokenizer (${value.length}/${value.length} at line 10)`)
       } catch (e) {
         expect().assertFail();
       }
@@ -2305,7 +2305,7 @@ message Bar {
           tokens.push(token);
           count++;
         } while (token !== null);
-        expect(tn.toString()).assertEqual('Tokenizer (165/165 at line 10)')
+        expect(tn.toString()).assertEqual(`Tokenizer (${value.length}/${value.length} at line 10)`)
       } catch (e) {
         expect().assertFail();
       }
