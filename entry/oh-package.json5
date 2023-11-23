@@ -1,0 +1,17 @@
+{
+  "license": "BSD License",
+  "devDependencies": {},
+  "author": "",
+  "name": "entry",
+  "description": "example description",
+  "ohos": {
+    "org": "huawei",
+    "directoryLevel": "module",
+    "buildTool": "hvigor"
+  },
+  "main": "",
+  "version": "2.0.0",
+  "dependencies": {
+    "protobufjs": "file:../protobufjs"
+  }
+}
