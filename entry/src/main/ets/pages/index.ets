@@ -140,7 +140,7 @@ struct Index {
 
                     Text("结果 :\r\n  " + this.result)
                         .fontSize(15)
-                        .margin({ top: 5, left: 20 })
+                        .margin({ top: 55, left: 10,right:10 })
 
                 }.width('100%');
             }
@@ -148,7 +148,7 @@ struct Index {
             .scrollBarColor(Color.Gray).scrollBarWidth(30);
             Button('重置显示', { type: ButtonType.Capsule, stateEffect: true })
                 .backgroundColor(0x317aff)
-                .margin({ top: 200, left: 5 })
+                .margin({ top: 410, left: 5 })
                 .width(110)
                 .onClick(event => {
                     this.result = "";
