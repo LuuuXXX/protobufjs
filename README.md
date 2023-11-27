@@ -4,36 +4,26 @@
 
 ProtoBuf(protocol buffers) 是一种语言无关、平台无关、可扩展的序列化结构数据的方法，它可用于（数据）通信协议、数据存储等。,是一种灵活，高效，自动化机制的结构数据序列化方法比XML更小,更快,更为简单。
 
-本项目主要是OpenHarmony系统下以[protobufjs](https://github.com/protobufjs/protobuf.js)为主要依赖开发，主要接口针对OpenHarmony系统进行合理的适配研发。
+本项目主要是OpenHarmony系统下以[protobuf.js 7.2.4](https://github.com/protobufjs/protobuf.js)为主要依赖开发，主要接口针对OpenHarmony系统进行合理的适配研发。
 
 ## 下载安装
 
 1.安装
 
 ```
-npm install protobufjs@5.0.3
+ohpm install @ohos/protobufjs
 ```
+OpenHarmony ohpm环境配置等更多内容，请参考 [如何安装OpenHarmony ohpm包](https://gitee.com/openharmony-tpc/docs/blob/master/OpenHarmony_har_usage.md) 。
 
-2.在需要使用的页面导入protobufjs
 
-```
-import  protobuf  from 'protobufjs'
-```
+2.proto文件
 
-## 使用说明
-
-### 简单使用接口方式
-1. 先定一个proto的格式协议字符串或.proto文件
+按照.proto文件格式定义消息体结构，如：userproto.proto文件。
 
 ```
-const protoStr = 'syntax = "proto3"; package com.user;message UserLoginResponse{string sessionId = 1;string userPrivilege = 2;bool isTokenType = 3;string formatTimestamp = 4;}';
-```
+syntax = "proto3";
 
-或 在resources->base->media下按照proto格式定义xxx.proto文件
-
-```
-syntax = "proto3";  
-package User;
+package com.user;
 message UserLoginResponse{
    string sessionId = 1;
    string userPrivilege = 2;
@@ -42,165 +32,179 @@ message UserLoginResponse{
 }
 ```
 
-2.使用接口解析
+3.生成js和.d.ts文件
 
 ```
-var builder = protobuf.newBuilder();
-    ProtoBuf.loadProto(proto,builder,"bench.proto");
-```
-或
-```
-var builder = protobuf.newBuilder();
-    var root = protobuf.loadJson(json, builder, fileName);
-```
+全局安装protobufjs
+npm install -g protobufjs@7.2.4
+全局安装protobufjs-cli
+npm install -g protobufjs-cli
 
-3.通过builder找到协议名后会产生Message，并创建一个相同协议结构的数据对象，放入已实例的Message
-
-```
- var UserLoginResponse = root.build("com.user.UserLoginResponse");
-
-    const userLogin = {
-      sessionId: "xd3sdfsd22",
-      userPrivilege: "John123",
-      isTokenType: false,
-      formatTimestamp: "12342222"
-    };
-
-    var msg = new UserLoginResponse(userLogin);
+在.proto文件目录下执行下列命令
+pbjs -t static-module -w es6 -o user.js user.proto
+pbts user.js  -o user.d.ts
 ```
 
-4.将Message序列化,可进行通信传递或存储
+4.修改js文件
 
 ```
-var arrayBuffer = msg.toArrayBuffer();
+将生成的js文件中的 import * as $protobuf from "protobufjs/minimal";
+修改为  import * as $protobuf from "protobufjs";
 ```
 
-5.对方拿到传递或存储的数据再按照1，2，3步骤拿到UserLoginResponse对象后再进行反序列化即可得到数据
+5.将生成js和.d.ts文件复制到工程中
+
+## 使用说明
+
+1.proto编码
 
 ```
-var decodeMsg = UserLoginResponse.decode(arrayBuffer);
+import { user } from './user.js'
+
+ let msg = user.UserLoginResponse.create({
+     sessionId: "testSynchronouslyLoadProtoFile",
+     userPrivilege: "John123",
+     isTokenType: false,
+     formatTimestamp: "12342222"
+ });
+
+ let arrayBuffer: Uint8Array = user.UserLoginResponse.encode(msg).finish()
 ```
 
-### 使用解析File文件方式
-
-1.在使用以下2个接口前需要注意几点： loadProtoFile接口和loadJsonFile接口
-引用以下几段代码以适配nodejs，
-loadProtoFile接口和loadJsonFile接口都需要配置下面这段代码做适配，否则无法使用这两个接口
-
+2.proto编码
 ```
-import { MyFs } from './MyFs'
-protobuf.Util.fetch = function (path, callback) {
-  if (callback && typeof callback != 'function')
-  callback = null;
-  if (callback) {
-    MyFs.readFile(path, function (err, data) {
-      if (err)
-      callback(null);
-      else
-      callback("" + data);
-    });
-  } else
-  try {
-    return MyFs.readFileSync(path);
-  } catch (e) {
-    return null;
-  }
-}
-```
-2.提前获取内存路径和将.proto文件写入到内存中
-
-```
- //创建一个proto文件内存路径,globalThis.context是通过在MainAbility->MainAbility.ts的onCreate中定义的一个属性{globalThis.context = this.context;}
- let protoPath = globalThis.context.filesDir + "/userproto.proto";
- //将proto数据写入内存
- FileUtils.getInstance().writeData(protoPath, protoStr);
- 
-```
-3.使用接口解析
-
-```
- var root = protobuf.loadProtoFile(path);
-    //读取完文件的数据后清理掉，避免二次进入页面数据重复存储导致错误
-    FileUtils.getInstance().clearFile(path);
-```
-
-4.通过builder找到协议名后会产生Message，并创建一个相同协议结构的数据对象，放入已实例的Message
-
-```
- var UserLoginResponse = root.build("com.user.UserLoginResponse");
-
-    const userLogin = {
-      sessionId: "xd3sdfsd22",
-      userPrivilege: "John123",
-      isTokenType: false,
-      formatTimestamp: "12342222"
-    };
-
-    var msg = new UserLoginResponse(userLogin);
-```
-
-5.将Message序列化,可进行通信传递或存储
-
-```
-var arrayBuffer = msg.toArrayBuffer();
-```
-
-6.对方拿到传递或存储的数据再按照1，2，3步骤拿到UserLoginResponse对象后再进行反序列化即可得到数据
-
-```
-var decodeMsg = UserLoginResponse.decode(arrayBuffer);
+let decodeMsg = user.UserLoginResponse.decode(arrayBuffer);
 ```
 
 ## 接口说明
 
-1， public static newBuilder(): any 
+**create**
 
-Constructs a new empty Builder.
+create(properties?: { [k: string]: any }): Message<{}>
 
-2， .loadProtoFile(path);
+生成Message对象
 
-同步解析proto文件的方式
+参数：
 
-3，.loadProtoFile(path, (err, root) => {}
+| 参数名   | 类型     | 必填 | 说明                                                   |
+| -------- |--------| ---- | ------------------------------------------------------ |
+| properties  | Object | 否   | 要设置的属性。 |
 
-异步解析proto文件的方式
+返回值：
 
-4，.loadProto(proto, builder, fileName);
+| 类型    | 说明         |
+| ------- |------------|
+| Message | Message实例。 |
 
-解析proto字符串方式
+**encode**
 
-5，.loadJson(json, builder, fileName);
+encode(message: (Message<{}>|{ [k: string]: any }), writer?: Writer): Writer
 
-解析json字符串方式
+编码消息
 
-6，.loadJsonFile(path);
-同步解析json文件的方式
+参数
 
-7，loadJsonFile(path, (err, root) => {}
-异步解析json文件的方式
+| 参数名   | 类型                           | 必填 | 说明                          |
+| -------- |------------------------------| ---- |-----------------------------|
+| message    | Message<{}>  &#124;   Object | 是   | Message示例或者普通对象。            |
+| writer  | Writer           | 否   | 编码的写入器。 |
 
-8，.toArrayBuffer(); 将Message序列化
+返回值：
 
-9，.decode(buffer); 将buffer数据反序列化
+| 类型    | 说明               |
+| ------- | ------------------ |
+| Writer | 协议消息体构建器。 |
+
+**decode**
+
+decode(reader: (Reader|Uint8Array), length?: number): Message<{}>
+
+解码消息
+
+| 参数名          | 类型                                       | 必填 | 说明         |
+| --------------- | ------------------------------------------ | ---- |------------|
+| reader        | Reader &#124; Uint8Array | 是   | 解码的读取器或缓冲区。 |
+| length        | number                                   | 否   | 长度。        |
+
+返回值：
+
+| 类型                | 说明               |
+| ------------------- | ------------------ |
+| Message<{}> | 解码的消息。 |
+
+**verify**
+
+static verify(message: { [k: string]: any }): (string|null)
+
+验证消息有效性
+
+| 参数名          | 类型   | 必填 | 说明                                                         |
+| --------------- |------| ---- | ------------------------------------------------------------ |
+| message | 普通对象 | 是   | 普通对象。                                         |
+
+返回值：
+
+| 类型                 | 说明                 |
+|--------------------|--------------------|
+| string &#124; null | 合法返回null,否则返回具体原因。 |
+
+**fromObject**
+
+static fromObject(object: { [k: string]: any }): Message<{}>
+
+从纯对象创建此类型的新消息。还将值转换为各自的内部类型
+
+参数：
+
+| 参数名   | 类型                                                          | 必填 | 说明   |
+| -------- |-------------------------------------------------------------| ---- |------|
+| object     | Object                                           | 是   | 普通对象 |
+
+返回值：
+
+| 类型    | 说明               |
+| ------- | ------------------ |
+| object | 普通对象。 |
+
+**toObject**
+
+static toObject(message: Message<{}>, options?: IConversionOptions): { [k: string]: any }
+
+将一个由键及其各自的值组成的数组转换为对象，省略未定义的值
+
+| 参数名             | 类型                                     | 必填 | 说明                                                                    |
+|-----------------|----------------------------------------| ---- |-----------------------------------------------------------------------|
+| message         | Message  | 是   | Message 休想。                                                           |
+| options         | IConversionOptions       | 否   | 转换选项。 |
+
+返回值：
+
+| 类型    | 说明               |
+| ------- | ------------------ |
+| object | 普通对象。 |
+
 
 ## 约束与限制
 在下述版本验证通过：
 
-DevEco Studio: 3.1 Beta1(3.1.0.200), SDK: API9 (3.2.10.6)
+-  DevEco Studio 版本：4.0 Beta2（4.0.3.600），OpenHarmony SDK:API10（4.0.10.11）
 
 ## 目录结构
 
 ```
-|-ets
-|   |- pages
-|        |-index.ets             #主页
-|        |-FileUtils.ets         #File文件工具类
-|        |-MyFs.ets              #fs适配封装
-|        |-rpc.ets               #rpc例子
-|        |-serialized.ets        #序列化例子
-|        |-websocket.ets         #websocket结合使用例子
-|        |-writer_reader.ets     #writer_reader用例子
-
+|---- protobuf
+|     |---- AppScrope  # 示例代码文件夹
+|     |---- entry  # 示例代码文件夹
+|     |---- protobufjs  # protobufjs库文件夹
+|           |---- src/main  # 模块代码
+|                |---- ets/   # 模块代码
+|                     |---- dist     # 打包文件
+|            |---- index.ets          # 入口文件
+|            |---- .ohpmignore        # ohpm发布的忽略文件
+|            |---- *.json5      # 配置文件
+|     |---- README.md  # 安装使用方法
+|     |---- README.OpenSource  # 开源说明
+|     |---- CHANGELOG.md  # 更新日志
 ```
 
 ## 贡献代码
