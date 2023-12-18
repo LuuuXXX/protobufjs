@@ -1,5 +1,5 @@
 ###2.0.0
-- 适配DevEco Studio 版本：4.0 Beta2（4.0.3.600），OpenHarmony SDK:API10（4.0.10.11）
+- 适配DevEco Studio 版本：4.1 Canary(4.1.3.317)，OpenHarmony SDK:API11 (4.1.0.36)
 - ArkTS新语法适配
 - protobufjs 7.2.4 版本适配
 - 取消以load方式加载proto文件或者字符串
