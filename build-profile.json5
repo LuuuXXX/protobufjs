@@ -34,8 +34,8 @@
       ]
     },
     {
-      "name": "protobufjs",
-      "srcPath": "./protobufjs"
+      "name": "library",
+      "srcPath": "./library"
     }
   ]
 }
