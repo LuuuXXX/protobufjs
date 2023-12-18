@@ -10,7 +10,7 @@
   "ohos": {
     "org": "opensource"
   },
-  "main": "src/main/ets/dist/protobuf",
+  "main": "src/main/ets/dist/protobuf.js",
   "type": "module",
   "version": "2.0.0",
   "tags": [
@@ -34,5 +34,5 @@
   },
   "license": "BSD License",
   "devDependencies": {},
-  "name": "protobufjs"
+  "name": "@ohos/protobufjs"
 }
