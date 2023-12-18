@@ -195,7 +195,7 @@ static toObject(message: Message<{}>, options?: IConversionOptions): { [k: strin
 |---- protobuf
 |     |---- AppScrope  # 示例代码文件夹
 |     |---- entry  # 示例代码文件夹
-|     |---- protobufjs  # protobufjs库文件夹
+|     |---- library  # 核心库
 |           |---- src/main  # 模块代码
 |                |---- ets/   # 模块代码
 |                     |---- dist     # 打包文件
