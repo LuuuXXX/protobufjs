@@ -17,9 +17,11 @@
 import writerReaderTest from './writerreader.test'
 import longFunctionTest from './LongFunction.test'
 import serializedTest from './serialized.test'
+import InterfaceTime from './InterfaceTime.test';
 
 export default function testsuite() {
   writerReaderTest();
   longFunctionTest();
   serializedTest();
+  InterfaceTime();
 }
