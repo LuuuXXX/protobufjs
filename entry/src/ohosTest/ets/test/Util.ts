@@ -13,6 +13,13 @@
  * limitations under the License.
  */
 
+export const userLogin = {
+   sessionId: "loadProto",
+   userPrivilege: "Jhon123",
+   isTokenType: false,
+   formatTimestamp: "xxxxxx"
+}
+
 export const protoJson = JSON.stringify({
   "package": "com.user",
   "syntax": "proto3",
