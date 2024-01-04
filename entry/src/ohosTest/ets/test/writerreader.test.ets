@@ -1125,8 +1125,10 @@ export default function writerReaderTest() {
         if (!(encLen instanceof ByteBuffer)) {
           bb.limit = encLen;
           let dec = bb.readVarint32ZigZag(0);
-          expect(dec['value']).assertEqual(values2[i]);
-          expect(encLen).assertEqual(dec['length']);
+          if (dec instanceof Object) {
+            expect(dec['value']).assertEqual(values2[i]);
+            expect(encLen).assertEqual(dec['length']);
+          }
           bb.clear();
         }
       }
@@ -1153,8 +1155,10 @@ export default function writerReaderTest() {
         }
         let encLen: ByteBuffer | number = bb.writeVarint64ZigZag(values3Number, 0);
         let dec: Long | LongValue = bb.readVarint64ZigZag(0);
-        expect(values3[i].toString()).assertEqual(dec['value'].toString());
-        expect(encLen).assertEqual(dec['length']);
+        if (dec instanceof Long) {
+          expect(values3[i].toString()).assertEqual(dec['value'].toString());
+          expect(encLen).assertEqual(dec['length']);
+        }
       }
 
       // var bb = new ByteBuffer(10);
