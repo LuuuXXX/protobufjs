@@ -49,7 +49,7 @@ pbts user.js  -o user.d.ts
 
 ```
 将生成的js文件中的 import * as $protobuf from "protobufjs/minimal";
-修改为  import * as $protobuf from "protobufjs";
+修改为  import * as $protobuf from "@ohos/protobufjs";
 ```
 
 5.将生成js和.d.ts文件复制到工程中
