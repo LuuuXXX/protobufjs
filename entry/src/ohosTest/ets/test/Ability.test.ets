@@ -15,7 +15,8 @@
   */
 import { describe, it, expect } from '@ohos/hypium'
 import { RnRouteNotFound } from './tracker_apm_rn'
-
+const BASE_COUNT: number = 2000;
+const HTTP_COUNT = 2
 export default function abilityTest() {
     describe('protobufTest', () => {
         it('create', 0, () => {
@@ -34,6 +35,10 @@ export default function abilityTest() {
             }
 
             let startTime=new Date().getMilliseconds()
+            for (let index = 0; index < BASE_COUNT; index++) {
+                RnRouteNotFound.create(rnRoute);
+            }
+            endTime(startTime,'create');
             let msg = RnRouteNotFound.create(rnRoute)
             console.info("protobuf create consuming time"+(new Date().getMilliseconds()-startTime))
             expect(JSON.stringify(msg)).assertEqual(JSON.stringify(rnRoute))
@@ -56,6 +61,10 @@ export default function abilityTest() {
 
             let msg = RnRouteNotFound.create(rnRoute)
             let startTime=new Date().getMilliseconds()
+            for (let index = 0; index < BASE_COUNT; index++) {
+                RnRouteNotFound.encode(msg).finish();
+            }
+            endTime(startTime,'encode');
             let arrayBuffer: Uint8Array = RnRouteNotFound.encode(msg).finish()
             console.info("protobuf encode consuming time"+(new Date().getMilliseconds()-startTime))
             let expectValue = "10,18,104,116,116,112,58,47,47,101,120,97,109,112,108,101,46,99,111,109,18,16,119,115,58,47,47,101,120,97,109,112,108,101,46,99,111,109,26,16,104,116,116,112,115,58,47,47,116,101,115,116,46,99,111,109,34,18,104,116,116,112,115,58,47,47,116,97,114,103,101,116,46,99,111,109"
@@ -79,6 +88,10 @@ export default function abilityTest() {
 
             let msg = RnRouteNotFound.create(rnRoute)
             let startTime=new Date().getMilliseconds()
+            for (let index = 0; index < BASE_COUNT; index++) {
+                RnRouteNotFound.encodeDelimited(msg).finish();
+            }
+            endTime(startTime,'encodeDelimited');
             let arrayBuffer: Uint8Array = RnRouteNotFound.encodeDelimited(msg).finish()
             console.info("protobuf encodeDelimited consuming time"+(new Date().getMilliseconds()-startTime))
             let expectValue = "76,10,18,104,116,116,112,58,47,47,101,120,97,109,112,108,101,46,99,111,109,18,16,119,115,58,47,47,101,120,97,109,112,108,101,46,99,111,109,26,16,104,116,116,112,115,58,47,47,116,101,115,116,46,99,111,109,34,18,104,116,116,112,115,58,47,47,116,97,114,103,101,116,46,99,111,109"
@@ -100,6 +113,10 @@ export default function abilityTest() {
             let arrayBuffer: Uint8Array = RnRouteNotFound.encode(msg).finish()
 
             let startTime=new Date().getMilliseconds()
+            for (let index = 0; index < BASE_COUNT; index++) {
+                RnRouteNotFound.decode(arrayBuffer);
+            }
+            endTime(startTime,'decode');
             let decodeMsg = RnRouteNotFound.decode(arrayBuffer);
             console.info("protobuf decode consuming time"+(new Date().getMilliseconds()-startTime))
             expect(JSON.stringify(decodeMsg)).assertEqual(JSON.stringify(rnRoute))
@@ -121,6 +138,10 @@ export default function abilityTest() {
             let arrayBuffer: Uint8Array = RnRouteNotFound.encodeDelimited(msg).finish()
 
             let startTime=new Date().getMilliseconds()
+            for (let index = 0; index < BASE_COUNT; index++) {
+                RnRouteNotFound.decodeDelimited(arrayBuffer);
+            }
+            endTime(startTime,'decodeDelimited');
             let decodeMsg = RnRouteNotFound.decodeDelimited(arrayBuffer);
             console.info("protobuf decodeDelimited consuming time"+(new Date().getMilliseconds()-startTime))
             expect(JSON.stringify(decodeMsg)).assertEqual(JSON.stringify(rnRoute))
@@ -137,6 +158,10 @@ export default function abilityTest() {
                 targetRouteName: "https://welcom.com"
             }
             let startTime=new Date().getMilliseconds()
+            for (let index = 0; index < BASE_COUNT; index++) {
+                RnRouteNotFound.verify(rnRoute);
+            }
+            endTime(startTime,'verify');
             let result = RnRouteNotFound.verify(rnRoute)
             console.info("protobuf verify consuming time"+(new Date().getMilliseconds()-startTime))
             expect(result).assertNull()
@@ -152,6 +177,11 @@ export default function abilityTest() {
             }
             let result = RnRouteNotFound.verify(rnRoute)
             expect(result != null).assertTrue()
+            let startTime=new Date().getMilliseconds()
+            for (let index = 0; index < BASE_COUNT; index++) {
+                RnRouteNotFound.verify(rnRoute);
+            }
+            endTime(startTime,'verifyFalse');
         })
 
         it('toObject', 0, () => {
@@ -171,6 +201,10 @@ export default function abilityTest() {
 
             let msg = RnRouteNotFound.create(rnRoute)
             let startTime=new Date().getMilliseconds()
+            for (let index = 0; index < BASE_COUNT; index++) {
+                RnRouteNotFound.toObject(msg);
+            }
+            endTime(startTime,'toObject');
             let obj = RnRouteNotFound.toObject(msg)
             console.info("protobuf toObject consuming time"+(new Date().getMilliseconds()-startTime))
             expect(JSON.stringify(obj)).assertEqual(JSON.stringify(rnRoute))
@@ -190,9 +224,20 @@ export default function abilityTest() {
             }
 
             let startTime=new Date().getMilliseconds()
+            for (let index = 0; index < BASE_COUNT; index++) {
+                RnRouteNotFound.fromObject(rnRoute);
+            }
+            endTime(startTime,'fromObject');
             let msg = RnRouteNotFound.fromObject(rnRoute)
             console.info("protobuf fromObject consuming time"+(new Date().getMilliseconds()-startTime))
             expect(JSON.stringify(msg)).assertEqual(JSON.stringify(rnRoute))
         })
     })
+}
+function endTime(startTime: number, tag: string) {
+    console.info(tag + ":startTime:" + startTime)
+    let endTime: number = new Date().getTime();
+    let averageTime = ((endTime - startTime) * 1000 / BASE_COUNT)
+    console.info(tag + ":endTime:" + endTime)
+    console.log(tag + ":averageTime:" + averageTime + "μs");
 }
