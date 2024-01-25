@@ -35,10 +35,11 @@ export default function abilityTest() {
             }
 
             let startTime=new Date().getMilliseconds()
+            let startTimes=new Date().getTime();
             for (let index = 0; index < BASE_COUNT; index++) {
                 RnRouteNotFound.create(rnRoute);
             }
-            endTime(startTime,'create');
+            endTime(startTimes,'create');
             let msg = RnRouteNotFound.create(rnRoute)
             console.info("protobuf create consuming time"+(new Date().getMilliseconds()-startTime))
             expect(JSON.stringify(msg)).assertEqual(JSON.stringify(rnRoute))
@@ -61,10 +62,11 @@ export default function abilityTest() {
 
             let msg = RnRouteNotFound.create(rnRoute)
             let startTime=new Date().getMilliseconds()
+            let startTimes=new Date().getTime();
             for (let index = 0; index < BASE_COUNT; index++) {
                 RnRouteNotFound.encode(msg).finish();
             }
-            endTime(startTime,'encode');
+            endTime(startTimes,'encode');
             let arrayBuffer: Uint8Array = RnRouteNotFound.encode(msg).finish()
             console.info("protobuf encode consuming time"+(new Date().getMilliseconds()-startTime))
             let expectValue = "10,18,104,116,116,112,58,47,47,101,120,97,109,112,108,101,46,99,111,109,18,16,119,115,58,47,47,101,120,97,109,112,108,101,46,99,111,109,26,16,104,116,116,112,115,58,47,47,116,101,115,116,46,99,111,109,34,18,104,116,116,112,115,58,47,47,116,97,114,103,101,116,46,99,111,109"
@@ -88,10 +90,11 @@ export default function abilityTest() {
 
             let msg = RnRouteNotFound.create(rnRoute)
             let startTime=new Date().getMilliseconds()
+            let startTimes=new Date().getTime();
             for (let index = 0; index < BASE_COUNT; index++) {
                 RnRouteNotFound.encodeDelimited(msg).finish();
             }
-            endTime(startTime,'encodeDelimited');
+            endTime(startTimes,'encodeDelimited');
             let arrayBuffer: Uint8Array = RnRouteNotFound.encodeDelimited(msg).finish()
             console.info("protobuf encodeDelimited consuming time"+(new Date().getMilliseconds()-startTime))
             let expectValue = "76,10,18,104,116,116,112,58,47,47,101,120,97,109,112,108,101,46,99,111,109,18,16,119,115,58,47,47,101,120,97,109,112,108,101,46,99,111,109,26,16,104,116,116,112,115,58,47,47,116,101,115,116,46,99,111,109,34,18,104,116,116,112,115,58,47,47,116,97,114,103,101,116,46,99,111,109"
@@ -111,12 +114,12 @@ export default function abilityTest() {
 
             let msg = RnRouteNotFound.create(rnRoute)
             let arrayBuffer: Uint8Array = RnRouteNotFound.encode(msg).finish()
-
             let startTime=new Date().getMilliseconds()
+            let startTimes=new Date().getTime();
             for (let index = 0; index < BASE_COUNT; index++) {
                 RnRouteNotFound.decode(arrayBuffer);
             }
-            endTime(startTime,'decode');
+            endTime(startTimes,'decode');
             let decodeMsg = RnRouteNotFound.decode(arrayBuffer);
             console.info("protobuf decode consuming time"+(new Date().getMilliseconds()-startTime))
             expect(JSON.stringify(decodeMsg)).assertEqual(JSON.stringify(rnRoute))
@@ -138,10 +141,11 @@ export default function abilityTest() {
             let arrayBuffer: Uint8Array = RnRouteNotFound.encodeDelimited(msg).finish()
 
             let startTime=new Date().getMilliseconds()
+            let startTimes=new Date().getTime();
             for (let index = 0; index < BASE_COUNT; index++) {
                 RnRouteNotFound.decodeDelimited(arrayBuffer);
             }
-            endTime(startTime,'decodeDelimited');
+            endTime(startTimes,'decodeDelimited');
             let decodeMsg = RnRouteNotFound.decodeDelimited(arrayBuffer);
             console.info("protobuf decodeDelimited consuming time"+(new Date().getMilliseconds()-startTime))
             expect(JSON.stringify(decodeMsg)).assertEqual(JSON.stringify(rnRoute))
@@ -158,10 +162,11 @@ export default function abilityTest() {
                 targetRouteName: "https://welcom.com"
             }
             let startTime=new Date().getMilliseconds()
+            let startTimes=new Date().getTime();
             for (let index = 0; index < BASE_COUNT; index++) {
                 RnRouteNotFound.verify(rnRoute);
             }
-            endTime(startTime,'verify');
+            endTime(startTimes,'verify');
             let result = RnRouteNotFound.verify(rnRoute)
             console.info("protobuf verify consuming time"+(new Date().getMilliseconds()-startTime))
             expect(result).assertNull()
@@ -178,10 +183,11 @@ export default function abilityTest() {
             let result = RnRouteNotFound.verify(rnRoute)
             expect(result != null).assertTrue()
             let startTime=new Date().getMilliseconds()
+            let startTimes=new Date().getTime();
             for (let index = 0; index < BASE_COUNT; index++) {
                 RnRouteNotFound.verify(rnRoute);
             }
-            endTime(startTime,'verifyFalse');
+            endTime(startTimes,'verifyFalse');
         })
 
         it('toObject', 0, () => {
@@ -201,10 +207,11 @@ export default function abilityTest() {
 
             let msg = RnRouteNotFound.create(rnRoute)
             let startTime=new Date().getMilliseconds()
+            let startTimes=new Date().getTime();
             for (let index = 0; index < BASE_COUNT; index++) {
                 RnRouteNotFound.toObject(msg);
             }
-            endTime(startTime,'toObject');
+            endTime(startTimes,'toObject');
             let obj = RnRouteNotFound.toObject(msg)
             console.info("protobuf toObject consuming time"+(new Date().getMilliseconds()-startTime))
             expect(JSON.stringify(obj)).assertEqual(JSON.stringify(rnRoute))
@@ -224,10 +231,11 @@ export default function abilityTest() {
             }
 
             let startTime=new Date().getMilliseconds()
+            let startTimes=new Date().getTime();
             for (let index = 0; index < BASE_COUNT; index++) {
                 RnRouteNotFound.fromObject(rnRoute);
             }
-            endTime(startTime,'fromObject');
+            endTime(startTimes,'fromObject');
             let msg = RnRouteNotFound.fromObject(rnRoute)
             console.info("protobuf fromObject consuming time"+(new Date().getMilliseconds()-startTime))
             expect(JSON.stringify(msg)).assertEqual(JSON.stringify(rnRoute))
