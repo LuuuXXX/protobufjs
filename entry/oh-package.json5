@@ -12,6 +12,7 @@
   "main": "",
   "version": "2.0.0",
   "dependencies": {
-    "protobufjs": "file:../library"
+    "@ohos/protobufjs": "file:../library",
+    "long": "^5.2.1"
   }
 }
