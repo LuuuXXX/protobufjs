@@ -13,10 +13,10 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-
-/*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
-import * as $protobuf from "protobufjs";
-
+import * as $protobuf from "@ohos/protobufjs";
+import Long from 'long';
+$protobuf.util.Long=Long
+$protobuf.configure()
 // Common aliases
 const $Reader = $protobuf.Reader, $Writer = $protobuf.Writer, $util = $protobuf.util;
 
@@ -41,7 +41,8 @@ export const user = $root.user = (() => {
          * @property {string|null} [sessionId] UserLoginResponse sessionId
          * @property {string|null} [userPrivilege] UserLoginResponse userPrivilege
          * @property {boolean|null} [isTokenType] UserLoginResponse isTokenType
-         * @property {string|null} [formatTimestamp] UserLoginResponse formatTimestamp
+         * @property {number|Long|null} [formatTimestamp] UserLoginResponse formatTimestamp
+         * @property {Uint8Array|null} [data] UserLoginResponse data
          */
 
         /**
@@ -85,11 +86,19 @@ export const user = $root.user = (() => {
 
         /**
          * UserLoginResponse formatTimestamp.
-         * @member {string} formatTimestamp
+         * @member {number|Long} formatTimestamp
          * @memberof user.UserLoginResponse
          * @instance
          */
-        UserLoginResponse.prototype.formatTimestamp = "";
+        UserLoginResponse.prototype.formatTimestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * UserLoginResponse data.
+         * @member {Uint8Array} data
+         * @memberof user.UserLoginResponse
+         * @instance
+         */
+        UserLoginResponse.prototype.data = $util.newBuffer([]);
 
         /**
          * Creates a new UserLoginResponse instance using the specified properties.
@@ -122,7 +131,9 @@ export const user = $root.user = (() => {
             if (message.isTokenType != null && Object.hasOwnProperty.call(message, "isTokenType"))
                 writer.uint32(/* id 3, wireType 0 =*/24).bool(message.isTokenType);
             if (message.formatTimestamp != null && Object.hasOwnProperty.call(message, "formatTimestamp"))
-                writer.uint32(/* id 4, wireType 2 =*/34).string(message.formatTimestamp);
+                writer.uint32(/* id 5, wireType 0 =*/40).int64(message.formatTimestamp);
+            if (message.data != null && Object.hasOwnProperty.call(message, "data"))
+                writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.data);
             return writer;
         };
 
@@ -169,8 +180,12 @@ export const user = $root.user = (() => {
                         message.isTokenType = reader.bool();
                         break;
                     }
-                case 4: {
-                        message.formatTimestamp = reader.string();
+                case 5: {
+                        message.formatTimestamp = reader.int64();
+                        break;
+                    }
+                case 6: {
+                        message.data = reader.bytes();
                         break;
                     }
                 default:
@@ -218,8 +233,11 @@ export const user = $root.user = (() => {
                 if (typeof message.isTokenType !== "boolean")
                     return "isTokenType: boolean expected";
             if (message.formatTimestamp != null && message.hasOwnProperty("formatTimestamp"))
-                if (!$util.isString(message.formatTimestamp))
-                    return "formatTimestamp: string expected";
+                if (!$util.isInteger(message.formatTimestamp) && !(message.formatTimestamp && $util.isInteger(message.formatTimestamp.low) && $util.isInteger(message.formatTimestamp.high)))
+                    return "formatTimestamp: integer|Long expected";
+            if (message.data != null && message.hasOwnProperty("data"))
+                if (!(message.data && typeof message.data.length === "number" || $util.isString(message.data)))
+                    return "data: buffer expected";
             return null;
         };
 
@@ -242,7 +260,19 @@ export const user = $root.user = (() => {
             if (object.isTokenType != null)
                 message.isTokenType = Boolean(object.isTokenType);
             if (object.formatTimestamp != null)
-                message.formatTimestamp = String(object.formatTimestamp);
+                if ($util.Long)
+                    (message.formatTimestamp = $util.Long.fromValue(object.formatTimestamp)).unsigned = false;
+                else if (typeof object.formatTimestamp === "string")
+                    message.formatTimestamp = parseInt(object.formatTimestamp, 10);
+                else if (typeof object.formatTimestamp === "number")
+                    message.formatTimestamp = object.formatTimestamp;
+                else if (typeof object.formatTimestamp === "object")
+                    message.formatTimestamp = new $util.LongBits(object.formatTimestamp.low >>> 0, object.formatTimestamp.high >>> 0).toNumber();
+            if (object.data != null)
+                if (typeof object.data === "string")
+                    $util.base64.decode(object.data, message.data = $util.newBuffer($util.base64.length(object.data)), 0);
+                else if (object.data.length >= 0)
+                    message.data = object.data;
             return message;
         };
 
@@ -263,7 +293,18 @@ export const user = $root.user = (() => {
                 object.sessionId = "";
                 object.userPrivilege = "";
                 object.isTokenType = false;
-                object.formatTimestamp = "";
+                if ($util.Long) {
+                    let long = new $util.Long(0, 0, false);
+                    object.formatTimestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.formatTimestamp = options.longs === String ? "0" : 0;
+                if (options.bytes === String)
+                    object.data = "";
+                else {
+                    object.data = [];
+                    if (options.bytes !== Array)
+                        object.data = $util.newBuffer(object.data);
+                }
             }
             if (message.sessionId != null && message.hasOwnProperty("sessionId"))
                 object.sessionId = message.sessionId;
@@ -272,7 +313,12 @@ export const user = $root.user = (() => {
             if (message.isTokenType != null && message.hasOwnProperty("isTokenType"))
                 object.isTokenType = message.isTokenType;
             if (message.formatTimestamp != null && message.hasOwnProperty("formatTimestamp"))
-                object.formatTimestamp = message.formatTimestamp;
+                if (typeof message.formatTimestamp === "number")
+                    object.formatTimestamp = options.longs === String ? String(message.formatTimestamp) : message.formatTimestamp;
+                else
+                    object.formatTimestamp = options.longs === String ? $util.Long.prototype.toString.call(message.formatTimestamp) : options.longs === Number ? new $util.LongBits(message.formatTimestamp.low >>> 0, message.formatTimestamp.high >>> 0).toNumber() : message.formatTimestamp;
+            if (message.data != null && message.hasOwnProperty("data"))
+                object.data = options.bytes === String ? $util.base64.encode(message.data, 0, message.data.length) : options.bytes === Array ? Array.prototype.slice.call(message.data) : message.data;
             return object;
         };
 

@@ -13,15 +13,19 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
+import Long from 'long';
 
 import { user } from './user.js'
+import buffer from '@ohos.buffer'
+import util from '@ohos.util';
 
 @Entry
 @Component
 struct Index {
     @State result: string = "";
     str: string = '';
-    scroller: Scroller = new Scroller()
+    scroller: Scroller = new Scroller();
+
 
     build() {
         Stack({ alignContent: Alignment.TopStart }) {
@@ -36,12 +40,13 @@ struct Index {
                         .textAlign(TextAlign.Center)
                         .margin({ top: 20 })
                         .onClick(event => {
-                            this.result = "";
+                            this.result = ""
                             let msg = user.UserLoginResponse.create({
-                                sessionId: "testSynchronouslyLoadProtoFile",
+                                sessionId: "215135415351435",
                                 userPrivilege: "John123",
                                 isTokenType: false,
-                                formatTimestamp: "12342222"
+                                formatTimestamp: Long.fromString("9223372036854775807"),
+                                data:new Uint8Array(buffer.from("测试").buffer)
                             });
 
                             let arrayBuffer: Uint8Array = user.UserLoginResponse.encode(msg).finish()
@@ -49,8 +54,15 @@ struct Index {
                             this.result = this.result + "序列化数据：" + JSON.stringify(arrayBuffer) + "\r\n";
 
                             let decodeMsg = user.UserLoginResponse.decode(arrayBuffer);
-                            console.log("protobuf decode:" + JSON.stringify(decodeMsg));
-                            this.result = this.result + "反序列化数据：" + JSON.stringify(decodeMsg);
+                            let timestamp=decodeMsg.formatTimestamp as Long
+                            const decoder = util.TextDecoder.create('utf-8');
+                            const utfStr = decoder.decodeWithStream(decodeMsg.data);
+                            this.result = this.result + "反序列化数据： \r\n"
+                                +"sessionId: " + decodeMsg.sessionId+"\r\n"
+                                +"userPrivilege: " + decodeMsg.userPrivilege+"\r\n"
+                                +"isTokenType: " + decodeMsg.isTokenType+"\r\n"
+                                +"formatTimesStamp: " + timestamp.toString()+"\r\n"
+                                + "data: " + utfStr
                         });
 
 
@@ -68,8 +80,9 @@ struct Index {
                                 sessionId: "testSynchronouslyLoadProtoFile",
                                 userPrivilege: "John123",
                                 isTokenType: false,
-                                formatTimestamp: "12342222"
+                                formatTimestamp: 123456789123456789
                             });
+
 
                             let arrayBuffer: Uint8Array = user.UserLoginResponse.encodeDelimited(msg).finish()
                             console.log("protobuf arrayBuffer:" + arrayBuffer);
@@ -94,7 +107,7 @@ struct Index {
                                 sessionId: "testSynchronouslyLoadProtoFile",
                                 userPrivilege: "John123",
                                 isTokenType: false,
-                                formatTimestamp: "12342222"
+                                // formatTimestamp: "12342222"
                             });
                             let obj = user.UserLoginResponse.toObject(msg)
                             this.result = JSON.stringify(obj)

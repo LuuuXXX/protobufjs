@@ -23,12 +23,13 @@ OpenHarmony ohpm环境配置等更多内容，请参考 [如何安装OpenHarmony
 ```
 syntax = "proto3";
 
-package com.user;
+package user;
 message UserLoginResponse{
    string sessionId = 1;
    string userPrivilege = 2;
    bool isTokenType = 3;
-   string formatTimestamp = 4;
+   int64 formatTimestamp = 5;
+   bytes data =6;
 }
 ```
 
@@ -45,14 +46,28 @@ pbjs -t static-module -w es6 -o user.js user.proto
 pbts user.js  -o user.d.ts
 ```
 
-4.修改js文件
+4.修改生成的文件
 
 ```
-将生成的js文件中的 import * as $protobuf from "protobufjs/minimal";
+1.将生成的js文件中的 import * as $protobuf from "protobufjs/minimal";
 修改为  import * as $protobuf from "@ohos/protobufjs";
+
+2.将生成的.d.ts文件中的 import * as $protobuf from "protobufjs";
+修改为  import * as $protobuf from "@ohos/protobufjs";
+
+3.在生成的js文件中 import * as $protobuf from "@ohos/protobufjs";这行代码夏敏添加如下代码
+import Long from 'long';
+$protobuf.util.Long=Long
+$protobuf.configure()
 ```
 
-5.将生成js和.d.ts文件复制到工程中
+5.在entry目录下安装long
+
+```
+ohpm install long
+```
+
+6.将生成js和.d.ts文件复制到工程中
 
 ## 使用说明
 
