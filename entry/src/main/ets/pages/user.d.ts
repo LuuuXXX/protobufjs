@@ -13,8 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-
-import * as $protobuf from "protobufjs";
+import * as $protobuf from "@ohos/protobufjs";
 import Long = require("long");
 /** Namespace user. */
 export namespace user {
@@ -32,7 +31,10 @@ export namespace user {
         isTokenType?: (boolean|null);
 
         /** UserLoginResponse formatTimestamp */
-        formatTimestamp?: (string|null);
+        formatTimestamp?: (number|Long|null);
+
+        /** UserLoginResponse data */
+        data?: (Uint8Array|null);
     }
 
     /** Represents a UserLoginResponse. */
@@ -54,7 +56,10 @@ export namespace user {
         public isTokenType: boolean;
 
         /** UserLoginResponse formatTimestamp. */
-        public formatTimestamp: string;
+        public formatTimestamp: (number|Long);
+
+        /** UserLoginResponse data. */
+        public data: Uint8Array;
 
         /**
          * Creates a new UserLoginResponse instance using the specified properties.
