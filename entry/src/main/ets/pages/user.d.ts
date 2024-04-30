@@ -14,7 +14,9 @@
   * limitations under the License.
   */
 import * as $protobuf from "@ohos/protobufjs";
-import Long = require("long");
+import Long from 'long';
+$protobuf.util.Long=Long
+$protobuf.configure()
 /** Namespace user. */
 export namespace user {
 
