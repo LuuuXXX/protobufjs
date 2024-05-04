@@ -14,8 +14,10 @@
   * limitations under the License.
   */
 
-import * as $protobuf from "protobufjs";
-import Long = require("long");
+import * as $protobuf from "@ohos/protobufjs";
+import Long from 'long';
+$protobuf.util.Long=Long
+$protobuf.configure()
 /** Properties of a RnApmTracker. */
 export interface IRnApmTracker {
 
