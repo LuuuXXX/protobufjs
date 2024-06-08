@@ -1,3 +1,6 @@
+###2.0.1
+- 更新README：修改了依赖的引入名称，更新了bigint在protobuf中的使用方式
+
 ###2.0.0
 - 适配DevEco Studio 版本：4.1 Canary(4.1.3.317)，OpenHarmony SDK:API11 (4.1.0.36)
 - ArkTS新语法适配
