@@ -69,6 +69,50 @@ ohpm install long
 
 6.将生成js和.d.ts文件复制到工程中
 
+## protobufjs-cli使用说明
+```
+在文件格式之间转换并生成静态代码
+  -t, --target 指定目标格式，可以接受需要自定义目标的路径。
+                   json          JSON
+                   json-module   JSON表示为模块
+                   proto2        Protocol Buffers, Version 2
+                   proto3        Protocol Buffers, Version 3
+                   static        无反射的静态代码（本身不起作用）
+                   static-module 无反射模块的静态代码
+  -p, --path 将某个目录添加到包含路径中
+  -o, --out 保存文件而非写入到标准输出
+  --sparse 只导出从主文件引用的类型（实验）
+  仅限模块目标：
+  -w, --wrap       指定要使用的包装器，可接受需要自定义包装器的路径。
+                   default   默认包装器支持CommonJS与AMD标准
+                   commonjs  CommonJS包装器
+                   amd       AMD包装器
+                   es6       ES6包装器
+                   closure   添加到全局protobuf的protobuf.roots上的闭包
+  --dependency     指定protobuf版本，可接受有效的模块ID。
+  -r, --root       指定备用的protobuf.roots名称
+  -l, --lint       Linter配置，默认protbuf.js兼容规则:
+                   eslint-disable block-scoped-var, id-length, 
+                   no-control-regex, no-magic-numbers, no-prototype-builtins, 
+                   no-redeclare, no-shadow, no-var, sort-vars
+  --es6            启用ES6语法
+  仅限原始源:
+  --keep-case      保留字段大小写而非是转换为驼峰大小写
+  仅限静态目标:
+  --no-create      不生成用于反射兼容性的创建函数.
+  --no-encode      不生成编码函数.
+  --no-decode      不生成解码函数.
+  --no-verify      不生成验证函数.
+  --no-convert     不生成转换函数
+  --no-delimited   不生成风格的编码/解码函数.
+  --no-beautify    不美化生成的代码.
+  --no-comments    不输出任何JSDoc注释.
+  --force-long     强制对s-/u-/int64和s-/fixed64字段使用Long
+  --force-number   强制对s-/u-/int64和s-/fixed64字段使用number
+  --force-message  强制使用消息而非普通对象
+```
+详细使用方式请参考：https://github.com/protobufjs/protobuf.js/blob/master/cli/README.md
+
 ## 使用说明
 
 1.proto编码
