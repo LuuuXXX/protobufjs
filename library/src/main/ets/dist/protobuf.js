@@ -2,11 +2,8 @@ import require$$0 from '@protobufjs/aspromise';
 import require$$1 from '@protobufjs/base64';
 import require$$2 from '@protobufjs/eventemitter';
 import require$$3 from '@protobufjs/float';
-import require$$4 from '@protobufjs/inquire';
 import require$$5 from '@protobufjs/utf8';
 import require$$6 from '@protobufjs/pool';
-import require$$2$1 from '@protobufjs/codegen';
-import require$$3$1 from '@protobufjs/fetch';
 import require$$4$1 from '@protobufjs/path';
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -251,8 +248,6 @@ function requireMinimal () {
 		// float handling accross browsers
 		util.float = require$$3;
 
-		// requires modules optionally and hides the call from bundlers
-		util.inquire = require$$4;
 
 		// converts to / from utf8 encoded strings
 		util.utf8 = require$$5;
@@ -5502,8 +5497,6 @@ function requireUtil () {
 	var Type, // cyclic
 	    Enum;
 
-	util.codegen = require$$2$1;
-	util.fetch   = require$$3$1;
 	util.path    = require$$4$1;
 
 	/**
