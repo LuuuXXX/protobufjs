@@ -5,6 +5,9 @@ import require$$3 from '@protobufjs/float';
 import require$$5 from '@protobufjs/utf8';
 import require$$6 from '@protobufjs/pool';
 import require$$4$1 from '@protobufjs/path';
+import buffer from 'buffer';
+import Long from 'long';
+import fs from '@ohos.file.fs';
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -358,9 +361,9 @@ function requireMinimal () {
 		 */
 		util.Buffer = (function() {
 		    try {
-		        var Buffer = util.inquire("buffer").Buffer;
+		        var Buffer = buffer.Buffer;
 		        // refuse to use non-node buffers if not explicitly assigned (perf reasons):
-		        return Buffer.prototype.utf8Write ? Buffer : /* istanbul ignore next */ null;
+		        return Buffer;
 		    } catch (e) {
 		        /* istanbul ignore next */
 		        return null;
@@ -412,7 +415,7 @@ function requireMinimal () {
 		 */
 		util.Long = /* istanbul ignore next */ util.global.dcodeIO && /* istanbul ignore next */ util.global.dcodeIO.Long
 		         || /* istanbul ignore next */ util.global.Long
-		         || util.inquire("long");
+		         || Long;
 
 		/**
 		 * Regular expression used to verify 2 bit (`bool`) map keys.
@@ -5281,7 +5284,7 @@ function requireRoot () {
 	        if (sync) {
 	            var source;
 	            try {
-	                source = util.fs.readFileSync(filename).toString("utf8");
+	                source = util.fs.readTextSync(filename).toString("utf8");
 	            } catch (err) {
 	                if (!weak)
 	                    finish(err);
@@ -5503,7 +5506,7 @@ function requireUtil () {
 	 * Node's fs module if available.
 	 * @type {Object.<string,*>}
 	 */
-	util.fs = util.inquire("fs");
+	util.fs = fs;
 
 	/**
 	 * Converts an object's values to an array.
@@ -8058,7 +8061,7 @@ var srcExports = src.exports;
 
 var protobufjs = srcExports;
 
-var index = /*@__PURE__*/getDefaultExportFromCjs(protobufjs);
+export var index = /*@__PURE__*/getDefaultExportFromCjs(protobufjs);
 
-export { index as default };
+// export { index as default };
 //# sourceMappingURL=protobuf.js.map
