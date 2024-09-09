@@ -13,7 +13,8 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-import * as $protobuf from "@ohos/protobufjs";
+import { index } from "@ohos/protobufjs";
+const $protobuf = index;
 import Long from 'long';
 $protobuf.util.Long=Long
 $protobuf.configure()

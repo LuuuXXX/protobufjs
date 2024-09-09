@@ -1,16 +1,19 @@
-###2.0.1
+### 2.1.0-rc.0
+- 重构protobufjs运行时，修复了taskpool下重复序列化反序列化数据丢失的问题
+
+### 2.0.1
 - 更新README：修改了依赖的引入名称，更新了bigint在protobuf中的使用方式
 
-###2.0.0
+### 2.0.0
 - 适配DevEco Studio 版本：4.1 Canary(4.1.3.317)，OpenHarmony SDK:API11 (4.1.0.36)
 - ArkTS新语法适配
 - protobufjs 7.2.4 版本适配
 - 取消以load方式加载proto文件或者字符串
 
-###1.2.1
+### 1.2.1
 1.适配DevEco Studio 3.1 Beta1版本
 
-###1.2.0
+### 1.2.0
 1.适配api9
 
 ### 1.1.1
