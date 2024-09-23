@@ -1,36 +1,36 @@
-﻿# protobuf
+# protobuf
 
-## 介绍
+## Introduction
 
-ProtoBuf(protocol buffers) 是一种语言无关、平台无关、可扩展的序列化结构数据的方法，它可用于（数据）通信协议、数据存储等。,是一种灵活，高效，自动化机制的结构数据序列化方法比XML更小,更快,更为简单。
+Protocol buffers (ProtoBuf) is a language-neutral, platform-neutral extensible mechanism for serializing structured data. It is used in (data) communication protocols and for data storage. As a flexible, efficient, and automatic structured data serialization method, ProtoBuf is smaller, faster, and simpler than XML.
 
-本项目主要是OpenHarmony系统下以[protobuf.js 5.0.3](https://github.com/protobufjs/protobuf.js)为主要依赖开发，主要接口针对OpenHarmony系统进行合理的适配研发。
+In this project, [protobuf.js 5.0.3](https://github.com/protobufjs/protobuf.js) has been adapted for use with OpenHarmony.
 
-## 下载安装
+## How to Install
 
-1.安装
+1. Install protobufjs.
 
 ```
 ohpm install @ohos/protobufjs
 ```
 
-2.在需要使用的页面导入protobuf
+2. Import protobuf to the target page.
 
 ```
 import protobuf from '@ohos/protobufjs'
 ```
 
-## 使用说明
+## How to Use
 
-**protobuf支持的输入格式**
+**Input Formats Supported by protobuf**
 
-1.proto格式字符串
+1. String in proto format
 
 ```
 const protoStr = 'syntax = "proto3"; package com.user;message UserLoginResponse{string sessionId = 1;string userPrivilege = 2;bool isTokenType = 3;string formatTimestamp = 4;}';
 ```
 
-2.proto文件映射的json字符串
+2. JSON string mapped to the .proto file
 
 ```
 const protoJson = '{
@@ -69,29 +69,9 @@ const protoJson = '{
 }'
 ```
 
-3.proto文件
+3. .proto file
 
-在resource->rawfile文件夹下按照 .proto文件格式定义消息体结构，如：userproto.proto文件。
-
-```
-syntax = "proto3";
-
-package com.user;
-message UserLoginResponse{
-   string sessionId = 1;
-   string userPrivilege = 2;
-   bool isTokenType = 3;
-   string formatTimestamp = 4;
-}
-```
-
-4.json文件
-
-在resource->rawfile文件夹下存放proto文件映射的json文件，参照第二点。
-
-**对象编解码**
-
-1.在resource->rawfile文件夹下按照 .proto文件格式定义消息体结构，如：userproto.proto文件。
+Define the message body struct in a .proto file, for example, **userproto.proto** in the **resource/rawfile** directory.
 
 ```
 syntax = "proto3";
@@ -105,16 +85,36 @@ message UserLoginResponse{
 }
 ```
 
-2.读取.proto 文件
+4. JSON file
+
+Choose **resource** > **rawfile**, and save the .json file mapped to the .proto file. For details, see the second point.
+
+**Object Encoding/Decoding**
+
+1. Define the message body struct in a .proto file, for example, **userproto.proto** in the **resource/rawfile** directory.
+
+```
+syntax = "proto3";
+
+package com.user;
+message UserLoginResponse{
+   string sessionId = 1;
+   string userPrivilege = 2;
+   bool isTokenType = 3;
+   string formatTimestamp = 4;
+}
+```
+
+2. Read the .proto file.
 
 ```
 let builder = await Protobuf.loadProtoFile("userproto.proto", null, null, getContext(this).resourceManager)
 ```
 
-3.对象编码
+3. Encode an object.
 
 ```
-// 构建消息体
+// Construct a message body.
 var UserLoginResponse = builder.build("com.user.UserLoginResponse");
 let userLoginData = {
     sessionId: "testAsynchronouslyLoadProtoFile",
@@ -123,42 +123,42 @@ let userLoginData = {
     formatTimestamp: "12342222"
   };
 
-// 对象编码的两种方式
-// 方式一：通过消息体静态编码方法进行编码
+// Two object encoding methods
+// Method 1: Use the static encoding method of the message body.
 var arrayBuffer = UserLoginResponse.encode(userLoginData).toArrayBuffer();
 
-// 方式二：通过消息体实例进行编解码
+// Method 2: Use a message body instance for encoding and decoding.
 var msg = new UserLoginResponse(userLoginData);
 var arrayBuffer = msg.toArrayBuffer();
 ```
 
-4.对象解码
+4. Decode an object.
 
 ```
 let decode = UserLoginResponse.decode(arrayBuffer)
 ```
 
-**主要接口示例：**
+**Examples:**
 
-1.proto字符串编解码
+1. proto string encoding and decoding
 
 ```
-Button("proto字符串编解码")
+Button("proto string encoding and decoding")
   .width('80%')
   .type(ButtonType.Capsule)
   .backgroundColor('#0D9FFB')
   .onClick(async () => {
     try {
-      // 1.创建protbuf.Builder对象：用于构造协议消息体。
+      // 1. Create a protbuf.Builder object to construct the protocol message body.
       var builder = protobuf.newBuilder();
       
-      // 2.加载proto字符串：解析协议消息体定义。
+      // 2. Load the proto string to parse the definition of the protocol message body.
       var root = await protobuf.loadProto(protoStr, builder, "user.proto");
       
-      // 3.构建协议消息体。
+      // 3. Construct the protocol message body.
       var UserLoginResponse = root.build("com.user.UserLoginResponse");
       
-	  // 设置编解码数据
+	  // Set the data to encode/decode.
       const userLogin = {
         sessionId: "loadProto",
         userPrivilege: "John123",
@@ -166,13 +166,13 @@ Button("proto字符串编解码")
         formatTimestamp: "12342222"
       };
       
-	  // 4.实例Message消息体：通过builder找到协议名后会产生Message，创建符合协议结构的数据对象，作为参数实例协议消息体。
+	  // 4. Instantiate message body. After the protocol name is found through the builder, a message is generated. Create a data object that complies with the protocol structure as the parameter instance protocol message body.
       var msg = new UserLoginResponse(userLogin);
       
-      // 5.消息体编码：可用于通信传递或存储
+      // 5. Encode the message body, which can be further passed or stored.
       var arrayBuffer = msg.toArrayBuffer();
       
-      // 6.消息体解码：得到原始消息体内容
+      // 6. Decode the message body to obtain the original message body content.
       var decodeMsg = UserLoginResponse.decode(arrayBuffer);
     } catch (error) {
       console.info('protobuf single file catch error: ' + error)
@@ -180,25 +180,25 @@ Button("proto字符串编解码")
   });
 ```
 
-2.json字符串编解码
+2. JSON string encoding and decoding
 
 ```
-Button("json字符串编解码")
+Button("JSON string encoding and decoding")
   .width('80%')
   .type(ButtonType.Capsule)
   .backgroundColor('#0D9FFB')
   .onClick(async () => {
     try {
-      // 1.创建protbuf.Builder对象：用于构造协议消息体。
+      // 1. Create a protbuf.Builder object to construct the protocol message body.
       var builder = protobuf.newBuilder();
       
-      // 2.加载json字符串：解析协议消息体定义。
+      // 2. Load the JSON string to parse the definition of the protocol message body.
       var root = await protobuf.loadProto(protoJson, builder, "user.json");
       
-      // 3.构建协议消息体。
+      // 3. Construct the protocol message body.
       var UserLoginResponse = root.build("com.user.UserLoginResponse");
       
-	  // 设置编解码数据
+	  // Set the data to encode/decode.
       const userLogin = {
         sessionId: "loadJson",
         userPrivilege: "John123",
@@ -206,13 +206,13 @@ Button("json字符串编解码")
         formatTimestamp: "12342222"
       };
       
-	  // 4.实例Message消息体：通过builder找到协议名后会产生Message，创建符合协议结构的数据对象，作为参数实例协议消息体。
+	  // 4. Instantiate message body. After the protocol name is found through the builder, a message is generated. Create a data object that complies with the protocol structure as the parameter instance protocol message body.
       var msg = new UserLoginResponse(userLogin);
       
-      // 5.消息体编码：可用于通信传递或存储
+      // 5. Encode the message body, which can be further passed or stored.
       var arrayBuffer = msg.toArrayBuffer();
       
-      // 6.消息体解码：得到原始消息体内容
+      // 6. Decode the message body to obtain the original message body content.
       var decodeMsg = UserLoginResponse.decode(arrayBuffer);
     } catch (error) {
       console.info('protobuf single file catch error: ' + error)
@@ -220,19 +220,19 @@ Button("json字符串编解码")
   });
 ```
 
-3.同步方式进行proto文件编解码
+3. Synchronous encoding and decoding of .proto files
 
 ```
-Button("同步方式进行proto文件编解码")
+Button("Synchronous encoding and decoding of .proto files")
   .width('80%')
   .type(ButtonType.Capsule)
   .backgroundColor('#0D9FFB')
   .onClick(async () => {
     try {
-    	// 读取文件需要借助全球化资源子系统中的ResourceManager来进行，支持多种方式获取
-    	// 方式一： 通过GlobalContext对象保存ability上下文中的resourceManager对象
-    	// 方式二： 通过getContext()方式获取
-    	// 在pages页面中获取: getContext(this).resourceManager
+    	// Read files using the ResourceManager in the globalization resource subsystem, which can be obtained in following methods.
+    	// Method 1: Use the GlobalContext object to save the resourceManager object in the ability context.
+    	// Method 2: Use getContext().
+    	// Obtain ResourceManager on pages: getContext(this).resourceManager
     	let context: Context = GlobalContext.getContext().getObject("context") as Context;
         var builder = await protobuf.loadProtoFile('userproto.proto', null, null, context.resourceManager);
         if (!builder) {
@@ -252,10 +252,10 @@ Button("同步方式进行proto文件编解码")
   });
 ```
 
-4.异步方式进行proto文件编解码
+4. Asynchronous encoding and decoding of .proto files
 
 ```
-Button("异步方式进行proto文件编解码")
+Button("Asynchronous encoding and decoding of .proto files")
   .width('80%')
   .type(ButtonType.Capsule)
   .backgroundColor('#0D9FFB')
@@ -287,598 +287,599 @@ Button("异步方式进行proto文件编解码")
   });
 ```
 
-## 接口说明
+## Available APIs
 
 **loadProto**
 
 static loadProto(proto:string,builder?:ProtoBuf.Builder|string|{root: string, file: string},filename?:string|{root: string, file: string}) :ProtoBuf.Builder;
 
-加载proto格式字符串，进行内容解析，并返回协议消息体构建器。
+Loads a string in proto format, parses the content, and returns a **ProtoBuf.Builder** instance.
 
-参数：
+Parameters:
 
-| 参数名   | 类型                                                         | 必填 | 说明                                                   |
+| Name  | Type                                                        | Mandatory| Description                                                  |
 | -------- | ------------------------------------------------------------ | ---- | ------------------------------------------------------ |
-| proto    | string                                                       | 是   | proto格式的字符串。                                    |
-| builder  | [Builder]() &#124;string &#124; {root: string, file: string} | 否   | 指定已有的协议消息体构建器，如果未指定将重新创建一个。 |
-| filename | string &#124; {root: string, file: string}                   | 否   | 如果知道对应的文件名称，必须为导入文件指定。           |
+| proto    | string                                                       | Yes  | String in proto format.                                   |
+| builder  | [Builder]() &#124;string &#124; {root: string, file: string} | No  | Existing **ProtoBuf.Builder** instance or a new **ProtoBuf.Builder** instance to create.|
+| filename | string &#124; {root: string, file: string}                   | No  | File name for the imported file.          |
 
-返回值：
+Return value:
 
-| 类型    | 说明               |
+| Type   | Description              |
 | ------- | ------------------ |
-| Builder | 协议消息体构建器。 |
+| Builder | **ProtoBuf.Builder** instance.|
 
 **protoFromString**
 
 static protoFromString(proto:string,builder?:ProtoBuf.Builder|string|{root: string, file: string},filename?:string|{root: string, file: string}) :ProtoBuf.Builder;
 
-loadProto方法的别名，加载proto格式字符串，进行内容解析，并返回协议消息体构建器。
+Loads and parses protobuf definitions from a string.
 
-参数
+Parameters:
 
-| 参数名   | 类型                                                         | 必填 | 说明                                                   |
+| Name  | Type                                                        | Mandatory| Description                                                  |
 | -------- | ------------------------------------------------------------ | ---- | ------------------------------------------------------ |
-| proto    | string                                                       | 是   | proto格式的字符串。                                    |
-| builder  | [Builder]() &#124;string &#124; {root: string, file: string} | 否   | 指定已有的协议消息体构建器，如果未指定将重新创建一个。 |
-| filename | string &#124; {root: string, file: string}                   | 否   | 如果知道对应的文件名称，必须为导入文件指定。           |
+| proto    | string                                                       | Yes  | String in proto format.                                   |
+| builder  | [Builder]() &#124;string &#124; {root: string, file: string} | No  | Existing **ProtoBuf.Builder** instance or a new **ProtoBuf.Builder** instance to create.|
+| filename | string &#124; {root: string, file: string}                   | No  | File name for the imported file.          |
 
-返回值：
+Return value:
 
-| 类型    | 说明               |
+| Type   | Description              |
 | ------- | ------------------ |
-| Builder | 协议消息体构建器。 |
+| Builder | **ProtoBuf.Builder** instance.|
 
 **loadProtoFile**
 
 static loadProtoFile(filename:string|{root: string, file: string}, callback?=(error?:Error,builder:Protobuf.Builder)=>void,builder?:Protobuf.Builder,resourceManager: @ohos.resourceManager.ResourceManager):ProtoBuf.Builder|undefined;
 
-加载proto文件，进行内容解析，并返回协议消息体构建器。
+Loads a .proto file, parses the content, and returns a **ProtoBuf.Builder** instance.
 
-| 参数名          | 类型                                       | 必填 | 说明                                                         |
+| Name         | Type                                      | Mandatory| Description                                                        |
 | --------------- | ------------------------------------------ | ---- | ------------------------------------------------------------ |
-| filename        | string &#124; {root: string, file: string} | 是   | 原始文件的路径或指定'file'的对象，并为所有导入的文件覆盖'根'路径。 |
-| callback        | function                                   | 否   | 成功时将接收' null '作为第一个参数，并将Builder作为第二个参数，否则将Error作为第一个参数。如果省略，文件将被同步读取。 |
-| builder         | Builder                                    | 否   | 指定已有的协议消息体构建器，如果未指定将重新创建一个。       |
-| resourceManager | @ohos.resourceManager.ResourceManager      | 是   | 访问应用资源的能力。                                         |
+| filename        | string &#124; {root: string, file: string} | Yes  | Path of the file to load or an object specifying the **root** and **file** properties.|
+| callback        | function                                   | No  | Callback to be invoked when the file is loaded. If the operation is successful, it receives **null** as the first parameter and **builder** as the second parameter. Otherwise, **error** is the first parameter. If this parameter is not specified, the file will be loaded synchronously.|
+| builder         | Builder                                    | No  | Existing **ProtoBuf.Builder** instance or a new **ProtoBuf.Builder** instance to create.      |
+| resourceManager | @ohos.resourceManager.ResourceManager      | Yes  | Capability of accessing application resources.                                        |
 
-表1 callback的参数说明
+Table 1 callback
 
-| 参数名  | 类型    | 说明                                                     |
+| Name | Type   | Description                                                    |
 | ------- | ------- | -------------------------------------------------------- |
-| error   | Error   | 如果解析成功，此参数返回'null',如果失败，返回对应Error。 |
-| builder | Builder | 协议消息体构建器。                                       |
+| error   | Error   | Error returned if the parsing fails. If the parsing is successful, **null** is returned.|
+| builder | Builder | **ProtoBuf.Builder** instance.                                      |
 
-返回值：
+Return value:
 
-| 类型                | 说明               |
+| Type               | Description              |
 | ------------------- | ------------------ |
-| Builder &#124; null | 协议消息体构建器。 |
+| Builder &#124; null | **ProtoBuf.Builder** instance.|
 
 **protoFromFile**
 
 static protoFromFile(filename:string|{root: string, file: string}, callback?=(error?:Error,builder:Protobuf.Builder)=>void,builder?:Protobuf.Builder,resourceManager: @ohos.resourceManager.ResourceManager):ProtoBuf.Builder|undefined;
 
-loadProtoFile方法别名，加载proto文件，进行内容解析，并返回协议消息体构建器。
+Loads a .proto file, parses the content, and returns a **ProtoBuf.Builder** instance.
 
-| 参数名          | 类型                                       | 必填 | 说明                                                         |
+| Name         | Type                                      | Mandatory| Description                                                        |
 | --------------- | ------------------------------------------ | ---- | ------------------------------------------------------------ |
-| filename        | string &#124; {root: string, file: string} | 是   | 原始文件的路径或指定'file'的对象，并为所有导入的文件覆盖'根'路径。 |
-| callback        | function                                   | 否   | 成功时将接收' null '作为第一个参数，并将Builder作为第二个参数，否则将Error作为第一个参数。如果省略，文件将被同步读取。 |
-| builder         | Builder                                    | 否   | 指定已有的协议消息体构建器，如果未指定将重新创建一个。       |
-| resourceManager | @ohos.resourceManager.ResourceManager      | 是   | 访问应用资源的能力。                                         |
+| filename        | string &#124; {root: string, file: string} | Yes  | Path of the file to load or an object specifying the **root** and **file** properties.|
+| callback        | function                                   | No  | Callback to be invoked when the file is loaded. If the operation is successful, it receives **null** as the first parameter and **builder** as the second parameter. Otherwise, **error** is the first parameter. If this parameter is not specified, the file will be loaded synchronously.|
+| builder         | Builder                                    | No  | Existing **ProtoBuf.Builder** instance or a new **ProtoBuf.Builder** instance to create.      |
+| resourceManager | @ohos.resourceManager.ResourceManager      | Yes  | Capability of accessing application resources.                                        |
 
-表1 callback的参数说明
+Table 1 callback
 
-| 参数名  | 类型    | 说明                                                     |
+| Name | Type   | Description                                                    |
 | ------- | ------- | -------------------------------------------------------- |
-| error   | Error   | 如果解析成功，此参数返回'null',如果失败，返回对应Error。 |
-| builder | Builder | 协议消息体构建器。                                       |
+| error   | Error   | Error returned if the parsing fails. If the parsing is successful, **null** is returned.|
+| builder | Builder | **ProtoBuf.Builder** instance.                                      |
 
-返回值：
+Return value:
 
-| 类型                     | 说明               |
+| Type                    | Description              |
 | ------------------------ | ------------------ |
-| Builder &#124; undefined | 协议消息体构建器。 |
+| Builder &#124; undefined | **ProtoBuf.Builder** instance.|
 
 **loadJson**
 
 static loadJson(json:string|any, builder?:Protobuf.Builder|string| {root: string, file: string}, filename?: string| {root: string, file: string} ): ProtoBuf.Builder;
 
-参数：
+Parameters:
 
-| 参数名   | 类型                                                         | 必填 | 说明                                                   |
+| Name  | Type                                                        | Mandatory| Description                                                  |
 | -------- | ------------------------------------------------------------ | ---- | ------------------------------------------------------ |
-| json     | string &#124; any                                            | 是   | proto格式的json字符串或者proto文件对应的json对象。     |
-| builder  | [Builder]() &#124;string &#124; {root: string, file: string} | 否   | 指定已有的协议消息体构建器，如果未指定将重新创建一个。 |
-| filename | string &#124; {root: string, file: string}                   | 否   | 如果知道对应的文件名称，必须为导入文件指定。           |
+| json     | string &#124; any                                            | Yes  | JSON string in proto format or JSON object corresponding to the .proto file.    |
+| builder  | [Builder]() &#124;string &#124; {root: string, file: string} | No  | Existing **ProtoBuf.Builder** instance or a new **ProtoBuf.Builder** instance to create.|
+| filename | string &#124; {root: string, file: string}                   | No  | File name for the imported file.          |
 
-返回值：
+Return value:
 
-| 类型    | 说明               |
+| Type   | Description              |
 | ------- | ------------------ |
-| Builder | 协议消息体构建器。 |
+| Builder | **ProtoBuf.Builder** instance.|
 
 **loadJsonFile**
 
 static loadJsonFile(filename:string|{root: string, file: string}, callback?=(error?:Error,builder:Protobuf.Builder)=>void,builder?:Protobuf.Builder,resourceManager: @ohos.resourceManager.ResourceManager):ProtoBuf.Builder|undefined;
 
-加载proto文件，进行内容解析，并返回协议消息体构建器。
+Loads a .proto file, parses the content, and returns a **ProtoBuf.Builder** instance.
 
-| 参数名          | 类型                                       | 必填 | 说明                                                         |
+| Name         | Type                                      | Mandatory| Description                                                        |
 | --------------- | ------------------------------------------ | ---- | ------------------------------------------------------------ |
-| filename        | string &#124; {root: string, file: string} | 是   | 原始文件的路径或指定'file'的对象，并为所有导入的文件覆盖'根'路径。 |
-| callback        | function                                   | 否   | 成功时将接收' null '作为第一个参数，并将Builder作为第二个参数，否则将Error作为第一个参数。如果省略，文件将被同步读取。 |
-| builder         | Builder                                    | 否   | 指定已有的协议消息体构建器，如果未指定将重新创建一个。       |
-| resourceManager | @ohos.resourceManager.ResourceManager      | 是   | 访问应用资源的能力。                                         |
+| filename        | string &#124; {root: string, file: string} | Yes  | Path of the file to load or an object specifying the **root** and **file** properties.|
+| callback        | function                                   | No  | Callback to be invoked when the file is loaded. If the operation is successful, it receives **null** as the first parameter and **builder** as the second parameter. Otherwise, **error** is the first parameter. If this parameter is not specified, the file will be loaded synchronously.|
+| builder         | Builder                                    | No  | Existing **ProtoBuf.Builder** instance or a new **ProtoBuf.Builder** instance to create.      |
+| resourceManager | @ohos.resourceManager.ResourceManager      | Yes  | Capability of accessing application resources.                                        |
 
-表1 callback的参数说明
+Table 1 callback
 
-| 参数名  | 类型    | 说明                                                     |
+| Name | Type   | Description                                                    |
 | ------- | ------- | -------------------------------------------------------- |
-| error   | Error   | 如果解析成功，此参数返回'null',如果失败，返回对应Error。 |
-| builder | Builder | 协议消息体构建器。                                       |
+| error   | Error   | Error returned if the parsing fails. If the parsing is successful, **null** is returned.|
+| builder | Builder | **ProtoBuf.Builder** instance.                                      |
 
-返回值：
+Return value:
 
-| 类型                     | 说明               |
+| Type                    | Description              |
 | ------------------------ | ------------------ |
-| Builder &#124; undefined | 协议消息体构建器。 |
+| Builder &#124; undefined | **ProtoBuf.Builder** instance.|
 
 **newBuilder**
 
 static newBuilder():Protobuf.Builder;
 
-返回值：
+Return value:
 
-| 类型    | 说明               |
+| Type   | Description              |
 | ------- | ------------------ |
-| Builder | 协议消息体构建器。 |
+| Builder | **ProtoBuf.Builder** instance.|
 
 **Util**
 
-以下接口在Util对象内，须通过Protobuf.Util方式调用。
+The following APIs are in the **Util** object and must be called using **Protobuf.Util**.
 
 **fetch**
 
 static fetch(path:string, callback?:(content?:string)=> void):string|undefined.
 
-获取文件内容，需要先设置资源文件读取对象ResourceManager。
+Fetches the content of a file. Before calling this API, you need to create a **ResourceManager** instance for reading the file content.
 
-参数：
+Parameters:
 
-| 参数名   | 类型                     | 必填 | 说明                                                         |
+| Name  | Type                    | Mandatory| Description                                                        |
 | -------- | ------------------------ | ---- | ------------------------------------------------------------ |
-| path     | string                   | 是   | 资源文件路径。                                               |
-| callback | (content?:string)=> void | 否   | 回调接收资源的内容。如果省略，资源将被同步获取。如果请求失败，内容将为空。 |
+| path     | string                   | Yes  | Resource file path.                                              |
+| callback | (content?:string)=> void | No  | Callback used to receive the content read. If it is not specified, the file content will be fetched synchronously. If the request fails, the content is empty.|
 
-返回值：
+Return value:
 
-| 类型                    | 说明           |
+| Type                   | Description          |
 | ----------------------- | -------------- |
-| string &#124; undefined | 资源文件内容。 |
+| string &#124; undefined | File content fetched.|
 
 **toCamelCase**
 
 static toCamelCase(str:string):string;
 
-用于将字符串转换为驼峰格式。
+Converts a string to the Camel Case format.
 
-参数：
+Parameters:
 
-| 参数名 | 类型   | 必填 | 说明                     |
+| Name| Type  | Mandatory| Description                    |
 | ------ | ------ | ---- | ------------------------ |
-| str    | string | 是   | 将字符串转换为驼峰格式。 |
+| str    | string | Yes  | String to convert.|
 
-返回值：
+Return value:
 
-| 类型   | 说明             |
+| Type  | Description            |
 | ------ | ---------------- |
-| string | 驼峰格式字符串。 |
+| string | String in Camel Case format.|
 
 **Builder**
 
-构建协议消息体的构建器，提供构建协议消息的功能。
+Protocol message body builder.
 
 **isMessage**
 
 static isMessage(def:Object):boolean;
 
-用于判断指定对象是否为消息体。
+Checks whether an object is a message.
 
-参数：
+Parameters:
 
-| 参数名 | 类型   | 必填 | 说明                       |
+| Name| Type  | Mandatory| Description                      |
 | ------ | ------ | ---- | -------------------------- |
-| def    | Object | 是   | 判断指定对象是否为消息体。 |
+| def    | Object | Yes  | Object to check.|
 
-返回值：
+Return value:
 
-| 类型    | 说明                   |
+| Type   | Description                  |
 | ------- | ---------------------- |
-| boolean | 指示对象是否为消息体。 |
+| boolean | A boolean value indicating whether the object is a message.|
 
 **isMessageField**
 
 static isMessageField(def:Object):boolean;
 
-用于判断指定对象是否为消息体的字段。
+Checks whether an object is a message field.
 
-参数：
+Parameters:
 
-| 参数名 | 类型   | 必填 | 说明                             |
+| Name| Type  | Mandatory| Description                            |
 | ------ | ------ | ---- | -------------------------------- |
-| def    | Object | 是   | 判断指定对象是否为消息体的字段。 |
+| def    | Object | Yes  | Object to check.|
 
-返回值：
+Return value:
 
-| 类型    | 说明                         |
+| Type   | Description                        |
 | ------- | ---------------------------- |
-| boolean | 指示对象是否为消息体的字段。 |
+| boolean | A boolean value indicating whether the object is a message field.|
 
 **isEnum**
 
 static isEnum(def:Object):boolean;
 
-用于判断指定对象是否为枚举对象。
+Checks whether an object is an enum.
 
-参数：
+Parameters:
 
-| 参数名 | 类型   | 必填 | 说明                         |
+| Name| Type  | Mandatory| Description                        |
 | ------ | ------ | ---- | ---------------------------- |
-| def    | Object | 是   | 判断指定对象是否为枚举对象。 |
+| def    | Object | Yes  | Object to check.|
 
-返回值：
+Return value:
 
-| 类型    | 说明                     |
+| Type   | Description                    |
 | ------- | ------------------------ |
-| boolean | 指示对象是否为枚举对象。 |
+| boolean | A boolean value indicating whether the object is an enum.|
 
 **build**
 
 build(path?: string | string[]) : Protobuf.Builder.Message | Object;
 
-用于构建协议，解析所有定义，返回构建的协议消息包。
+Builds a message type for parsing definitions.
 
-参数：
+Parameters:
 
-| 参数名 | 类型                   | 必填 | 说明               |
+| Name| Type                  | Mandatory| Description              |
 | ------ | ---------------------- | ---- | ------------------ |
-| path   | string &#124; string[] | 否   | 协议内包完整路径。 |
+| path   | string &#124; string[] | No  | Path to the message type to build.|
 
-返回值：
+Return value:
 
-| 类型                                   | 说明         |
+| Type                                  | Description        |
 | -------------------------------------- | ------------ |
-| Protobuf.Builder.Message &#124; Object | 协议消息包。 |
+| Protobuf.Builder.Message &#124; Object | **Protobuf.Builder.Message** instance.|
 
 **lookup**
 
 lookup(path?: string, excludeNonNamespace?: boolean) : ProtoBuf.Reflect.T;
 
-用于构建协议消息包。
+Finds a type defined in your ProtoBuf schema.
 
-参数：
+Parameters:
 
-| 参数名              | 类型    | 必填 | 说明                                       |
+| Name             | Type   | Mandatory| Description                                      |
 | ------------------- | ------- | ---- | ------------------------------------------ |
-| path                | string  | 否   | 协议内包完整路径。                         |
-| excludeNonNamespace | boolean | 否   | 排除非命名空间类型，如fields,默认为false。 |
+| path                | string  | No  | Path of the type to find.                        |
+| excludeNonNamespace | boolean | No  | Whether to exclude non-namespace types, such as fields, from the lookup. The default value is **false**.|
 
-返回值：
+Return value:
 
-| 类型               | 说明         |
+| Type              | Description        |
 | ------------------ | ------------ |
-| ProtoBuf.Reflect.T | 反射的描述。 |
+| ProtoBuf.Reflect.T | Type found.|
 
 **Message**
 
-提供协议消息体的编解码方法。
+Provides methods for encoding and decoding messages.
 
 **constructor**
 
 new Message(values:Object);
 
-构建消息体实例。
+A constructor used to create a **Message** instance.
 
-| 参数名 | 类型   | 必填 | 说明                           |
+| Name| Type  | Mandatory| Description                          |
 | ------ | ------ | ---- | ------------------------------ |
-| values | Object | 是   | 符合协议消息体结构的数据对象。 |
+| values | Object | Yes  | Object used to create a **Message** instance.|
 
 **encode**
 
 static encode(data: Object, buffer?: ByteBuffer | boolean, noVerify?: boolean):ByteBuffer;
 
-将协议消息体编码为ByteBuffer格式。
+Encodes a message in the ByteBuffer format.
 
-参数：
+Parameters:
 
-| 参数名   | 类型    | 必填 | 说明                                                         |
+| Name  | Type   | Mandatory| Description                                                        |
 | -------- | ------- | ---- | ------------------------------------------------------------ |
-| data     | string  | 是   | 消息体对应的数据。                                           |
-| buffer   | boolean | 否   | 指定编解码结果的ByteBuffer对象，如果未指定，将创建一个新的。 |
-| noVerify | boolean | 否   | 是否不验证字段值，默认为false。                              |
+| data     | string  | Yes  | Data to encode.                                          |
+| buffer   | boolean | No  | **ByteBuffer** object used to hold the encoded data. If it is not specified, a new **ByteBuffer** object will be created.|
+| noVerify | boolean | No  | Whether to verify the field value. The default value is **false**.                             |
 
-返回值：
+Return value:
 
-| 类型       | 说明                                   |
+| Type      | Description                                  |
 | ---------- | -------------------------------------- |
-| ByteBuffer | 协议消息体数据编码后的ByteBuffer数据。 |
+| ByteBuffer | **ByteBuffer** instance containing the encoded data.|
 
 **encode**
 
 encode(buffer?: ByteBuffer| boolean, noVerify?: boolean): ByteBuffer;
 
-将消息编码为ByteBuffer格式数据。
+Encodes this message into the ByteBuffer format.
 
-参数：
+Parameters:
 
-| 参数名   | 类型    | 必填 | 说明                                                         |
+| Name  | Type   | Mandatory| Description                                                        |
 | -------- | ------- | ---- | ------------------------------------------------------------ |
-| buffer   | string  | 是   | 指定编解码结果的ByteBuffer对象，如果未指定，将创建一个新的。 |
-| noVerify | boolean | 否   | 是否不验证字段值，默认为false。                              |
+| buffer   | string  | Yes  | **ByteBuffer** object used to hold the encoded data. If it is not specified, a new **ByteBuffer** object will be created.|
+| noVerify | boolean | No  | Whether to verify the field value. The default value is **false**.                             |
 
-返回值：
+Return value:
 
-| 类型       | 说明                                   |
+| Type      | Description                                  |
 | ---------- | -------------------------------------- |
-| ByteBuffer | 协议消息体数据编码后的ByteBuffer数据。 |
+| ByteBuffer | **ByteBuffer** instance containing the encoded data.|
 
 **encodeAB**
 
 encodeAB():ArrayBuffer;
 
-将消息编码为ArrayBuffer格式。
+Encodes this message into the ArrayBuffer format.
 
-返回值：
+Return value:
 
-| 类型        | 说明                                    |
+| Type       | Description                                   |
 | ----------- | --------------------------------------- |
-| ArrayBuffer | 协议消息体数据编码后的ArrayBuffer数据。 |
+| ArrayBuffer | **ArrayBuffer** instance containing the encoded data.|
 
 **toArrayBuffer**
 
 toArrayBuffer():ArrayBuffer;
 
-encodeAB方法的别名，用于将消息编码为ArrayBuffer格式。
+Converts this message into the ArrayBuffer format.
 
-返回值：
+Return value:
 
-| 类型        | 说明                                    |
+| Type       | Description                                   |
 | ----------- | --------------------------------------- |
-| ArrayBuffer | 协议消息体数据编码后的ArrayBuffer数据。 |
+| ArrayBuffer | **ArrayBuffer** instance containing the converted data.|
 
 **calculate**
 
 calculate(): Number;
 
-计算消息体长度。
+Calculates the message length.
 
-返回值：
+Return value:
 
-| 类型   | 说明               |
+| Type  | Description              |
 | ------ | ------------------ |
-| Number | 协议消息体的长度。 |
+| Number | Message length.|
 
 **encodeDelimited**
 
 encodeDelimited(buffer?: ByteBuffer| boolean, noVerify?: boolean): ByteBuffer;
 
-将消息编码为ByteBuffer格式数据。
+Encodes this message into the ByteBuffer format with a length prefix.
 
-参数：
+Parameters:
 
-| 参数名   | 类型    | 必填 | 说明                                                         |
+| Name  | Type   | Mandatory| Description                                                        |
 | -------- | ------- | ---- | ------------------------------------------------------------ |
-| buffer   | string  | 是   | 指定编解码结果的ByteBuffer对象，如果未指定，将创建一个新的。 |
-| noVerify | boolean | 否   | 是否不验证字段值，默认为false。                              |
+| buffer   | string  | Yes  | **ByteBuffer** object used to hold the encoded data. If it is not specified, a new **ByteBuffer** object will be created.|
+| noVerify | boolean | No  | Whether to verify the field value. The default value is **false**.                             |
 
-返回值：
+Return value:
 
-| 类型       | 说明                                   |
+| Type      | Description                                  |
 | ---------- | -------------------------------------- |
-| ByteBuffer | 协议消息体数据编码后的ByteBuffer数据。 |
+| ByteBuffer | **ByteBuffer** instance containing the encoded data.|
 
 **encode64**
 
 encode64(): string;
 
-将消息编码为base64编码的字符串。
+Encodes the message into a Base64-encoded string.
 
-返回值：
+Return value:
 
-| 类型   | 说明                             |
+| Type  | Description                            |
 | ------ | -------------------------------- |
-| string | 将消息编码为base64编码的字符串。 |
+| string | A Base64-encoded string.|
 
 **toBase64**
 
 toBase64(): string;
 
-encode64方法的别名，将消息编码为base64编码的字符串。
+Converts the message into a Base64-encoded string.
 
-返回值：
+Return value:
 
-| 类型   | 说明                             |
+| Type  | Description                            |
 | ------ | -------------------------------- |
-| string | 将消息编码为base64编码的字符串。 |
+| string | A Base64-encoded string.|
 
 **encodeHex**
 
 encodeHex(): string;
 
-将消息编码为十六进制编码的字符串。
+Encodes the message into a hexadecimal-encoded string.
 
-返回值：
+Return value:
 
-| 类型   | 说明                               |
+| Type  | Description                              |
 | ------ | ---------------------------------- |
-| string | 将消息编码为十六进制编码的字符串。 |
+| string | A hexadecimal-encoded string.|
 
 **toHex**
 
 toHex(): string;
 
-encodeHex方法的别名，将消息编码为十六进制编码的字符串。
+Converts the message into a hexadecimal-encoded string.
 
-返回值：
+Return value:
 
-| 类型   | 说明                               |
+| Type  | Description                              |
 | ------ | ---------------------------------- |
-| string | 将消息编码为十六机制编码的字符串。 |
+| string | A hexadecimal-encoded string.|
 
 **encodeJson**
 
 encodeJson(): string;
 
-将消息编码为Json字符串。
+Encodes the message into a JSON string.
 
-返回值：
+Return value:
 
-| 类型   | 说明                     |
+| Type  | Description                    |
 | ------ | ------------------------ |
-| string | 将消息编码为Json字符串。 |
+| string | A JSON string.|
 
 **toRaw**
 
 toRaw(binaryAsBase64?:boolean, longsAsStrings:boolean):Object;
 
-返回消息的原始负载。
+Returns the original object.
 
-参数：
+Parameters:
 
-| 参数名             | 类型    | 必填 | 说明                                                         |
+| Name            | Type   | Mandatory| Description                                                        |
 | ------------------ | ------- | ---- | ------------------------------------------------------------ |
-| databinaryAsBase64 | boolean | 否   | 指示是否包含二进制数据作为base64字符串而不是缓冲区，默认为false。 |
-| longsAsStrings     | boolean | 是   | 指示是否将long编码为字符串。                                 |
+| databinaryAsBase64 | boolean | No  | Whether to encode binary data as a Base64 string. The default value is **false**.|
+| longsAsStrings     | boolean | Yes  | Whether to encode a long value as a string.                                |
 
-返回值：
+Return value:
 
-| 类型   | 说明                 |
+| Type  | Description                |
 | ------ | -------------------- |
-| Object | 返回消息的原始负载。 |
+| Object | Original object.|
 
 **decode**
 
 static decode(data: ByteBuffer|ArrayBuffer|Buffer|string, length?: Number| string, enc?: string):Protobuf.Builder.Message;
 
-从指定的缓冲区或字符串解码消息。
+Decodes the message from a specified buffer or string.
 
-参数：
+Parameters:
 
-| 参数名 | 类型                                                      | 必填 | 说明                                                         |
+| Name| Type                                                     | Mandatory| Description                                                        |
 | ------ | --------------------------------------------------------- | ---- | ------------------------------------------------------------ |
-| data   | ByteBuffer &#124; ArrayBuffer &#124; Buffer &#124; string | 是   | 要解码的数据。                                               |
-| length | Number &#124; string                                      | 否   | 消息体长度，默认解码所有数据。                               |
-| enc    | string                                                    | 否   | 如果缓冲区是字符串，将进行编码，支持hex，base64，utf8(不推荐)，默认为base64 |
+| data   | ByteBuffer &#124; ArrayBuffer &#124; Buffer &#124; string | Yes  | Data to decode.                                              |
+| length | Number &#124; string                                      | No  | Length of the message to decode. By default, the entire message is decoded.                              |
+| enc    | string                                                    | No  | A string or buffer. **hex**, **base64** (default), and **utf8** (not recommended) are supported.|
 
-返回值：
+Return value:
 
-| 类型                     | 说明                             |
+| Type                    | Description                            |
 | ------------------------ | -------------------------------- |
-| Protobuf.Builder.Message | 从指定的缓冲区或字符串解码消息。 |
+| Protobuf.Builder.Message | Message decoded.|
 
 **decode64**
 
 static decode64(str:string):Protobuf.Builder.Message;
 
-从指定的base64编码字符串解码消息。
+Decodes the message from a specified Base64-encoded string.
 
-参数：
+Parameters:
 
-| 参数名 | 类型   | 必填 | 说明                           |
+| Name| Type  | Mandatory| Description                          |
 | ------ | ------ | ---- | ------------------------------ |
-| str    | string | 是   | 要解码的base64编码字符串数据。 |
+| str    | string | Yes  | A string to decode.|
 
-返回值：
+Return value:
 
-| 类型                     | 说明                               |
+| Type                    | Description                              |
 | ------------------------ | ---------------------------------- |
-| Protobuf.Builder.Message | 从指定的base64编码字符串解码消息。 |
+| Protobuf.Builder.Message | Message decoded.|
 
 **decodeHex**
 
 static decodeHex(str:string):Protobuf.Builder.Message;
 
-从指定的十六进制编码字符串解码消息。
+Decodes the message from a specified hexadecimal-encoded string.
 
-参数：
+Parameters:
 
-| 参数名 | 类型   | 必填 | 说明                             |
+| Name| Type  | Mandatory| Description                            |
 | ------ | ------ | ---- | -------------------------------- |
-| str    | string | 是   | 要解码的十六进制编码字符串数据。 |
+| str    | string | Yes  | A hexadecimal-encoded string to decode.|
 
-返回值：
+Return value:
 
-| 类型                     | 说明                                 |
+| Type                    | Description                                |
 | ------------------------ | ------------------------------------ |
-| Protobuf.Builder.Message | 从指定的十六进制编码字符串解码消息。 |
+| Protobuf.Builder.Message | Message decoded.|
 
 **decodeJson**
 
 static decodeJson(str:string):Protobuf.Builder.Message;
 
-从JSON字符串解码消息。
+Decodes the message from a JSON string.
 
-参数：
+Parameters:
 
-| 参数名 | 类型   | 必填 | 说明                   |
+| Name| Type  | Mandatory| Description                  |
 | ------ | ------ | ---- | ---------------------- |
-| str    | string | 是   | 从JSON字符串解码消息。 |
+| str    | string | Yes  | A string to decode.|
 
-返回值：
+Return value:
 
-| 类型                     | 说明                   |
+| Type                    | Description                  |
 | ------------------------ | ---------------------- |
-| Protobuf.Builder.Message | 从JSON字符串解码消息。 |
+| Protobuf.Builder.Message | Message decoded.|
 
 **decodeDelimited**
 
 static decodeDelimited(buffer: ByteBuffer | ArrayBuffer | Buffer | string, enc?: string):Protobuf.Builder.Message;
 
-从指定的缓冲区或字符串解码以长度分隔的varint32消息。
+Decodes the length-delimited varint32 message from the specified buffer or string.
 
-参数：
+Parameters:
 
-| 参数名 | 类型                                                      | 必填 | 说明                                                         |
+| Name| Type                                                     | Mandatory| Description                                                        |
 | ------ | --------------------------------------------------------- | ---- | ------------------------------------------------------------ |
-| buffer | ByteBuffer &#124; ArrayBuffer &#124; Buffer &#124; string | 是   | 指定的缓冲区或字符串。                                       |
-| enc    | string                                                    | 否   | 如果缓冲区是字符串，将进行编码，支持hex，base64，utf8(不推荐)，默认为base64。 |
+| buffer | ByteBuffer &#124; ArrayBuffer &#124; Buffer &#124; string | Yes  | The specified buffer or string.                                      |
+| enc    | string                                                    | No  | A string or buffer. **hex**, **base64** (default), and **utf8** (not recommended) are supported.|
 
-返回值：
+Return value:
 
-| 类型                     | 说明                                                 |
+| Type                    | Description                                                |
 | ------------------------ | ---------------------------------------------------- |
-| Protobuf.Builder.Message | 从指定的缓冲区或字符串解码以长度分隔的varint32消息。 |
+| Protobuf.Builder.Message | Length-delimited varint32 message decoded.|
 
-## 约束与限制
-在下述版本验证通过：
+## Constraints
+This project has been verified in the following versions:
 
-- DevEco Studio: 4.0 (4.0.3.512), SDK: API10 (4.0.10.9)
-- DevEco Studio: 4.0 Release(4.0.3.413), SDK: API10 (4.0.10.3)
+- DevEco Studio: 4.0 (4.0.3.512), SDK: API 10 (4.0.10.9)
+- DevEco Studio: 4.0 Release (4.0.3.413), SDK: API 10 (4.0.10.3)
 
-## 目录结构
+## Directory Structure
 
 ```
 |---- protobuf
-|     |---- AppScrope  # 示例代码文件夹
-|     |---- entry  # 示例代码文件夹
-|     |---- protobufjs  # protobufjs库文件夹
-|           |---- src/main  # 模块代码
-|                |---- ets/   # 模块代码
-|                     |---- dist     # 打包文件
-|            |---- index.ets          # 入口文件
-|            |---- .ohpmignore        # ohpm发布的忽略文件
-|            |---- *.json5      # 配置文件
-|     |---- README.md  # 安装使用方法
-|     |---- README.OpenSource  # 开源说明
-|     |---- CHANGELOG.md  # 更新日志
+|     |---- AppScrope  # Sample code
+|     |---- entry  # Sample code
+|     |---- protobufjs  # protobufjs library
+|           |---- src/main  # Module code
+|                |---- ets/   # Module code
+|                     |---- dist     # Package file
+|            |---- index.ets          # Entry file
+|            |---- .ohpmignore        # Ignore files released by ohpm
+|            |---- *.json5      # Configuration file
+|     |---- README.md  # Readme
+|     |---- README_zh.md  # Readme
+|     |---- README.OpenSource  # Open source description
+|     |---- CHANGELOG.md  # Changelog
 ```
 
-## 贡献代码
+## How to Contribute
 
-使用过程中发现任何问题都可以提 [Issue](https://gitee.com/openharmony-tpc/protobuf/issues) 给我们，当然，我们也非常欢迎你给我们发 [PR](https://gitee.com/openharmony-tpc/protobuf/pulls) 。
+If you find any problem when using the project, submit an [issue](https://gitee.com/openharmony-tpc/protobuf/issues) or a [PR](https://gitee.com/openharmony-tpc/protobuf/pulls).
 
-## 开源协议
+## License
 
-本项目基于 [BSD License](https://gitee.com/openharmony-tpc/protobuf/blob/master/LICENSE) ，请自由地享受和参与开源。
+This project is licensed under [BSD License](https://gitee.com/openharmony-tpc/protobuf/blob/master/LICENSE).
