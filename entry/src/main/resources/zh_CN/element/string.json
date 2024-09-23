@@ -14,43 +14,43 @@
     },
     {
       "name": "serialized_data",
-      "value": "serialized data"
+      "value": "序列化数据"
     },
     {
       "name": "Deserialize_data",
-      "value": "Deserialize data"
+      "value": "反序列化数据"
     },
     {
       "name": "Encoding_and_decoding",
-      "value": "Encoding and decoding proto strings"
+      "value": "编解码proto字符串"
     },
     {
       "name": "Encoding_decoding_protoJson",
-      "value": "Encoding and decoding protoJson"
+      "value": "编解码protoJson"
     },
     {
       "name": "Encoding_decoding_protoJsonFile",
-      "value": "Encoding and decoding protoJsonFile"
+      "value": "编解码protoJsonFile"
     },
     {
       "name": "synchronous",
-      "value": "synchronous"
+      "value": "同步"
     },
     {
       "name": "asynchronous",
-      "value": "asynchronous"
+      "value": "异步"
     },
     {
       "name": "Single_proto_file",
-      "value": "Single proto file"
+      "value": "单个proto文件"
     },
     {
       "name": "import_proto_files",
-      "value": "import other proto files"
+      "value": "import导入其他proto文件"
     },
     {
       "name": "Internal_nesting",
-      "value": "Internal nesting"
+      "value": "内部嵌套"
     }
   ]
 }

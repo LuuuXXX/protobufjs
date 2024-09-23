@@ -25,18 +25,20 @@ struct Index {
   private TAG: string = 'protobuf'
   private protoStr: string = 'syntax = "proto3"; package com.user;message UserLoginResponse{string sessionId = 1;string userPrivilege = 2;bool isTokenType = 3;string formatTimestamp = 4;}';
   private util: Util = new Util()
-
+  getResourceString(res: Resource) {
+    return getContext().resourceManager.getStringSync(res.id)
+  }
   build() {
     Row() {
       Column({ space: 10 }) {
-        Text("序列化数据：" + this.bufferData)
+        Text(this.getResourceString($r('app.string.serialized_data'))+"：" + this.bufferData)
           .fontSize(13)
           .margin({ top: 10, left: 10 })
-        Text("反序列化数据：" + this.decodeData)
+        Text(this.getResourceString($r('app.string.Deserialize_data'))+"：" + this.decodeData)
           .fontSize(13)
           .margin({ top: 5, left: 10 })
 
-        Button("编解码proto字符串")
+        Button($r('app.string.Encoding_and_decoding'))
           .width('80%')
           .type(ButtonType.Capsule)
           .backgroundColor('#0D9FFB')
@@ -51,7 +53,7 @@ struct Index {
             }
           });
 
-        Button("编解码protoJson")
+        Button($r('app.string.Encoding_decoding_protoJson'))
           .width('80%')
           .type(ButtonType.Capsule)
           .backgroundColor('#0D9FFB')
@@ -66,7 +68,7 @@ struct Index {
             }
           });
 
-        Button("编解码protoJsonFile")
+        Button($r('app.string.Encoding_decoding_protoJsonFile'))
           .width('80%')
           .type(ButtonType.Capsule)
           .backgroundColor('#0D9FFB')
@@ -82,7 +84,7 @@ struct Index {
             }
           });
 
-        Button("同步：单个proto文件")
+        Button(this.getResourceString($r('app.string.synchronous'))+"："+this.getResourceString($r('app.string.Single_proto_file')))
           .width('80%')
           .type(ButtonType.Capsule)
           .backgroundColor('#0D9FFB')
@@ -98,7 +100,7 @@ struct Index {
             }
           });
 
-        Button('同步：import导入其他proto文件')
+        Button(this.getResourceString($r('app.string.synchronous'))+'：'+this.getResourceString($r('app.string.import_proto_files')))
           .width('80%')
           .backgroundColor('#0D9FFB')
           .onClick(async () => {
@@ -113,7 +115,7 @@ struct Index {
             }
           });
 
-        Button('同步：内部嵌套')
+        Button(this.getResourceString($r('app.string.synchronous'))+'：'+this.getResourceString($r('app.string.Internal_nesting')))
           .backgroundColor('#0D9FFB')
           .width('80%')
           .onClick(async () => {
@@ -128,7 +130,7 @@ struct Index {
             }
           })
 
-        Button("异步：单个proto文件")
+        Button(this.getResourceString($r('app.string.asynchronous'))+"："+this.getResourceString($r('app.string.Single_proto_file')))
           .width('80%')
           .type(ButtonType.Capsule)
           .backgroundColor('#0D9FFB')
@@ -147,7 +149,7 @@ struct Index {
           });
 
 
-        Button('异步：import导入其他proto文件')
+        Button(this.getResourceString($r('app.string.asynchronous'))+'：'+this.getResourceString($r('app.string.import_proto_files')))
           .width('80%')
           .backgroundColor('#0D9FFB')
           .onClick(() => {
@@ -164,7 +166,7 @@ struct Index {
             }
           });
 
-        Button('异步：内部嵌套')
+        Button(this.getResourceString($r('app.string.asynchronous'))+'：'+this.getResourceString($r('app.string.Internal_nesting')))
           .width('80%')
           .backgroundColor('#0D9FFB')
           .onClick(() => {
