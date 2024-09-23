@@ -1,24 +1,24 @@
-﻿# protobuf
+# protobuf
 
-## 介绍
+## Introduction
 
-ProtoBuf(protocol buffers) 是一种语言无关、平台无关、可扩展的序列化结构数据的方法，它可用于（数据）通信协议、数据存储等。,是一种灵活，高效，自动化机制的结构数据序列化方法比XML更小,更快,更为简单。
+Protocol buffers (ProtoBuf) is a language-neutral, platform-neutral extensible mechanism for serializing structured data. It is used in (data) communication protocols and for data storage. As a flexible, efficient, and automatic structured data serialization method, ProtoBuf is smaller, faster, and simpler than XML.
 
-本项目主要是OpenHarmony系统下以[protobuf.js 7.2.4](https://github.com/protobufjs/protobuf.js)为主要依赖开发，主要接口针对OpenHarmony系统进行合理的适配研发。
+In this project, [protobuf.js 7.2.4](https://github.com/protobufjs/protobuf.js) has been adapted for use with OpenHarmony.
 
-## 下载安装
+## How to Install
 
-1.安装
+1. Install protobufjs.
 
 ```
 ohpm install @ohos/protobufjs
 ```
-OpenHarmony ohpm环境配置等更多内容，请参考 [如何安装OpenHarmony ohpm包](https://gitee.com/openharmony-tpc/docs/blob/master/OpenHarmony_har_usage.md) 。
+For details about the OpenHarmony ohpm environment configuration, see [OpenHarmony HAR](https://gitee.com/openharmony-tpc/docs/blob/master/OpenHarmony_har_usage.en.md).
 
 
-2.proto文件
+2. Define a message body struct in a .proto file.
 
-按照.proto文件格式定义消息体结构，如：userproto.proto文件。
+For example, define a message body struct in the **userproto.proto** file.
 
 ```
 syntax = "proto3";
@@ -33,89 +33,89 @@ message UserLoginResponse{
 }
 ```
 
-3.生成js和.d.ts文件
+3. Generate .js and .d.ts files.
 
 ```
-全局安装protobufjs
+Install protobufjs globally.
 npm install -g protobufjs@7.2.4
-全局安装protobufjs-cli
+Install protobufjs-cli globally.
 npm install -g protobufjs-cli
 
-在.proto文件目录下执行下列命令
+Run the following commands in the .proto file directory:
 pbjs -t static-module -w es6 -o user.js user.proto
 pbts user.js  -o user.d.ts
 ```
 
-4.修改生成的文件
+4. Modify the generated files.
 
 ```
-1.将生成的js文件中的 import * as $protobuf from "protobufjs/minimal";
-修改为   import { index } from "@ohos/protobufjs"; const $protobuf = index;
+1. In the .js file, change import * as $protobuf from "protobufjs/minimal"; to
+**import * as $protobuf from "@ohos/protobufjs";**.
 
-2.将生成的.d.ts文件中的 import * as $protobuf from "protobufjs";
-修改为  import * as $protobuf from "@ohos/protobufjs";
+2. In the generated .d.ts file, change import * as $protobuf from "protobufjs"; to
+**import * as $protobuf from "@ohos/protobufjs";**.
 
-3.在生成的js文件中 import * as $protobuf from "@ohos/protobufjs";这行代码下方添加如下代码
+3. In the generated .js file, add the following code below import * as $protobuf from "@ohos/protobufjs";:
 import Long from 'long';
 $protobuf.util.Long=Long
 $protobuf.configure()
 ```
 
-5.在entry目录下安装long
+5. Install long in the **entry** directory.
 
 ```
 ohpm install long
 ```
 
-6.将生成js和.d.ts文件复制到工程中
+6. Copy the generated .js and .d.ts files to the project.
 
-## protobufjs-cli使用说明
+## Using protobufjs-cli
 ```
-在文件格式之间转换并生成静态代码
-  -t, --target 指定目标格式，可以接受需要自定义目标的路径。
+Translate between file formats and generate static code.
+  -t, --target Specifies the target format, which can be any of the following:
                    json          JSON
-                   json-module   JSON表示为模块
+                   json-module   JSON representation as a module
                    proto2        Protocol Buffers, Version 2
                    proto3        Protocol Buffers, Version 3
-                   static        无反射的静态代码（本身不起作用）
-                   static-module 无反射模块的静态代码
-  -p, --path 将某个目录添加到包含路径中
-  -o, --out 保存文件而非写入到标准输出
-  --sparse 只导出从主文件引用的类型（实验）
-  仅限模块目标：
-  -w, --wrap       指定要使用的包装器，可接受需要自定义包装器的路径。
-                   default   默认包装器支持CommonJS与AMD标准
-                   commonjs  CommonJS包装器
-                   amd       AMD包装器
-                   es6       ES6包装器
-                   closure   添加到全局protobuf的protobuf.roots上的闭包
-  --dependency     指定protobuf版本，可接受有效的模块ID。
-  -r, --root       指定备用的protobuf.roots名称
-  -l, --lint       Linter配置，默认protbuf.js兼容规则:
+                   static        Static code without reflection (non-functional on its own)
+                   static-module Static code without reflection as a module
+  -p, --path Adds a directory to the include path.
+  -o, --out Saves a file instead of writing to stdout.
+  --sparse Exports only those types referenced from a main file (experimental).
+  Module targets only:
+  -w, --wrap       Specifies the wrapper to use, which can be any of the following:
+                   default   Default wrapper supporting both CommonJS and AMD
+                   commonjs  CommonJS wrapper
+                   amd       AMD wrapper
+                   es6       ES6 wrapper
+                   closure   A closure added to protobuf.roots where protobuf is global
+  --dependency     Specifies the protobuf version. A valid module ID is accepted.
+  -r, --root       Specifies an alternative protobuf.roots name.
+  -l, --lint       Linter configuration. Defaults to protobuf.js-compatible rules:
                    eslint-disable block-scoped-var, id-length, 
                    no-control-regex, no-magic-numbers, no-prototype-builtins, 
                    no-redeclare, no-shadow, no-var, sort-vars
-  --es6            启用ES6语法
-  仅限原始源:
-  --keep-case      保留字段大小写而非是转换为驼峰大小写
-  仅限静态目标:
-  --no-create      不生成用于反射兼容性的创建函数.
-  --no-encode      不生成编码函数.
-  --no-decode      不生成解码函数.
-  --no-verify      不生成验证函数.
-  --no-convert     不生成转换函数
-  --no-delimited   不生成风格的编码/解码函数.
-  --no-beautify    不美化生成的代码.
-  --no-comments    不输出任何JSDoc注释.
-  --force-long     强制对s-/u-/int64和s-/fixed64字段使用Long
-  --force-number   强制对s-/u-/int64和s-/fixed64字段使用number
-  --force-message  强制使用消息而非普通对象
+  --es6            Enables ES6 syntax.
+  Proto sources only:
+  --keep-case      Keeps field casing instead of converting to camel case.
+  Static targets only:
+  --no-create      Does not generate create functions used for reflection compatibility.
+  --no-encode      Does not generate encode functions.
+  --no-decode      Does not generate decode functions.
+  --no-verify      Does not generate verify functions.
+  --no-convert     Does not generate convert functions.
+  --no-delimited   Does not generate delimited encode/decode functions.
+  --no-beautify    Does not beautify generated code.
+  --no-comments    Does not output any JSDoc annotations.
+  --force-long     Enforces the use of 'Long' for s-/u-/int64 and s-/fixed64 fields.
+  --force-number   Enforces the use of 'number' for s-/u-/int64 and s-/fixed64 fields.
+  --force-message  Enforces the use of message instances instead of plain objects.
 ```
-详细使用方式请参考：https://github.com/protobufjs/protobuf.js/blob/master/cli/README.md
+For details, see https://github.com/protobufjs/protobuf.js/blob/master/cli/README.md.
 
-## 使用说明
+## How to Use
 
-1.proto编码
+1. Proto code
 
 ```
 import { user } from './user.js'
@@ -130,148 +130,147 @@ import { user } from './user.js'
  let arrayBuffer: Uint8Array = user.UserLoginResponse.encode(msg).finish()
 ```
 
-2.proto编码
+2. Proto code
 ```
 let decodeMsg = user.UserLoginResponse.decode(arrayBuffer);
 ```
 
-## 接口说明
+## Available APIs
 
 **create**
 
 create(properties?: { [k: string]: any }): Message<{}>
 
-生成Message对象
+Creates a message object.
 
-参数：
+Parameters:
 
-| 参数名   | 类型     | 必填 | 说明                                                   |
-| -------- |--------| ---- | ------------------------------------------------------ |
-| properties  | Object | 否   | 要设置的属性。 |
+| Name    | Type  | Mandatory| Description          |
+| ---------- | ------ | ---- | -------------- |
+| properties | Object | No  | Properties to set.|
 
-返回值：
+Return value:
 
-| 类型    | 说明         |
-| ------- |------------|
-| Message | Message实例。 |
+| Type   | Description         |
+| ------- | ------------- |
+| Message | **Message** instance created.|
 
 **encode**
 
 encode(message: (Message<{}>|{ [k: string]: any }), writer?: Writer): Writer
 
-编码消息
+Encodes a message.
 
-参数
+Parameters:
 
-| 参数名   | 类型                           | 必填 | 说明                          |
-| -------- |------------------------------| ---- |-----------------------------|
-| message    | Message<{}>  &#124;   Object | 是   | Message示例或者普通对象。            |
-| writer  | Writer           | 否   | 编码的写入器。 |
+| Name | Type                        | Mandatory| Description                     |
+| ------- | ---------------------------- | ---- | ------------------------- |
+| message | Message<{}>  &#124;   Object | Yes  | Message instance or object to encode.|
+| writer  | Writer                       | No  | Writer used to encode the message.           |
 
-返回值：
+Return value:
 
-| 类型    | 说明               |
-| ------- | ------------------ |
-| Writer | 协议消息体构建器。 |
+| Type  | Description              |
+| ------ | ------------------ |
+| Writer | Protocol message body builder.|
 
 **decode**
 
 decode(reader: (Reader|Uint8Array), length?: number): Message<{}>
 
-解码消息
+Decodes a message.
 
-| 参数名          | 类型                                       | 必填 | 说明         |
-| --------------- | ------------------------------------------ | ---- |------------|
-| reader        | Reader &#124; Uint8Array | 是   | 解码的读取器或缓冲区。 |
-| length        | number                                   | 否   | 长度。        |
+| Name| Type                    | Mandatory| Description                  |
+| ------ | ------------------------ | ---- | ---------------------- |
+| reader | Reader &#124; Uint8Array | Yes  | Reader or buffer for decoding.|
+| length | number                   | No  | Length.                |
 
-返回值：
+Return value:
 
-| 类型                | 说明               |
-| ------------------- | ------------------ |
-| Message<{}> | 解码的消息。 |
+| Type       | Description        |
+| ----------- | ------------ |
+| Message<{}> | Decoded message.|
 
 **verify**
 
 static verify(message: { [k: string]: any }): (string|null)
 
-验证消息有效性
+Verifies the message validity.
 
-| 参数名          | 类型   | 必填 | 说明                                                         |
-| --------------- |------| ---- | ------------------------------------------------------------ |
-| message | 普通对象 | 是   | 普通对象。                                         |
+| Name | Type    | Mandatory| Description      |
+| ------- | -------- | ---- | ---------- |
+| message | Object.| Yes  | Message to verify.|
 
-返回值：
+Return value:
 
-| 类型                 | 说明                 |
-|--------------------|--------------------|
-| string &#124; null | 合法返回null,否则返回具体原因。 |
+| Type              | Description                           |
+| ------------------ | ------------------------------- |
+| string &#124; null | Returns **null** if the value is valid; returns a specific cause otherwise.|
 
 **fromObject**
 
 static fromObject(object: { [k: string]: any }): Message<{}>
 
-从纯对象创建此类型的新消息。还将值转换为各自的内部类型
+Creates a message instance of this type from an object, and converts values to their respective internal types.
 
-参数：
+Parameters:
 
-| 参数名   | 类型                                                          | 必填 | 说明   |
-| -------- |-------------------------------------------------------------| ---- |------|
-| object     | Object                                           | 是   | 普通对象 |
+| Name| Type  | Mandatory| Description    |
+| ------ | ------ | ---- | -------- |
+| object | Object | Yes  | Object.|
 
-返回值：
+Return value:
 
-| 类型    | 说明               |
-| ------- | ------------------ |
-| object | 普通对象。 |
+| Type  | Description      |
+| ------ | ---------- |
+| object | Object created.|
 
 **toObject**
 
 static toObject(message: Message<{}>, options?: IConversionOptions): { [k: string]: any }
 
-将一个由键及其各自的值组成的数组转换为对象，省略未定义的值
+Converts an array of key-value pairs to an object, omitting undefined values.
 
-| 参数名             | 类型                                     | 必填 | 说明                                                                    |
-|-----------------|----------------------------------------| ---- |-----------------------------------------------------------------------|
-| message         | Message  | 是   | Message 休想。                                                           |
-| options         | IConversionOptions       | 否   | 转换选项。 |
+| Name | Type              | Mandatory| Description          |
+| ------- | ------------------ | ---- | -------------- |
+| message | Message            | Yes  | Message to convert.|
+| options | IConversionOptions | No  | Conversion options.    |
 
-返回值：
+Return value:
 
-| 类型    | 说明               |
-| ------- | ------------------ |
-| object | 普通对象。 |
+| Type  | Description      |
+| ------ | ---------- |
+| object | Object obtained.|
 
 
-## 约束与限制
-在下述版本验证通过：
+## Constraints
+This project has been verified in the following version:
 
--  DevEco Studio: NEXT Beta1-5.0.3.806, SDK: API12 Release(5.0.0.66)
+-  DevEco Studio: 4.1 Canary (4.1.3.317), OpenHarmony SDK: API 11 (4.1.0.36)
 
--  DevEco Studio 版本：4.1 Canary(4.1.3.317)，OpenHarmony SDK:API11 (4.1.0.36)
-
-## 目录结构
+## Directory Structure
 
 ```
 |---- protobuf
-|     |---- AppScrope  # 示例代码文件夹
-|     |---- entry  # 示例代码文件夹
-|     |---- library  # 核心库
-|           |---- src/main  # 模块代码
-|                |---- ets/   # 模块代码
-|                     |---- dist     # 打包文件
-|            |---- index.ets          # 入口文件
-|            |---- .ohpmignore        # ohpm发布的忽略文件
-|            |---- *.json5      # 配置文件
-|     |---- README.md  # 安装使用方法
-|     |---- README.OpenSource  # 开源说明
-|     |---- CHANGELOG.md  # 更新日志
+|     |---- AppScrope  # Sample code
+|     |---- entry  # Sample code
+|     |---- library  # Core library
+|           |---- src/main  # Module code
+|                |---- ets/   # Module code
+|                     |---- dist     # Package file
+|            |---- index.ets          # Entry file
+|            |---- .ohpmignore        # Ignore files released by ohpm
+|            |---- *.json5      # Configuration file
+|     |---- README.md  # Readme
+|     |---- README_zh.md  # Readme
+|     |---- README.OpenSource  # Open source description
+|     |---- CHANGELOG.md  # Changelog
 ```
 
-## 贡献代码
+## How to Contribute
 
-使用过程中发现任何问题都可以提 [Issue](https://gitee.com/openharmony-tpc/protobuf/issues) 给我们，当然，我们也非常欢迎你给我们发 [PR](https://gitee.com/openharmony-tpc/protobuf/pulls) 。
+If you find any problem when using the project, submit an [issue](https://gitee.com/openharmony-tpc/protobuf/issues) or a [PR](https://gitee.com/openharmony-tpc/protobuf/pulls).
 
-## 开源协议
+## License
 
-本项目基于 [BSD License](https://gitee.com/openharmony-tpc/protobuf/blob/master/LICENSE) ，请自由地享受和参与开源。
+This project is licensed under [BSD License](https://gitee.com/openharmony-tpc/protobuf/blob/master/LICENSE).
