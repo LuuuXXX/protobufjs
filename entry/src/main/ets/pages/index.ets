@@ -26,12 +26,14 @@ struct Index {
     str: string = '';
     scroller: Scroller = new Scroller();
 
-
+    getResourceString(res: Resource) {
+        return getContext().resourceManager.getStringSync(res.id)
+    }
     build() {
         Stack({ alignContent: Alignment.TopStart }) {
             Scroll(this.scroller) {
                 Column() {
-                    Text("proto序列化反序列化")
+                    Text($r('app.string.proto_serialization_deserialization'))
                         .width('90%')
                         .height(60)
                         .backgroundColor(0xFFFFFF)
@@ -46,18 +48,18 @@ struct Index {
                                 userPrivilege: "John123",
                                 isTokenType: false,
                                 formatTimestamp: Long.fromString("9223372036854775807"),
-                                data:new Uint8Array(buffer.from("测试").buffer)
+                                data:new Uint8Array(buffer.from(this.getResourceString($r('app.string.test'))).buffer)
                             });
 
                             let arrayBuffer: Uint8Array = user.UserLoginResponse.encode(msg).finish()
                             console.log("protobuf arrayBuffer:" + arrayBuffer);
-                            this.result = this.result + "序列化数据：" + JSON.stringify(arrayBuffer) + "\r\n";
+                            this.result = this.result + this.getResourceString($r('app.string.serialized_data'))+"：" + JSON.stringify(arrayBuffer) + "\r\n";
 
                             let decodeMsg = user.UserLoginResponse.decode(arrayBuffer);
                             let timestamp=decodeMsg.formatTimestamp as Long
                             const decoder = util.TextDecoder.create('utf-8');
                             const utfStr = decoder.decodeWithStream(decodeMsg.data);
-                            this.result = this.result + "反序列化数据： \r\n"
+                            this.result = this.result + this.getResourceString($r('app.string.Deserialize_data'))+"： \r\n"
                                 +"sessionId: " + decodeMsg.sessionId+"\r\n"
                                 +"userPrivilege: " + decodeMsg.userPrivilege+"\r\n"
                                 +"isTokenType: " + decodeMsg.isTokenType+"\r\n"
@@ -66,7 +68,7 @@ struct Index {
                         });
 
 
-                    Text("proto序列化反序列化 ( 编码为分隔符分隔的字节序列/从分隔符分隔的字节序列中解码消息 )")
+                    Text(this.getResourceString($r('app.string.proto_serialization_deserialization'))+`( ${this.getResourceString($r('app.string.Encode_to_decode'))} )`)
                         .width('90%')
                         .height(60)
                         .backgroundColor(0xFFFFFF)
@@ -86,14 +88,14 @@ struct Index {
 
                             let arrayBuffer: Uint8Array = user.UserLoginResponse.encodeDelimited(msg).finish()
                             console.log("protobuf arrayBuffer:" + arrayBuffer);
-                            this.result = this.result + "序列化数据：" + JSON.stringify(arrayBuffer) + "\r\n";
+                            this.result = this.result + this.getResourceString($r('app.string.serialized_data'))+"：" + JSON.stringify(arrayBuffer) + "\r\n";
 
                             let decodeMsg = user.UserLoginResponse.decodeDelimited(arrayBuffer);
                             console.log("protobuf decode:" + JSON.stringify(decodeMsg));
-                            this.result = this.result + "反序列化数据：" + JSON.stringify(decodeMsg);
+                            this.result = this.result + this.getResourceString($r('app.string.Deserialize_data'))+"：" + JSON.stringify(decodeMsg);
                         });
 
-                    Text("使用message创建一个普通对象")
+                    Text($r('app.string.Create_normal_message'))
                         .width('90%')
                         .height(60)
                         .backgroundColor(0xFFFFFF)
@@ -113,7 +115,7 @@ struct Index {
                             this.result = JSON.stringify(obj)
                         });
 
-                    Text("验证protobuf有效性(null代表有效,否则返回无效原因)")
+                    Text(this.getResourceString($r('app.string.Verify_protobuf_validity'))+`(${this.getResourceString($r('app.string.null_means_valid'))})`)
                         .width('90%')
                         .height(60)
                         .backgroundColor(0xFFFFFF)
@@ -132,7 +134,7 @@ struct Index {
                             this.result = JSON.stringify(msg)
                         });
 
-                    Text("纯对象创建消息")
+                    Text($r('app.string.Pure_object'))
                         .width('90%')
                         .height(60)
                         .backgroundColor(0xFFFFFF)
@@ -151,7 +153,7 @@ struct Index {
                             this.result = JSON.stringify(msg)
                         });
 
-                    Text("结果 :\r\n  " + this.result)
+                    Text(this.getResourceString($r('app.string.result'))+" :\r\n  " + this.result)
                         .fontSize(15)
                         .margin({ top: 55, left: 10,right:10 })
 
@@ -159,7 +161,7 @@ struct Index {
             }
             .scrollable(ScrollDirection.Vertical).scrollBar(BarState.On)
             .scrollBarColor(Color.Gray).scrollBarWidth(30);
-            Button('重置显示', { type: ButtonType.Capsule, stateEffect: true })
+            Button($r('app.string.reset_display'), { type: ButtonType.Capsule, stateEffect: true })
                 .backgroundColor(0x317aff)
                 .margin({ top: 410, left: 5 })
                 .width(110)
