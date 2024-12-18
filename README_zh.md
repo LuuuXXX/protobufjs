@@ -50,12 +50,14 @@ pbts user.js  -o user.d.ts
 
 ```
 1.将生成的js文件中的 import * as $protobuf from "protobufjs/minimal";
-修改为   import { index } from "@ohos/protobufjs"; const $protobuf = index;
+修改为   
+import { index } from "@ohos/protobufjs"; 
+const $protobuf = index;
 
 2.将生成的.d.ts文件中的 import * as $protobuf from "protobufjs";
 修改为  import * as $protobuf from "@ohos/protobufjs";
 
-3.在生成的js文件中 import * as $protobuf from "@ohos/protobufjs";这行代码下方添加如下代码
+3.在生成的js文件中 const $protobuf = index;这行代码下方添加如下代码
 import Long from 'long';
 $protobuf.util.Long=Long
 $protobuf.configure()

@@ -50,12 +50,13 @@ pbts user.js  -o user.d.ts
 
 ```
 1. In the .js file, change import * as $protobuf from "protobufjs/minimal"; to
-**import * as $protobuf from "@ohos/protobufjs";**.
+**import { index } from "@ohos/protobufjs"; 
+const $protobuf = index;**.
 
 2. In the generated .d.ts file, change import * as $protobuf from "protobufjs"; to
 **import * as $protobuf from "@ohos/protobufjs";**.
 
-3. In the generated .js file, add the following code below import * as $protobuf from "@ohos/protobufjs";:
+3. In the generated .js file, add the following code below const $protobuf = index;:
 import Long from 'long';
 $protobuf.util.Long=Long
 $protobuf.configure()
