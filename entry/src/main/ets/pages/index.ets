@@ -58,7 +58,7 @@ struct Index {
                             let decodeMsg = user.UserLoginResponse.decode(arrayBuffer);
                             let timestamp=decodeMsg.formatTimestamp as Long
                             const decoder = util.TextDecoder.create('utf-8');
-                            const utfStr = decoder.decodeWithStream(decodeMsg.data);
+                            const utfStr = decoder.decodeToString(decodeMsg.data);
                             this.result = this.result + this.getResourceString($r('app.string.Deserialize_data'))+"： \r\n"
                                 +"sessionId: " + decodeMsg.sessionId+"\r\n"
                                 +"userPrivilege: " + decodeMsg.userPrivilege+"\r\n"
