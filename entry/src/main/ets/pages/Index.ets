@@ -19,6 +19,7 @@ import { GlobalContext } from '../entryability/GlobalContext';
 
 @Entry
 @Component
+
 struct Index {
   @State bufferData: string = "";
   @State decodeData: string = "";
