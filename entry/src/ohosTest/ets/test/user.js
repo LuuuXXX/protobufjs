@@ -15,9 +15,7 @@
   */
 import { index } from "@ohos/protobufjs";
 const $protobuf = index;
-import Long from 'long';
 $protobuf.util.Long=undefined
-// $protobuf.util.BigInt=undefined
 $protobuf.configure()
 // Common aliases
 const $Reader = $protobuf.Reader, $Writer = $protobuf.Writer, $util = $protobuf.util;

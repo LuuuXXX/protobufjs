@@ -15,7 +15,8 @@
   */
 
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
-import * as $protobuf from "@ohos/protobufjs";
+import { index } from "@ohos/protobufjs";
+const $protobuf = index;
 
 // Common aliases
 const $Reader = $protobuf.Reader, $Writer = $protobuf.Writer, $util = $protobuf.util;
