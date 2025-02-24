@@ -15,6 +15,7 @@
   */
 import { describe, it, expect } from '@ohos/hypium'
 import { RnRouteNotFound } from './tracker_apm_rn'
+import { user } from './user.js'
 const BASE_COUNT: number = 2000;
 const HTTP_COUNT = 2
 export default function abilityTest() {
@@ -45,6 +46,18 @@ export default function abilityTest() {
             expect(JSON.stringify(msg)).assertEqual(JSON.stringify(rnRoute))
         })
 
+        it('TestBigInt', 0, () => {
+            let msg = user.UserLoginResponse.create({
+                formatTimestamp: BigInt("9223372036854775807"),
+            });
+
+            let arrayBuffer: Uint8Array = user.UserLoginResponse.encode(msg).finish()
+
+            let decodeMsg = user.UserLoginResponse.decode(arrayBuffer);
+            let timestamp=decodeMsg.formatTimestamp
+            expect(timestamp).assertEqual(BigInt('9223372036854775807'))
+        })
+
         it('encode', 0, () => {
             class RnRoute {
                 prevPageUrl: string = ""
@@ -69,8 +82,8 @@ export default function abilityTest() {
             endTime(startTimes,'encode');
             let arrayBuffer: Uint8Array = RnRouteNotFound.encode(msg).finish()
             console.info("protobuf encode consuming time"+(new Date().getMilliseconds()-startTime))
-            let expectValue = "10,18,104,116,116,112,58,47,47,101,120,97,109,112,108,101,46,99,111,109,18,16,119,115,58,47,47,101,120,97,109,112,108,101,46,99,111,109,26,16,104,116,116,112,115,58,47,47,116,101,115,116,46,99,111,109,34,18,104,116,116,112,115,58,47,47,116,97,114,103,101,116,46,99,111,109"
-            expect(arrayBuffer.toString()).assertEqual(expectValue)
+            let expectValue = "[10,18,104,116,116,112,58,47,47,101,120,97,109,112,108,101,46,99,111,109,18,16,119,115,58,47,47,101,120,97,109,112,108,101,46,99,111,109,26,16,104,116,116,112,115,58,47,47,116,101,115,116,46,99,111,109,34,18,104,116,116,112,115,58,47,47,116,97,114,103,101,116,46,99,111,109]"
+            expect(JSON.stringify(Array.from(arrayBuffer))).assertDeepEquals(expectValue)
         })
 
         it('encodeDelimited', 0, () => {
@@ -97,8 +110,8 @@ export default function abilityTest() {
             endTime(startTimes,'encodeDelimited');
             let arrayBuffer: Uint8Array = RnRouteNotFound.encodeDelimited(msg).finish()
             console.info("protobuf encodeDelimited consuming time"+(new Date().getMilliseconds()-startTime))
-            let expectValue = "76,10,18,104,116,116,112,58,47,47,101,120,97,109,112,108,101,46,99,111,109,18,16,119,115,58,47,47,101,120,97,109,112,108,101,46,99,111,109,26,16,104,116,116,112,115,58,47,47,116,101,115,116,46,99,111,109,34,18,104,116,116,112,115,58,47,47,116,97,114,103,101,116,46,99,111,109"
-            expect(arrayBuffer.toString()).assertEqual(expectValue)
+            let expectValue = "[76,10,18,104,116,116,112,58,47,47,101,120,97,109,112,108,101,46,99,111,109,18,16,119,115,58,47,47,101,120,97,109,112,108,101,46,99,111,109,26,16,104,116,116,112,115,58,47,47,116,101,115,116,46,99,111,109,34,18,104,116,116,112,115,58,47,47,116,97,114,103,101,116,46,99,111,109]"
+            expect(JSON.stringify(Array.from(arrayBuffer))).assertDeepEquals(expectValue)
         })
 
         it('decode', 0, () => {
@@ -155,11 +168,13 @@ export default function abilityTest() {
             class RnRoute {
                 prevPageUrl: string = ""
                 targetRouteName: string = ""
+                id:BigInt=121n
             }
 
             let rnRoute: RnRoute = {
                 prevPageUrl: "http://www.baidu.com",
-                targetRouteName: "https://welcom.com"
+                targetRouteName: "https://welcom.com",
+                id:BigInt('215315343545351531534')
             }
             let startTime=new Date().getMilliseconds()
             let startTimes=new Date().getTime();
