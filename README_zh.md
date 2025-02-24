@@ -43,7 +43,7 @@ npm install -g protobufjs-cli
 
 在.proto文件目录下执行下列命令
 pbjs -t static-module -w es6 -o user.js user.proto
-pbts user.js  -o user.d.ts
+pbts user.js  -o user.d.ts  
 ```
 
 4.修改生成的文件
@@ -51,11 +51,10 @@ pbts user.js  -o user.d.ts
 ```
 1.将生成的js文件中的 import * as $protobuf from "protobufjs/minimal";
 修改为   
-import { index } from "@ohos/protobufjs"; 
-const $protobuf = index;
+修改为   import $protobuf from "@ohos/protobufjs";
 
 2.将生成的.d.ts文件中的 import * as $protobuf from "protobufjs";
-修改为  import * as $protobuf from "@ohos/protobufjs";
+修改为   import $protobuf from "@ohos/protobufjs";
 
 3.在生成的js文件中 const $protobuf = index;这行代码下方添加如下代码
 import Long from 'long';
@@ -69,7 +68,23 @@ $protobuf.configure()
 ohpm install long
 ```
 
-6.将生成js和.d.ts文件复制到工程中
+6.BigInt使用
+
+```
+在生成的js文件中 将$protobuf.util.Long 设置为undefined
+import Long from 'long';
+$protobuf.util.Long = undefined
+$protobuf.configure()
+
+let msg = user.UserLoginResponse.create({
+   sessionId: "215135415351435",
+   userPrivilege: "John123",
+   isTokenType: false,
+   formatTimestamp: BigInt("9223372036854775807")
+);
+```
+
+7.将生成js和.d.ts文件复制到工程中
 
 ## protobufjs-cli使用说明
 ```
@@ -233,10 +248,10 @@ static toObject(message: Message<{}>, options?: IConversionOptions): { [k: strin
 
 将一个由键及其各自的值组成的数组转换为对象，省略未定义的值
 
-| 参数名             | 类型                                     | 必填 | 说明                                                                    |
-|-----------------|----------------------------------------| ---- |-----------------------------------------------------------------------|
-| message         | Message  | 是   | Message 休想。                                                           |
-| options         | IConversionOptions       | 否   | 转换选项。 |
+| 参数名             | 类型                                     | 必填 | 说明            |
+|-----------------|----------------------------------------| ---- |---------------|
+| message         | Message  | 是   | Message 消息对象。 |
+| options         | IConversionOptions       | 否   | 转换选项。         |
 
 返回值：
 
