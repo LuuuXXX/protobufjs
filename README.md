@@ -68,7 +68,24 @@ $protobuf.configure()
 ohpm install long
 ```
 
-6. Copy the generated .js and .d.ts files to the project.
+6. use BigInt
+
+```
+In the generated JS file, add $protobuf.util Set Long to undefined
+
+import Long from 'long';
+$protobuf.util.Long = undefined
+$protobuf.configure()
+
+let msg = user.UserLoginResponse.create({
+   sessionId: "215135415351435",
+   userPrivilege: "John123",
+   isTokenType: false,
+   formatTimestamp: BigInt("9223372036854775807"),
+);
+```
+
+7. Copy the generated .js and .d.ts files to the project.
 
 ## Using protobufjs-cli
 ```

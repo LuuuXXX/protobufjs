@@ -17,6 +17,10 @@
       "value": "proto序列化反序列化"
     },
     {
+      "name": "proto_serialization_deserialization_bigInt",
+      "value": "proto序列化反序列化(包含BigInt)"
+    },
+    {
       "name": "serialized_data",
       "value": "序列化数据"
     },

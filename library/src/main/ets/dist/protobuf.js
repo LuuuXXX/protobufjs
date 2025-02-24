@@ -102,14 +102,27 @@ function requireLongbits () {
 	    return new LongBits(lo, hi);
 	};
 
+	LongBits.fromBigInt = function fromBigInt(value) {
+		if (value === 0n)
+			return zero;
+		const uint64 = BigInt.asUintN(64, value);
+		const lo = Number(uint64 & 0xFFFFFFFFn);
+		const hi = Number(uint64 >> 32n & 0xFFFFFFFFn);
+		return new LongBits(lo >>> 0, hi >>> 0);
+	};
+
 	/**
 	 * Constructs new long bits from a number, long or string.
 	 * @param {Long|number|string} value Value
 	 * @returns {util.LongBits} Instance
 	 */
 	LongBits.from = function from(value) {
-	    if (typeof value === "number")
-	        return LongBits.fromNumber(value);
+	    if (typeof value === "number"){
+			return LongBits.fromNumber(value);
+		}
+		if (typeof value === "bigint") {
+			return LongBits.fromBigInt(value);
+		}
 	    if (util.isString(value)) {
 	        /* istanbul ignore else */
 	        if (util.Long)
@@ -134,6 +147,11 @@ function requireLongbits () {
 	        return -(lo + hi * 4294967296);
 	    }
 	    return this.lo + this.hi * 4294967296;
+	};
+
+	LongBits.prototype.toBigInt = function toBigInt(unsigned) {
+		const uint64 = (BigInt(this.hi) << 32n) | BigInt(this.lo);
+		return unsigned ? uint64 : BigInt.asIntN(64, uint64);
 	};
 
 	/**
@@ -417,6 +435,8 @@ function requireMinimal () {
 		         || /* istanbul ignore next */ util.global.Long
 		         || Long;
 
+		util.BigInt = util.global.dcodeIO &&  util.global.dcodeIO.BigInt || util.global.BigInt ||BigInt;
+
 		/**
 		 * Regular expression used to verify 2 bit (`bool`) map keys.
 		 * @type {RegExp}
@@ -671,7 +691,7 @@ function requireMinimal () {
 		        function Buffer_allocUnsafe(size) {
 		            return new Buffer(size);
 		        };
-		}; 
+		};
 	} (minimal));
 	return minimal;
 }
@@ -1610,8 +1630,7 @@ Reader$1._configure = function(BufferReader_) {
     BufferReader$1 = BufferReader_;
     Reader$1.create = create();
     BufferReader$1._configure();
-
-    var fn = util$5.Long ? "toLong" : /* istanbul ignore next */ "toNumber";
+	let fn = util$5.Long ? "toLong" : (util$5.BigInt ? 'toBigInt' : 'toNumber');
     util$5.merge(Reader$1.prototype, {
 
         int64: function read_int64() {
@@ -1867,7 +1886,7 @@ Service$1.prototype.end = function end(endedByRPC) {
 	 * @returns {undefined}
 	 */
 
-	rpc.Service = service$1; 
+	rpc.Service = service$1;
 } (rpc));
 
 var roots = {};
@@ -1907,7 +1926,7 @@ var roots = {};
 	}
 
 	// Set up buffer utility according to the environment
-	configure(); 
+	configure();
 } (indexMinimal));
 
 var util$2 = {exports: {}};
@@ -2114,7 +2133,7 @@ function requireTypes () {
 		    /* fixed64  */ 1,
 		    /* sfixed64 */ 1,
 		    /* bool     */ 0
-		]); 
+		]);
 	} (types$1));
 	return types$1;
 }
@@ -4399,7 +4418,7 @@ function requireConverter () {
 		    return gen
 		    ("return d");
 		    /* eslint-enable no-unexpected-multiline, block-scoped-var, no-redeclare */
-		}; 
+		};
 	} (converter));
 	return converter;
 }
@@ -4507,7 +4526,7 @@ var wrappers = {};
 
 	        return this.toObject(message, options);
 	    }
-	}; 
+	};
 } (wrappers));
 
 var type;
