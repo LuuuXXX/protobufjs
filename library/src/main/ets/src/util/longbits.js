@@ -72,14 +72,28 @@ LongBits.fromNumber = function fromNumber(value) {
     return new LongBits(lo, hi);
 };
 
+LongBits.fromBigInt = function fromBigInt(value) {
+    if (value === 0n) {
+        return zero;
+    }
+    const uint64 = BigInt.asUintN(64, value);
+    const lo = Number(uint64 & 0xFFFFFFFFn);
+    const hi = Number((uint64 >> 32n) & 0xFFFFFFFFn);
+    return new LongBits(lo >>> 0, hi >>> 0);
+};
+
 /**
  * Constructs new long bits from a number, long or string.
  * @param {Long|number|string} value Value
  * @returns {util.LongBits} Instance
  */
 LongBits.from = function from(value) {
-    if (typeof value === "number")
+    if (typeof value === "number") {
         return LongBits.fromNumber(value);
+    }
+    if (typeof value === "bigint") {
+        return LongBits.fromBigInt(value);
+    }
     if (util.isString(value)) {
         /* istanbul ignore else */
         if (util.Long)
@@ -104,6 +118,11 @@ LongBits.prototype.toNumber = function toNumber(unsigned) {
         return -(lo + hi * 4294967296);
     }
     return this.lo + this.hi * 4294967296;
+};
+
+LongBits.prototype.toBigInt = function toBigInt(unsigned) {
+    const uint64 = (BigInt(this.hi) << 32n) | BigInt(this.lo);
+    return unsigned ? uint64 : BigInt.asIntN(64, uint64);
 };
 
 /**
