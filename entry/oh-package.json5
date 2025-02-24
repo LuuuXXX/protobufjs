@@ -10,7 +10,7 @@
     "buildTool": "hvigor"
   },
   "main": "",
-  "version": "2.1.0-rc.0",
+  "version": "2.1.1",
   "dependencies": {
     "@ohos/protobufjs": "file:../library",
     "long": "^5.2.1"
