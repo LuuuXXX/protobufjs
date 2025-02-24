@@ -67,6 +67,35 @@ struct Index {
                                 + "data: " + utfStr
                         });
 
+                    Text($r('app.string.proto_serialization_deserialization_bigInt'))
+                        .width('90%')
+                        .height(60)
+                        .backgroundColor(0xFFFFFF)
+                        .borderRadius(15)
+                        .fontSize(16)
+                        .textAlign(TextAlign.Center)
+                        .margin({ top: 20 })
+                        .onClick(event => {
+                            this.result = ""
+                            let msg = user.UserLoginResponse.create({
+                                sessionId: "215135415351435",
+                                userPrivilege: "John123",
+                                isTokenType: false,
+                                formatTimestamp: BigInt("9223372036854775807"),
+                            });
+
+                            let arrayBuffer: Uint8Array = user.UserLoginResponse.encode(msg).finish()
+                            this.result = this.result + this.getResourceString($r('app.string.serialized_data'))+"：" + JSON.stringify(arrayBuffer) + "\r\n";
+
+                            let decodeMsg = user.UserLoginResponse.decode(arrayBuffer);
+                            let timestamp=decodeMsg.formatTimestamp
+                            this.result = this.result + this.getResourceString($r('app.string.Deserialize_data'))+"： \r\n"
+                                +"sessionId: " + decodeMsg.sessionId+"\r\n"
+                                +"userPrivilege: " + decodeMsg.userPrivilege+"\r\n"
+                                +"isTokenType: " + decodeMsg.isTokenType+"\r\n"
+                                +"formatTimesStamp: " + timestamp.toString()+"\r\n"
+                        });
+
 
                     Text(this.getResourceString($r('app.string.proto_serialization_deserialization'))+`( ${this.getResourceString($r('app.string.Encode_to_decode'))} )`)
                         .width('90%')
@@ -82,7 +111,7 @@ struct Index {
                                 sessionId: "testSynchronouslyLoadProtoFile",
                                 userPrivilege: "John123",
                                 isTokenType: false,
-                                formatTimestamp: 123456789123456789
+                                formatTimestamp: Long.fromString("9007199254740991")
                             });
 
 
@@ -91,8 +120,13 @@ struct Index {
                             this.result = this.result + this.getResourceString($r('app.string.serialized_data'))+"：" + JSON.stringify(arrayBuffer) + "\r\n";
 
                             let decodeMsg = user.UserLoginResponse.decodeDelimited(arrayBuffer);
-                            console.log("protobuf decode:" + JSON.stringify(decodeMsg));
-                            this.result = this.result + this.getResourceString($r('app.string.Deserialize_data'))+"：" + JSON.stringify(decodeMsg);
+                            let timestamp=decodeMsg.formatTimestamp
+                            console.info("protobuf--> timestamp: "+timestamp)
+                            this.result = this.result + this.getResourceString($r('app.string.Deserialize_data'))+"： \r\n"
+                                +"sessionId: " + decodeMsg.sessionId+"\r\n"
+                                +"userPrivilege: " + decodeMsg.userPrivilege+"\r\n"
+                                +"isTokenType: " + decodeMsg.isTokenType+"\r\n"
+                                +"formatTimesStamp: " + timestamp.toString()+"\r\n"
                         });
 
                     Text($r('app.string.Create_normal_message'))

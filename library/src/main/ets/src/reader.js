@@ -379,12 +379,18 @@ Reader.prototype.skipType = function(wireType) {
     return this;
 };
 
-Reader._configure = function(BufferReader_) {
+Reader._configure = function (BufferReader_) {
     BufferReader = BufferReader_;
     Reader.create = create();
     BufferReader._configure();
-
-    var fn = util.Long ? "toLong" : /* istanbul ignore next */ "toNumber";
+    let fn = ''
+    if (util$5.Long) {
+        fn = "toLong";
+    } else if (util$5.BigInt) {
+        fn = "toBigInt";
+    } else {
+        fn = "toNumber";
+    }
     util.merge(Reader.prototype, {
 
         int64: function read_int64() {
