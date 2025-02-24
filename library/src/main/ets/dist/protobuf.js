@@ -102,22 +102,36 @@ function requireLongbits () {
 	    return new LongBits(lo, hi);
 	};
 
+	LongBits.fromBigInt = function fromBigInt(value) {
+		if (value === 0n)
+			return zero;
+		const uint64 = BigInt.asUintN(64, value);
+		const lo = Number(uint64 & 0xFFFFFFFFn);
+		const hi = Number((uint64 >> 32n) & 0xFFFFFFFFn);
+		return new LongBits(lo >>> 0, hi >>> 0);
+	};
+
 	/**
 	 * Constructs new long bits from a number, long or string.
 	 * @param {Long|number|string} value Value
 	 * @returns {util.LongBits} Instance
 	 */
 	LongBits.from = function from(value) {
-	    if (typeof value === "number")
-	        return LongBits.fromNumber(value);
-	    if (util.isString(value)) {
-	        /* istanbul ignore else */
-	        if (util.Long)
-	            value = util.Long.fromString(value);
-	        else
-	            return LongBits.fromNumber(parseInt(value, 10));
-	    }
-	    return value.low || value.high ? new LongBits(value.low >>> 0, value.high >>> 0) : zero;
+		if (typeof value === "number") {
+			return LongBits.fromNumber(value);
+		}
+		if (typeof value === "bigint") {
+			return LongBits.fromBigInt(value);
+		}
+		if (util.isString(value)) {
+			/* istanbul ignore else */
+			if (util.Long) {
+				value = util.Long.fromString(value);
+			} else {
+				return LongBits.fromNumber(parseInt(value, 10));
+			}
+		}
+		return value.low || value.high ? new LongBits(value.low >>> 0, value.high >>> 0) : zero;
 	};
 
 	/**
@@ -134,6 +148,11 @@ function requireLongbits () {
 	        return -(lo + hi * 4294967296);
 	    }
 	    return this.lo + this.hi * 4294967296;
+	};
+
+	LongBits.prototype.toBigInt = function toBigInt(unsigned) {
+		const uint64 = (BigInt(this.hi) << 32n) | BigInt(this.lo);
+		return unsigned ? uint64 : BigInt.asIntN(64, uint64);
 	};
 
 	/**
@@ -417,6 +436,8 @@ function requireMinimal () {
 		         || /* istanbul ignore next */ util.global.Long
 		         || Long;
 
+		util.BigInt = util.global.dcodeIO && util.global.dcodeIO.BigInt || util.global.BigInt || BigInt;
+
 		/**
 		 * Regular expression used to verify 2 bit (`bool`) map keys.
 		 * @type {RegExp}
@@ -671,12 +692,12 @@ function requireMinimal () {
 		        function Buffer_allocUnsafe(size) {
 		            return new Buffer(size);
 		        };
-		}; 
+		};
 	} (minimal));
 	return minimal;
 }
 
-var writer = Writer$1;
+var writer = Writer;
 
 var util$7      = requireMinimal();
 
@@ -765,8 +786,7 @@ function State(writer) {
  * @classdesc Wire format writer using `Uint8Array` if available, otherwise `Array`.
  * @constructor
  */
-function Writer$1() {
-
+function Writer() {
     /**
      * Current length.
      * @type {number}
@@ -801,13 +821,13 @@ function Writer$1() {
 var create$1 = function create() {
     return util$7.Buffer
         ? function create_buffer_setup() {
-            return (Writer$1.create = function create_buffer() {
+            return (Writer.create = function create_buffer() {
                 return new BufferWriter$1();
             })();
         }
         /* istanbul ignore next */
         : function create_array() {
-            return new Writer$1();
+            return new Writer();
         };
 };
 
@@ -816,21 +836,21 @@ var create$1 = function create() {
  * @function
  * @returns {BufferWriter|Writer} A {@link BufferWriter} when Buffers are supported, otherwise a {@link Writer}
  */
-Writer$1.create = create$1();
+Writer.create = create$1();
 
 /**
  * Allocates a buffer of the specified size.
  * @param {number} size Buffer size
  * @returns {Uint8Array} Buffer
  */
-Writer$1.alloc = function alloc(size) {
+Writer.alloc = function alloc(size) {
     return new util$7.Array(size);
 };
 
 // Use Uint8Array buffer pool in the browser, just like node does with buffers
 /* istanbul ignore else */
 if (util$7.Array !== Array)
-    Writer$1.alloc = util$7.pool(Writer$1.alloc, util$7.Array.prototype.subarray);
+    Writer.alloc = util$7.pool(Writer.alloc, util$7.Array.prototype.subarray);
 
 /**
  * Pushes a new operation to the queue.
@@ -840,7 +860,7 @@ if (util$7.Array !== Array)
  * @returns {Writer} `this`
  * @private
  */
-Writer$1.prototype._push = function push(fn, len, val) {
+Writer.prototype._push = function push(fn, len, val) {
     this.tail = this.tail.next = new Op(fn, len, val);
     this.len += len;
     return this;
@@ -881,7 +901,7 @@ VarintOp.prototype.fn = writeVarint32;
  * @param {number} value Value to write
  * @returns {Writer} `this`
  */
-Writer$1.prototype.uint32 = function write_uint32(value) {
+Writer.prototype.uint32 = function write_uint32(value) {
     // here, the call to this.push has been inlined and a varint specific Op subclass is used.
     // uint32 is by far the most frequently used operation and benefits significantly from this.
     this.len += (this.tail = this.tail.next = new VarintOp(
@@ -901,7 +921,7 @@ Writer$1.prototype.uint32 = function write_uint32(value) {
  * @param {number} value Value to write
  * @returns {Writer} `this`
  */
-Writer$1.prototype.int32 = function write_int32(value) {
+Writer.prototype.int32 = function write_int32(value) {
     return value < 0
         ? this._push(writeVarint64, 10, LongBits$1.fromNumber(value)) // 10 bytes per spec
         : this.uint32(value);
@@ -912,7 +932,7 @@ Writer$1.prototype.int32 = function write_int32(value) {
  * @param {number} value Value to write
  * @returns {Writer} `this`
  */
-Writer$1.prototype.sint32 = function write_sint32(value) {
+Writer.prototype.sint32 = function write_sint32(value) {
     return this.uint32((value << 1 ^ value >> 31) >>> 0);
 };
 
@@ -935,7 +955,7 @@ function writeVarint64(val, buf, pos) {
  * @returns {Writer} `this`
  * @throws {TypeError} If `value` is a string and no long library is present.
  */
-Writer$1.prototype.uint64 = function write_uint64(value) {
+Writer.prototype.uint64 = function write_uint64(value) {
     var bits = LongBits$1.from(value);
     return this._push(writeVarint64, bits.length(), bits);
 };
@@ -947,7 +967,7 @@ Writer$1.prototype.uint64 = function write_uint64(value) {
  * @returns {Writer} `this`
  * @throws {TypeError} If `value` is a string and no long library is present.
  */
-Writer$1.prototype.int64 = Writer$1.prototype.uint64;
+Writer.prototype.int64 = Writer.prototype.uint64;
 
 /**
  * Writes a signed 64 bit value as a varint, zig-zag encoded.
@@ -955,7 +975,7 @@ Writer$1.prototype.int64 = Writer$1.prototype.uint64;
  * @returns {Writer} `this`
  * @throws {TypeError} If `value` is a string and no long library is present.
  */
-Writer$1.prototype.sint64 = function write_sint64(value) {
+Writer.prototype.sint64 = function write_sint64(value) {
     var bits = LongBits$1.from(value).zzEncode();
     return this._push(writeVarint64, bits.length(), bits);
 };
@@ -965,7 +985,7 @@ Writer$1.prototype.sint64 = function write_sint64(value) {
  * @param {boolean} value Value to write
  * @returns {Writer} `this`
  */
-Writer$1.prototype.bool = function write_bool(value) {
+Writer.prototype.bool = function write_bool(value) {
     return this._push(writeByte, 1, value ? 1 : 0);
 };
 
@@ -981,7 +1001,7 @@ function writeFixed32(val, buf, pos) {
  * @param {number} value Value to write
  * @returns {Writer} `this`
  */
-Writer$1.prototype.fixed32 = function write_fixed32(value) {
+Writer.prototype.fixed32 = function write_fixed32(value) {
     return this._push(writeFixed32, 4, value >>> 0);
 };
 
@@ -991,7 +1011,7 @@ Writer$1.prototype.fixed32 = function write_fixed32(value) {
  * @param {number} value Value to write
  * @returns {Writer} `this`
  */
-Writer$1.prototype.sfixed32 = Writer$1.prototype.fixed32;
+Writer.prototype.sfixed32 = Writer.prototype.fixed32;
 
 /**
  * Writes an unsigned 64 bit value as fixed 64 bits.
@@ -999,7 +1019,7 @@ Writer$1.prototype.sfixed32 = Writer$1.prototype.fixed32;
  * @returns {Writer} `this`
  * @throws {TypeError} If `value` is a string and no long library is present.
  */
-Writer$1.prototype.fixed64 = function write_fixed64(value) {
+Writer.prototype.fixed64 = function write_fixed64(value) {
     var bits = LongBits$1.from(value);
     return this._push(writeFixed32, 4, bits.lo)._push(writeFixed32, 4, bits.hi);
 };
@@ -1011,7 +1031,7 @@ Writer$1.prototype.fixed64 = function write_fixed64(value) {
  * @returns {Writer} `this`
  * @throws {TypeError} If `value` is a string and no long library is present.
  */
-Writer$1.prototype.sfixed64 = Writer$1.prototype.fixed64;
+Writer.prototype.sfixed64 = Writer.prototype.fixed64;
 
 /**
  * Writes a float (32 bit).
@@ -1019,7 +1039,7 @@ Writer$1.prototype.sfixed64 = Writer$1.prototype.fixed64;
  * @param {number} value Value to write
  * @returns {Writer} `this`
  */
-Writer$1.prototype.float = function write_float(value) {
+Writer.prototype.float = function write_float(value) {
     return this._push(util$7.float.writeFloatLE, 4, value);
 };
 
@@ -1029,7 +1049,7 @@ Writer$1.prototype.float = function write_float(value) {
  * @param {number} value Value to write
  * @returns {Writer} `this`
  */
-Writer$1.prototype.double = function write_double(value) {
+Writer.prototype.double = function write_double(value) {
     return this._push(util$7.float.writeDoubleLE, 8, value);
 };
 
@@ -1048,12 +1068,12 @@ var writeBytes = util$7.Array.prototype.set
  * @param {Uint8Array|string} value Buffer or base64 encoded string to write
  * @returns {Writer} `this`
  */
-Writer$1.prototype.bytes = function write_bytes(value) {
+Writer.prototype.bytes = function write_bytes(value) {
     var len = value.length >>> 0;
     if (!len)
         return this._push(writeByte, 1, 0);
     if (util$7.isString(value)) {
-        var buf = Writer$1.alloc(len = base64.length(value));
+        var buf = Writer.alloc(len = base64.length(value));
         base64.decode(value, buf, 0);
         value = buf;
     }
@@ -1065,7 +1085,7 @@ Writer$1.prototype.bytes = function write_bytes(value) {
  * @param {string} value Value to write
  * @returns {Writer} `this`
  */
-Writer$1.prototype.string = function write_string(value) {
+Writer.prototype.string = function write_string(value) {
     var len = utf8$1.length(value);
     return len
         ? this.uint32(len)._push(utf8$1.write, len, value)
@@ -1077,7 +1097,7 @@ Writer$1.prototype.string = function write_string(value) {
  * Calling {@link Writer#reset|reset} or {@link Writer#ldelim|ldelim} resets the writer to the previous state.
  * @returns {Writer} `this`
  */
-Writer$1.prototype.fork = function fork() {
+Writer.prototype.fork = function fork() {
     this.states = new State(this);
     this.head = this.tail = new Op(noop, 0, 0);
     this.len = 0;
@@ -1088,7 +1108,7 @@ Writer$1.prototype.fork = function fork() {
  * Resets this instance to the last state.
  * @returns {Writer} `this`
  */
-Writer$1.prototype.reset = function reset() {
+Writer.prototype.reset = function reset() {
     if (this.states) {
         this.head   = this.states.head;
         this.tail   = this.states.tail;
@@ -1105,7 +1125,7 @@ Writer$1.prototype.reset = function reset() {
  * Resets to the last state and appends the fork state's current write length as a varint followed by its operations.
  * @returns {Writer} `this`
  */
-Writer$1.prototype.ldelim = function ldelim() {
+Writer.prototype.ldelim = function ldelim() {
     var head = this.head,
         tail = this.tail,
         len  = this.len;
@@ -1122,7 +1142,7 @@ Writer$1.prototype.ldelim = function ldelim() {
  * Finishes the write operation.
  * @returns {Uint8Array} Finished buffer
  */
-Writer$1.prototype.finish = function finish() {
+Writer.prototype.finish = function finish() {
     var head = this.head.next, // skip noop
         buf  = this.constructor.alloc(this.len),
         pos  = 0;
@@ -1135,7 +1155,7 @@ Writer$1.prototype.finish = function finish() {
     return buf;
 };
 
-Writer$1._configure = function(BufferWriter_) {
+Writer._configure = function(BufferWriter_) {
     BufferWriter$1 = BufferWriter_;
     Writer$1.create = create$1();
     BufferWriter$1._configure();
@@ -1144,8 +1164,8 @@ Writer$1._configure = function(BufferWriter_) {
 var writer_buffer = BufferWriter;
 
 // extends Writer
-var Writer = writer;
-(BufferWriter.prototype = Object.create(Writer.prototype)).constructor = BufferWriter;
+var Writer$1 = writer;
+(BufferWriter.prototype = Object.create(Writer$1.prototype)).constructor = BufferWriter;
 
 var util$6 = requireMinimal();
 
@@ -1156,7 +1176,7 @@ var util$6 = requireMinimal();
  * @constructor
  */
 function BufferWriter() {
-    Writer.call(this);
+    Writer$1.call(this);
 }
 
 BufferWriter._configure = function () {
@@ -1226,7 +1246,7 @@ BufferWriter.prototype.string = function write_string_buffer(value) {
 
 BufferWriter._configure();
 
-var reader = Reader$1;
+var reader = Reader;
 
 var util$5      = requireMinimal();
 
@@ -1246,8 +1266,7 @@ function indexOutOfRange(reader, writeLength) {
  * @constructor
  * @param {Uint8Array} buffer Buffer to read from
  */
-function Reader$1(buffer) {
-
+function Reader(buffer) {
     /**
      * Read buffer.
      * @type {Uint8Array}
@@ -1270,20 +1289,20 @@ function Reader$1(buffer) {
 var create_array = typeof Uint8Array !== "undefined"
     ? function create_typed_array(buffer) {
         if (buffer instanceof Uint8Array || Array.isArray(buffer))
-            return new Reader$1(buffer);
+            return new Reader(buffer);
         throw Error("illegal buffer");
     }
     /* istanbul ignore next */
     : function create_array(buffer) {
         if (Array.isArray(buffer))
-            return new Reader$1(buffer);
+            return new Reader(buffer);
         throw Error("illegal buffer");
     };
 
 var create = function create() {
     return util$5.Buffer
         ? function create_buffer_setup(buffer) {
-            return (Reader$1.create = function create_buffer(buffer) {
+            return (Reader.create = function create_buffer(buffer) {
                 return util$5.Buffer.isBuffer(buffer)
                     ? new BufferReader$1(buffer)
                     /* istanbul ignore next */
@@ -1301,16 +1320,16 @@ var create = function create() {
  * @returns {Reader|BufferReader} A {@link BufferReader} if `buffer` is a Buffer, otherwise a {@link Reader}
  * @throws {Error} If `buffer` is not a valid buffer
  */
-Reader$1.create = create();
+Reader.create = create();
 
-Reader$1.prototype._slice = util$5.Array.prototype.subarray || /* istanbul ignore next */ util$5.Array.prototype.slice;
+Reader.prototype._slice = util$5.Array.prototype.subarray || /* istanbul ignore next */ util$5.Array.prototype.slice;
 
 /**
  * Reads a varint as an unsigned 32 bit value.
  * @function
  * @returns {number} Value read
  */
-Reader$1.prototype.uint32 = (function read_uint32_setup() {
+Reader.prototype.uint32 = (function read_uint32_setup() {
     var value = 4294967295; // optimizer type-hint, tends to deopt otherwise (?!)
     return function read_uint32() {
         value = (         this.buf[this.pos] & 127       ) >>> 0; if (this.buf[this.pos++] < 128) return value;
@@ -1332,7 +1351,7 @@ Reader$1.prototype.uint32 = (function read_uint32_setup() {
  * Reads a varint as a signed 32 bit value.
  * @returns {number} Value read
  */
-Reader$1.prototype.int32 = function read_int32() {
+Reader.prototype.int32 = function read_int32() {
     return this.uint32() | 0;
 };
 
@@ -1340,7 +1359,7 @@ Reader$1.prototype.int32 = function read_int32() {
  * Reads a zig-zag encoded varint as a signed 32 bit value.
  * @returns {number} Value read
  */
-Reader$1.prototype.sint32 = function read_sint32() {
+Reader.prototype.sint32 = function read_sint32() {
     var value = this.uint32();
     return value >>> 1 ^ -(value & 1) | 0;
 };
@@ -1427,7 +1446,7 @@ function readLongVarint() {
  * Reads a varint as a boolean.
  * @returns {boolean} Value read
  */
-Reader$1.prototype.bool = function read_bool() {
+Reader.prototype.bool = function read_bool() {
     return this.uint32() !== 0;
 };
 
@@ -1442,7 +1461,7 @@ function readFixed32_end(buf, end) { // note that this uses `end`, not `pos`
  * Reads fixed 32 bits as an unsigned 32 bit integer.
  * @returns {number} Value read
  */
-Reader$1.prototype.fixed32 = function read_fixed32() {
+Reader.prototype.fixed32 = function read_fixed32() {
 
     /* istanbul ignore if */
     if (this.pos + 4 > this.len)
@@ -1455,7 +1474,7 @@ Reader$1.prototype.fixed32 = function read_fixed32() {
  * Reads fixed 32 bits as a signed 32 bit integer.
  * @returns {number} Value read
  */
-Reader$1.prototype.sfixed32 = function read_sfixed32() {
+Reader.prototype.sfixed32 = function read_sfixed32() {
 
     /* istanbul ignore if */
     if (this.pos + 4 > this.len)
@@ -1496,7 +1515,7 @@ function readFixed64(/* this: Reader */) {
  * @function
  * @returns {number} Value read
  */
-Reader$1.prototype.float = function read_float() {
+Reader.prototype.float = function read_float() {
 
     /* istanbul ignore if */
     if (this.pos + 4 > this.len)
@@ -1512,7 +1531,7 @@ Reader$1.prototype.float = function read_float() {
  * @function
  * @returns {number} Value read
  */
-Reader$1.prototype.double = function read_double() {
+Reader.prototype.double = function read_double() {
 
     /* istanbul ignore if */
     if (this.pos + 8 > this.len)
@@ -1527,7 +1546,7 @@ Reader$1.prototype.double = function read_double() {
  * Reads a sequence of bytes preceeded by its length as a varint.
  * @returns {Uint8Array} Value read
  */
-Reader$1.prototype.bytes = function read_bytes() {
+Reader.prototype.bytes = function read_bytes() {
     var length = this.uint32(),
         start  = this.pos,
         end    = this.pos + length;
@@ -1548,7 +1567,7 @@ Reader$1.prototype.bytes = function read_bytes() {
  * Reads a string preceeded by its byte length as a varint.
  * @returns {string} Value read
  */
-Reader$1.prototype.string = function read_string() {
+Reader.prototype.string = function read_string() {
     var bytes = this.bytes();
     return utf8.read(bytes, 0, bytes.length);
 };
@@ -1558,7 +1577,7 @@ Reader$1.prototype.string = function read_string() {
  * @param {number} [length] Length if known, otherwise a varint is assumed
  * @returns {Reader} `this`
  */
-Reader$1.prototype.skip = function skip(length) {
+Reader.prototype.skip = function skip(length) {
     if (typeof length === "number") {
         /* istanbul ignore if */
         if (this.pos + length > this.len)
@@ -1579,7 +1598,7 @@ Reader$1.prototype.skip = function skip(length) {
  * @param {number} wireType Wire type received
  * @returns {Reader} `this`
  */
-Reader$1.prototype.skipType = function(wireType) {
+Reader.prototype.skipType = function(wireType) {
     switch (wireType) {
         case 0:
             this.skip();
@@ -1601,18 +1620,24 @@ Reader$1.prototype.skipType = function(wireType) {
 
         /* istanbul ignore next */
         default:
-            throw Error("invalid wire type " + wireType + " at offset " + this.pos);
+            throw Error('invalid wire type ' + wireType + ' at offset ' + this.pos);
     }
     return this;
 };
 
-Reader$1._configure = function(BufferReader_) {
+Reader._configure = function (BufferReader_) {
     BufferReader$1 = BufferReader_;
-    Reader$1.create = create();
+    Reader.create = create();
     BufferReader$1._configure();
-
-    var fn = util$5.Long ? "toLong" : /* istanbul ignore next */ "toNumber";
-    util$5.merge(Reader$1.prototype, {
+	let fn = '';
+	if (util$5.Long) {
+		fn = 'toLong';
+	} else if (util$5.BigInt) {
+		fn = 'toBigInt';
+	} else {
+		fn = 'toNumber';
+	}
+    util$5.merge(Reader.prototype, {
 
         int64: function read_int64() {
             return readLongVarint.call(this)[fn](false);
@@ -1632,7 +1657,7 @@ Reader$1._configure = function(BufferReader_) {
 
         sfixed64: function read_sfixed64() {
             return readFixed64.call(this)[fn](false);
-        }
+        },
 
     });
 };
@@ -1640,8 +1665,8 @@ Reader$1._configure = function(BufferReader_) {
 var reader_buffer = BufferReader;
 
 // extends Reader
-var Reader = reader;
-(BufferReader.prototype = Object.create(Reader.prototype)).constructor = BufferReader;
+var Reader$1 = reader;
+(BufferReader.prototype = Object.create(Reader$1.prototype)).constructor = BufferReader;
 
 var util$4 = requireMinimal();
 
@@ -1653,7 +1678,7 @@ var util$4 = requireMinimal();
  * @param {Buffer} buffer Buffer to read from
  */
 function BufferReader(buffer) {
-    Reader.call(this, buffer);
+    Reader$1.call(this, buffer);
 
     /**
      * Read buffer.
@@ -1867,7 +1892,7 @@ Service$1.prototype.end = function end(endedByRPC) {
 	 * @returns {undefined}
 	 */
 
-	rpc.Service = service$1; 
+	rpc.Service = service$1;
 } (rpc));
 
 var roots = {};
@@ -1907,7 +1932,7 @@ var roots = {};
 	}
 
 	// Set up buffer utility according to the environment
-	configure(); 
+	configure();
 } (indexMinimal));
 
 var util$2 = {exports: {}};
@@ -2114,7 +2139,7 @@ function requireTypes () {
 		    /* fixed64  */ 1,
 		    /* sfixed64 */ 1,
 		    /* bool     */ 0
-		]); 
+		]);
 	} (types$1));
 	return types$1;
 }
@@ -4399,7 +4424,7 @@ function requireConverter () {
 		    return gen
 		    ("return d");
 		    /* eslint-enable no-unexpected-multiline, block-scoped-var, no-redeclare */
-		}; 
+		};
 	} (converter));
 	return converter;
 }
@@ -4507,7 +4532,7 @@ var wrappers = {};
 
 	        return this.toObject(message, options);
 	    }
-	}; 
+	};
 } (wrappers));
 
 var type;
@@ -8061,7 +8086,7 @@ var srcExports = src.exports;
 
 var protobufjs = srcExports;
 
-export var index = /*@__PURE__*/getDefaultExportFromCjs(protobufjs);
+var index = /*@__PURE__*/getDefaultExportFromCjs(protobufjs);
 
-// export { index as default };
+export { index as default };
 //# sourceMappingURL=protobuf.js.map
