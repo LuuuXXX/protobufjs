@@ -384,7 +384,7 @@ Reader._configure = function(BufferReader_) {
     Reader.create = create();
     BufferReader._configure();
 
-    var fn = util.Long ? "toLong" : /* istanbul ignore next */ "toNumber";
+    var fn = util$5.Long ? "toLong" : (util$5.BigInt ? 'toBigInt' : 'toNumber');
     util.merge(Reader.prototype, {
 
         int64: function read_int64() {
