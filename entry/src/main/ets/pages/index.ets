@@ -25,6 +25,8 @@ struct Index {
     @State result: string = "";
     str: string = '';
     scroller: Scroller = new Scroller();
+    controller: TextInputController = new TextInputController();
+    bigInt:string='9223372036854775807'
 
     getResourceString(res: Resource) {
         return getContext().resourceManager.getStringSync(res.id)
@@ -40,7 +42,7 @@ struct Index {
                         .borderRadius(15)
                         .fontSize(16)
                         .textAlign(TextAlign.Center)
-                        .margin({ top: 20 })
+                        .margin({ top: 10 })
                         .onClick(event => {
                             this.result = ""
                             let msg = user.UserLoginResponse.create({
@@ -67,6 +69,43 @@ struct Index {
                                 + "data: " + utfStr
                         });
 
+                    TextInput({ text: this.bigInt})
+                        .width('90%')
+                        .height(50)
+                        .margin({ top: 10 })
+                        .onChange((value: string) => {
+                            this.bigInt = value;
+                        })
+
+                    Text($r('app.string.proto_serialization_deserialization_bigInt'))
+                        .width('90%')
+                        .height(60)
+                        .backgroundColor(0xFFFFFF)
+                        .borderRadius(15)
+                        .fontSize(16)
+                        .textAlign(TextAlign.Center)
+                        .margin({ top: 10 })
+                        .onClick(event => {
+                            this.result = ""
+                            let msg = user.UserLoginResponse.create({
+                                sessionId: "215135415351435",
+                                userPrivilege: "John123",
+                                isTokenType: false,
+                                formatTimestamp: BigInt(this.bigInt),
+                            });
+
+                            let arrayBuffer: Uint8Array = user.UserLoginResponse.encode(msg).finish()
+                            this.result = this.result + this.getResourceString($r('app.string.serialized_data'))+"：" + JSON.stringify(arrayBuffer) + "\r\n";
+
+                            let decodeMsg = user.UserLoginResponse.decode(arrayBuffer);
+                            let timestamp=decodeMsg.formatTimestamp
+                            this.result = this.result + this.getResourceString($r('app.string.Deserialize_data'))+"： \r\n"
+                                +"sessionId: " + decodeMsg.sessionId+"\r\n"
+                                +"userPrivilege: " + decodeMsg.userPrivilege+"\r\n"
+                                +"isTokenType: " + decodeMsg.isTokenType+"\r\n"
+                                +"formatTimesStamp: " + timestamp.toString()+"\r\n"
+                        });
+
 
                     Text(this.getResourceString($r('app.string.proto_serialization_deserialization'))+`( ${this.getResourceString($r('app.string.Encode_to_decode'))} )`)
                         .width('90%')
@@ -75,14 +114,14 @@ struct Index {
                         .borderRadius(15)
                         .fontSize(16)
                         .textAlign(TextAlign.Center)
-                        .margin({ top: 20 })
+                        .margin({ top: 10 })
                         .onClick(event => {
                             this.result = "";
                             let msg = user.UserLoginResponse.create({
                                 sessionId: "testSynchronouslyLoadProtoFile",
                                 userPrivilege: "John123",
                                 isTokenType: false,
-                                formatTimestamp: 123456789123456789
+                                formatTimestamp: Long.fromString("9007199254740991")
                             });
 
 
@@ -91,8 +130,13 @@ struct Index {
                             this.result = this.result + this.getResourceString($r('app.string.serialized_data'))+"：" + JSON.stringify(arrayBuffer) + "\r\n";
 
                             let decodeMsg = user.UserLoginResponse.decodeDelimited(arrayBuffer);
-                            console.log("protobuf decode:" + JSON.stringify(decodeMsg));
-                            this.result = this.result + this.getResourceString($r('app.string.Deserialize_data'))+"：" + JSON.stringify(decodeMsg);
+                            let timestamp=decodeMsg.formatTimestamp
+                            console.info("protobuf--> timestamp: "+timestamp)
+                            this.result = this.result + this.getResourceString($r('app.string.Deserialize_data'))+"： \r\n"
+                                +"sessionId: " + decodeMsg.sessionId+"\r\n"
+                                +"userPrivilege: " + decodeMsg.userPrivilege+"\r\n"
+                                +"isTokenType: " + decodeMsg.isTokenType+"\r\n"
+                                +"formatTimesStamp: " + timestamp.toString()+"\r\n"
                         });
 
                     Text($r('app.string.Create_normal_message'))
@@ -102,7 +146,7 @@ struct Index {
                         .borderRadius(15)
                         .fontSize(16)
                         .textAlign(TextAlign.Center)
-                        .margin({ top: 20 })
+                        .margin({ top: 10 })
                         .onClick(event => {
                             this.result = ""
                             let msg = user.UserLoginResponse.create({
@@ -122,7 +166,7 @@ struct Index {
                         .borderRadius(15)
                         .fontSize(16)
                         .textAlign(TextAlign.Center)
-                        .margin({ top: 20 })
+                        .margin({ top: 10 })
                         .onClick(event => {
                             this.result = ""
                             let msg = user.UserLoginResponse.verify({
@@ -141,7 +185,7 @@ struct Index {
                         .borderRadius(15)
                         .fontSize(16)
                         .textAlign(TextAlign.Center)
-                        .margin({ top: 20 })
+                        .margin({ top: 10 })
                         .onClick(event => {
                             this.result = ""
                             let msg = user.UserLoginResponse.fromObject({
@@ -163,7 +207,7 @@ struct Index {
             .scrollBarColor(Color.Gray).scrollBarWidth(30);
             Button($r('app.string.reset_display'), { type: ButtonType.Capsule, stateEffect: true })
                 .backgroundColor(0x317aff)
-                .margin({ top: 410, left: 5 })
+                .margin({ top: 430, left: 5 })
                 .width(110)
                 .onClick(event => {
                     this.result = "";

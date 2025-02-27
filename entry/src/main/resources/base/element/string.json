@@ -17,6 +17,10 @@
       "value": "proto serialization deserialization"
     },
     {
+      "name": "proto_serialization_deserialization_bigInt",
+      "value": "proto serialization deserialization (BigInt)"
+    },
+    {
       "name": "serialized_data",
       "value": "serialized data"
     },
