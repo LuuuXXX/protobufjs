@@ -36,7 +36,7 @@ var ruleRe = /^required|optional|repeated$/;
  * @throws {TypeError} If arguments are invalid
  */
 Field.fromJSON = function fromJSON(name, json) {
-    hilog.info(0x0000, "protobuf.filed", "-> fromJSON");
+    hilog.info(0x0000, 'protobuf.filed', '-> fromJSON');
     return new Field(name, json.id, json.type, json.rule, json.extend, json.options, json.comment);
 };
 

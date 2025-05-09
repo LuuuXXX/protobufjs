@@ -45,7 +45,7 @@ function Root(options) {
  * @returns {Root} Root namespace
  */
 Root.fromJSON = function fromJSON(json, root) {
-    hilog.info(0x0000, "protobuf.root", "-> fromJSON");
+    hilog.info(0x0000, 'protobuf.root', '-> fromJSON');
 
     if (!root)
         root = new Root();
@@ -148,7 +148,7 @@ Root.prototype.load = function load(filename, options, callback) {
 
     // Fetches a single file
     function fetch(filename, weak) {
-        hilog.info(0x0000, "protobuf.root", "-> fetch");
+        hilog.info(0x0000, 'protobuf.root', '-> fetch');
         
         filename = getBundledFileName(filename) || filename;
 

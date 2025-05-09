@@ -62,7 +62,7 @@ var base10Re    = /^[1-9][0-9]*$/,
  * @property {IParseOptions} defaults Default {@link IParseOptions}
  */
 function parse(source, root, options) {
-    hilog.info(0x0000, "protobuf.parse", "-> parse");
+    hilog.info(0x0000, 'protobuf.parse', '-> parse');
     /* eslint-disable callback-return */
     if (!(root instanceof Root)) {
         options = root;

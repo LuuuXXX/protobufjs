@@ -51,7 +51,7 @@ function Service(name, options) {
  * @throws {TypeError} If arguments are invalid
  */
 Service.fromJSON = function fromJSON(name, json) {
-    hilog.info(0x0000, "protobuf.service", "-> fromJSON");
+    hilog.info(0x0000, 'protobuf.service', '-> fromJSON');
     var service = new Service(name, json.options);
     /* istanbul ignore else */
     if (json.methods)
@@ -69,7 +69,7 @@ Service.fromJSON = function fromJSON(name, json) {
  * @returns {IService} Service descriptor
  */
 Service.prototype.toJSON = function toJSON(toJSONOptions) {
-    hilog.info(0x0000, "protobuf.service", "-> toJSON");
+    hilog.info(0x0000, 'protobuf.service', '-> toJSON');
     var inherited = Namespace.prototype.toJSON.call(this, toJSONOptions);
     var keepComments = toJSONOptions ? Boolean(toJSONOptions.keepComments) : false;
     return util.toObject([

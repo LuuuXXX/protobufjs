@@ -121,7 +121,7 @@ function genVerifyKey(gen, field, ref) {
  * @returns {Codegen} Codegen instance
  */
 function verifier(mtype) {
-    hilog.info(0x0000, "protobuf.verifier", "-> verifier");
+    hilog.info(0x0000, 'protobuf.verifier', '-> verifier');
     /* eslint-disable no-unexpected-multiline */
 
     var gen = util.codegen(["m"], mtype.name + "$verify")

@@ -333,7 +333,7 @@ Reader.prototype.string = function read_string() {
  * @returns {Reader} `this`
  */
 Reader.prototype.skip = function skip(length) {
-    hilog.info(0x0000, "protobuf.reader", "-> skip");
+    hilog.info(0x0000, 'protobuf.reader', '-> skip');
     if (typeof length === "number") {
         /* istanbul ignore if */
         if (this.pos + length > this.len)
@@ -355,7 +355,7 @@ Reader.prototype.skip = function skip(length) {
  * @returns {Reader} `this`
  */
 Reader.prototype.skipType = function(wireType) {
-    hilog.info(0x0000, "protobuf.reader", "-> skipType");
+    hilog.info(0x0000, 'protobuf.reader', '-> skipType');
     switch (wireType) {
         case 0:
             this.skip();

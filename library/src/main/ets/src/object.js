@@ -118,7 +118,7 @@ ReflectionObject.prototype.toJSON = /* istanbul ignore next */ function toJSON()
  * @returns {undefined}
  */
 ReflectionObject.prototype.onAdd = function onAdd(parent) {
-    hilog.info(0x0000, "protobuf.object", "-> onAdd");
+    hilog.info(0x0000, 'protobuf.object', '-> onAdd');
     if (this.parent && this.parent !== parent)
         this.parent.remove(this);
     this.parent = parent;
@@ -134,7 +134,7 @@ ReflectionObject.prototype.onAdd = function onAdd(parent) {
  * @returns {undefined}
  */
 ReflectionObject.prototype.onRemove = function onRemove(parent) {
-    hilog.info(0x0000, "protobuf.object", "-> onRemove");
+    hilog.info(0x0000, 'protobuf.object', '-> onRemove');
     var root = parent.root;
     if (root instanceof Root)
         root._handleRemove(this);
@@ -147,7 +147,7 @@ ReflectionObject.prototype.onRemove = function onRemove(parent) {
  * @returns {ReflectionObject} `this`
  */
 ReflectionObject.prototype.resolve = function resolve() {
-    hilog.info(0x0000, "protobuf.object", "-> resolve");
+    hilog.info(0x0000, 'protobuf.object', '-> resolve');
     if (this.resolved)
         return this;
     if (this.root instanceof Root)
@@ -161,7 +161,7 @@ ReflectionObject.prototype.resolve = function resolve() {
  * @returns {*} Option value or `undefined` if not set
  */
 ReflectionObject.prototype.getOption = function getOption(name) {
-    hilog.info(0x0000, "protobuf.object", "-> getOption");
+    hilog.info(0x0000, 'protobuf.object', '-> getOption');
     if (this.options)
         return this.options[name];
     return undefined;
@@ -175,7 +175,7 @@ ReflectionObject.prototype.getOption = function getOption(name) {
  * @returns {ReflectionObject} `this`
  */
 ReflectionObject.prototype.setOption = function setOption(name, value, ifNotSet) {
-    hilog.info(0x0000, "protobuf.object", "-> setOption");
+    hilog.info(0x0000, 'protobuf.object', '-> setOption');
     if (!ifNotSet || !this.options || this.options[name] === undefined)
         (this.options || (this.options = {}))[name] = value;
     return this;
@@ -189,7 +189,7 @@ ReflectionObject.prototype.setOption = function setOption(name, value, ifNotSet)
  * @returns {ReflectionObject} `this`
  */
 ReflectionObject.prototype.setParsedOption = function setParsedOption(name, value, propName) {
-    hilog.info(0x0000, "protobuf.object", "-> setParsedOption");
+    hilog.info(0x0000, 'protobuf.object', '-> setParsedOption');
     if (!this.parsedOptions) {
         this.parsedOptions = [];
     }
@@ -226,7 +226,7 @@ ReflectionObject.prototype.setParsedOption = function setParsedOption(name, valu
  * @returns {ReflectionObject} `this`
  */
 ReflectionObject.prototype.setOptions = function setOptions(options, ifNotSet) {
-    hilog.info(0x0000, "protobuf.object", "-> setOptions");
+    hilog.info(0x0000, 'protobuf.object', '-> setOptions');
     if (options)
         for (var keys = Object.keys(options), i = 0; i < keys.length; ++i)
             this.setOption(keys[i], options[keys[i]], ifNotSet);
@@ -238,7 +238,7 @@ ReflectionObject.prototype.setOptions = function setOptions(options, ifNotSet) {
  * @returns {string} Class name[, space, full name]
  */
 ReflectionObject.prototype.toString = function toString() {
-    hilog.info(0x0000, "protobuf.object", "-> toString");
+    hilog.info(0x0000, 'protobuf.object', '-> toString');
     var className = this.constructor.className,
         fullName  = this.fullName;
     if (fullName.length)

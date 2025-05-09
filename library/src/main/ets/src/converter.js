@@ -104,7 +104,7 @@ function genValuePartial_fromObject(gen, field, fieldIndex, prop) {
  * @returns {Codegen} Codegen instance
  */
 converter.fromObject = function fromObject(mtype) {
-    hilog.info(0x0000, "protobuf.converter", "-> fromObject");
+    hilog.info(0x0000, 'protobuf.converter', '-> fromObject');
 
     /* eslint-disable no-unexpected-multiline, block-scoped-var, no-redeclare */
     var fields = mtype.fieldsArray;
@@ -207,7 +207,7 @@ function genValuePartial_toObject(gen, field, fieldIndex, prop) {
  * @returns {Codegen} Codegen instance
  */
 converter.toObject = function toObject(mtype) {
-    hilog.info(0x0000, "protobuf.converter", "-> toObject");
+    hilog.info(0x0000, 'protobuf.converter', '-> toObject');
     /* eslint-disable no-unexpected-multiline, block-scoped-var, no-redeclare */
     var fields = mtype.fieldsArray.slice().sort(util.compareFieldsById);
     if (!fields.length)

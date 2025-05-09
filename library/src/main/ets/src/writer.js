@@ -123,7 +123,7 @@ function Writer() {
 }
 
 var create = function create() {
-    hilog.info(0x0000, "protobuf.writer", "-> create");
+    hilog.info(0x0000, 'protobuf.writer', '-> create');
 
     return util.Buffer
         ? function create_buffer_setup() {
@@ -150,7 +150,7 @@ Writer.create = create();
  * @returns {Uint8Array} Buffer
  */
 Writer.alloc = function alloc(size) {
-    hilog.info(0x0000, "protobuf.writer", "-> alloc");
+    hilog.info(0x0000, 'protobuf.writer', '-> alloc');
     return new util.Array(size);
 };
 
@@ -450,7 +450,7 @@ Writer.prototype.ldelim = function ldelim() {
  * @returns {Uint8Array} Finished buffer
  */
 Writer.prototype.finish = function finish() {
-    hilog.info(0x0000, "protobuf.writer", "-> finish");
+    hilog.info(0x0000, 'protobuf.writer', '-> finish');
     var head = this.head.next, // skip noop
         buf  = this.constructor.alloc(this.len),
         pos  = 0;

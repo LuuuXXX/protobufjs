@@ -153,7 +153,7 @@ Object.defineProperty(Namespace.prototype, "nestedArray", {
  * @returns {INamespace} Namespace descriptor
  */
 Namespace.prototype.toJSON = function toJSON(toJSONOptions) {
-    hilog.info(0x0000, "protobuf.namespace", "-> toJSON");
+    hilog.info(0x0000, 'protobuf.namespace', '-> toJSON');
     return util.toObject([
         "options" , this.options,
         "nested"  , arrayToJSON(this.nestedArray, toJSONOptions)
@@ -166,7 +166,7 @@ Namespace.prototype.toJSON = function toJSON(toJSONOptions) {
  * @returns {Namespace} `this`
  */
 Namespace.prototype.addJSON = function addJSON(nestedJson) {
-    hilog.info(0x0000, "protobuf.namespace", "-> addJSON");
+    hilog.info(0x0000, 'protobuf.namespace', '-> addJSON');
     var ns = this;
     /* istanbul ignore else */
     if (nestedJson) {
@@ -194,7 +194,7 @@ Namespace.prototype.addJSON = function addJSON(nestedJson) {
  * @returns {ReflectionObject|null} The reflection object or `null` if it doesn't exist
  */
 Namespace.prototype.get = function get(name) {
-    hilog.info(0x0000, "protobuf.namespace", "-> get");
+    hilog.info(0x0000, 'protobuf.namespace', '-> get');
     return this.nested && this.nested[name]
         || null;
 };
@@ -207,7 +207,7 @@ Namespace.prototype.get = function get(name) {
  * @throws {Error} If there is no such enum
  */
 Namespace.prototype.getEnum = function getEnum(name) {
-    hilog.info(0x0000, "protobuf.namespace", "-> getEnum");
+    hilog.info(0x0000, 'protobuf.namespace', '-> getEnum');
     if (this.nested && this.nested[name] instanceof Enum)
         return this.nested[name].values;
     throw Error("no such enum: " + name);
@@ -221,7 +221,7 @@ Namespace.prototype.getEnum = function getEnum(name) {
  * @throws {Error} If there is already a nested object with this name
  */
 Namespace.prototype.add = function add(object) {
-    hilog.info(0x0000, "protobuf.namespace", "-> add");
+    hilog.info(0x0000, 'protobuf.namespace', '-> add');
     if (!(object instanceof Field && object.extend !== undefined || object instanceof Type  || object instanceof OneOf || object instanceof Enum || object instanceof Service || object instanceof Namespace))
         throw TypeError("object must be a valid nested object");
 
@@ -257,7 +257,7 @@ Namespace.prototype.add = function add(object) {
  * @throws {Error} If `object` is not a member of this namespace
  */
 Namespace.prototype.remove = function remove(object) {
-    hilog.info(0x0000, "protobuf.namespace", "-> remove");
+    hilog.info(0x0000, 'protobuf.namespace', '-> remove');
     if (!(object instanceof ReflectionObject))
         throw TypeError("object must be a ReflectionObject");
     if (object.parent !== this)
@@ -278,7 +278,7 @@ Namespace.prototype.remove = function remove(object) {
  * @returns {Namespace} Pointer to the last namespace created or `this` if path is empty
  */
 Namespace.prototype.define = function define(path, json) {
-    hilog.info(0x0000, "protobuf.namespace", "-> define");
+    hilog.info(0x0000, 'protobuf.namespace', '-> define');
     if (util.isString(path))
         path = path.split(".");
     else if (!Array.isArray(path))
@@ -306,7 +306,7 @@ Namespace.prototype.define = function define(path, json) {
  * @returns {Namespace} `this`
  */
 Namespace.prototype.resolveAll = function resolveAll() {
-    hilog.info(0x0000, "protobuf.namespace", "-> resolveAll");
+    hilog.info(0x0000, 'protobuf.namespace', '-> resolveAll');
     var nested = this.nestedArray, i = 0;
     while (i < nested.length)
         if (nested[i] instanceof Namespace)
@@ -324,7 +324,7 @@ Namespace.prototype.resolveAll = function resolveAll() {
  * @returns {ReflectionObject|null} Looked up object or `null` if none could be found
  */
 Namespace.prototype.lookup = function lookup(path, filterTypes, parentAlreadyChecked) {
-    hilog.info(0x0000, "protobuf.namespace", "-> lookup");
+    hilog.info(0x0000, 'protobuf.namespace', '-> lookup');
     /* istanbul ignore next */
     if (typeof filterTypes === "boolean") {
         parentAlreadyChecked = filterTypes;
@@ -383,7 +383,7 @@ Namespace.prototype.lookup = function lookup(path, filterTypes, parentAlreadyChe
  * @throws {Error} If `path` does not point to a type
  */
 Namespace.prototype.lookupType = function lookupType(path) {
-    hilog.info(0x0000, "protobuf.namespace", "-> lookupType");
+    hilog.info(0x0000, 'protobuf.namespace', '-> lookupType');
     var found = this.lookup(path, [ Type ]);
     if (!found)
         throw Error("no such type: " + path);
@@ -398,7 +398,7 @@ Namespace.prototype.lookupType = function lookupType(path) {
  * @throws {Error} If `path` does not point to an enum
  */
 Namespace.prototype.lookupEnum = function lookupEnum(path) {
-    hilog.info(0x0000, "protobuf.namespace", "-> lookupEnum");
+    hilog.info(0x0000, 'protobuf.namespace', '-> lookupEnum');
     var found = this.lookup(path, [ Enum ]);
     if (!found)
         throw Error("no such Enum '" + path + "' in " + this);
@@ -413,7 +413,7 @@ Namespace.prototype.lookupEnum = function lookupEnum(path) {
  * @throws {Error} If `path` does not point to a type or enum
  */
 Namespace.prototype.lookupTypeOrEnum = function lookupTypeOrEnum(path) {
-    hilog.info(0x0000, "protobuf.namespace", "-> lookupTypeOrEnum");
+    hilog.info(0x0000, 'protobuf.namespace', '-> lookupTypeOrEnum');
     var found = this.lookup(path, [ Type, Enum ]);
     if (!found)
         throw Error("no such Type or Enum '" + path + "' in " + this);
@@ -428,7 +428,7 @@ Namespace.prototype.lookupTypeOrEnum = function lookupTypeOrEnum(path) {
  * @throws {Error} If `path` does not point to a service
  */
 Namespace.prototype.lookupService = function lookupService(path) {
-    hilog.info(0x0000, "protobuf.namespace", "-> lookupService");
+    hilog.info(0x0000, 'protobuf.namespace', '-> lookupService');
     var found = this.lookup(path, [ Service ]);
     if (!found)
         throw Error("no such Service '" + path + "' in " + this);
