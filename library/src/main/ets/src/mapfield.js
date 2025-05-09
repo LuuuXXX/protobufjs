@@ -1,5 +1,6 @@
 "use strict";
 module.exports = MapField;
+import hilog from '@ohos.hilog';
 
 // extends Field
 var Field = require("./field");
@@ -65,6 +66,7 @@ function MapField(name, id, keyType, type, options, comment) {
  * @throws {TypeError} If arguments are invalid
  */
 MapField.fromJSON = function fromJSON(name, json) {
+    hilog.info(0x0000, "protobuf.mapfield", "-> fromJSON");
     return new MapField(name, json.id, json.keyType, json.type, json.options, json.comment);
 };
 
@@ -74,6 +76,7 @@ MapField.fromJSON = function fromJSON(name, json) {
  * @returns {IMapField} Map field descriptor
  */
 MapField.prototype.toJSON = function toJSON(toJSONOptions) {
+    hilog.info(0x0000, "protobuf.mapfield", "-> toJSON");
     var keepComments = toJSONOptions ? Boolean(toJSONOptions.keepComments) : false;
     return util.toObject([
         "keyType" , this.keyType,

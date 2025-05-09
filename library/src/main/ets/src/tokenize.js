@@ -1,5 +1,6 @@
 "use strict";
 module.exports = tokenize;
+import hilog from '@ohos.hilog';
 
 var delimRe        = /[\s{}=;:[\],'"()<>]/g,
     stringDoubleRe = /(?:"([^"\\]*(?:\\.[^"\\]*)*)")/g,
@@ -26,6 +27,7 @@ var unescapeMap = {
  * @memberof tokenize
  */
 function unescape(str) {
+    hilog.info(0x0000, "protobuf.tokenize", "-> unescape");
     return str.replace(unescapeRe, function($0, $1) {
         switch ($1) {
             case "\\":
@@ -97,6 +99,7 @@ tokenize.unescape = unescape;
  * @returns {ITokenizerHandle} Tokenizer handle
  */
 function tokenize(source, alternateCommentMode) {
+    hilog.info(0x0000, "protobuf.tokenize", "-> tokenize");
     /* eslint-disable callback-return */
     source = source.toString();
 

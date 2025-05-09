@@ -1,5 +1,6 @@
 "use strict";
 module.exports = Root;
+import hilog from '@ohos.hilog';
 
 // extends Namespace
 var Namespace = require("./namespace");
@@ -44,6 +45,8 @@ function Root(options) {
  * @returns {Root} Root namespace
  */
 Root.fromJSON = function fromJSON(json, root) {
+    hilog.info(0x0000, "protobuf.root", "-> fromJSON");
+
     if (!root)
         root = new Root();
     if (json.options)
@@ -145,6 +148,8 @@ Root.prototype.load = function load(filename, options, callback) {
 
     // Fetches a single file
     function fetch(filename, weak) {
+        hilog.info(0x0000, "protobuf.root", "-> fetch");
+        
         filename = getBundledFileName(filename) || filename;
 
         // Skip if already loaded / attempted

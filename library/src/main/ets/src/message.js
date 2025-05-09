@@ -1,5 +1,6 @@
 "use strict";
 module.exports = Message;
+import hilog from '@ohos.hilog';
 
 var util = require("./util/minimal");
 
@@ -41,6 +42,7 @@ function Message(properties) {
  * @this Constructor<T>
  */
 Message.create = function create(properties) {
+    hilog.info(0x0000, "protobuf.message", "-> create");
     return this.$type.create(properties);
 };
 
@@ -53,6 +55,7 @@ Message.create = function create(properties) {
  * @this Constructor<T>
  */
 Message.encode = function encode(message, writer) {
+    hilog.info(0x0000, "protobuf.message", "-> encode");
     return this.$type.encode(message, writer);
 };
 
@@ -65,6 +68,7 @@ Message.encode = function encode(message, writer) {
  * @this Constructor<T>
  */
 Message.encodeDelimited = function encodeDelimited(message, writer) {
+    hilog.info(0x0000, "protobuf.message", "-> encodeDelimited");
     return this.$type.encodeDelimited(message, writer);
 };
 
@@ -78,6 +82,7 @@ Message.encodeDelimited = function encodeDelimited(message, writer) {
  * @this Constructor<T>
  */
 Message.decode = function decode(reader) {
+    hilog.info(0x0000, "protobuf.message", "-> decode");
     return this.$type.decode(reader);
 };
 
@@ -91,6 +96,7 @@ Message.decode = function decode(reader) {
  * @this Constructor<T>
  */
 Message.decodeDelimited = function decodeDelimited(reader) {
+    hilog.info(0x0000, "protobuf.message", "-> decodeDelimited");
     return this.$type.decodeDelimited(reader);
 };
 
@@ -102,6 +108,7 @@ Message.decodeDelimited = function decodeDelimited(reader) {
  * @returns {string|null} `null` if valid, otherwise the reason why it is not
  */
 Message.verify = function verify(message) {
+    hilog.info(0x0000, "protobuf.message", "-> verify");
     return this.$type.verify(message);
 };
 
@@ -113,6 +120,7 @@ Message.verify = function verify(message) {
  * @this Constructor<T>
  */
 Message.fromObject = function fromObject(object) {
+    hilog.info(0x0000, "protobuf.message", "-> fromObject");
     return this.$type.fromObject(object);
 };
 
@@ -125,6 +133,7 @@ Message.fromObject = function fromObject(object) {
  * @this Constructor<T>
  */
 Message.toObject = function toObject(message, options) {
+    hilog.info(0x0000, "protobuf.message", "-> toObject");
     return this.$type.toObject(message, options);
 };
 
@@ -133,6 +142,7 @@ Message.toObject = function toObject(message, options) {
  * @returns {Object.<string,*>} JSON object
  */
 Message.prototype.toJSON = function toJSON() {
+    hilog.info(0x0000, "protobuf.message", "-> toJSON");
     return this.$type.toObject(this, util.toJSONOptions);
 };
 

@@ -1,5 +1,6 @@
 "use strict";
 module.exports = Type;
+import hilog from '@ohos.hilog';
 
 // extends Namespace
 var Namespace = require("./namespace");
@@ -195,6 +196,7 @@ Object.defineProperties(Type.prototype, {
  * @returns {Codegen} Codegen instance
  */
 Type.generateConstructor = function generateConstructor(mtype) {
+    hilog.info(0x0000, "protobuf.type", "-> generateConstructor");
     /* eslint-disable no-unexpected-multiline */
     var gen = util.codegen(["p"], mtype.name);
     // explicitly initialize mutable object/array fields so that these aren't just inherited from the prototype
@@ -235,6 +237,7 @@ function clearCache(type) {
  * @returns {Type} Created message type
  */
 Type.fromJSON = function fromJSON(name, json) {
+    hilog.info(0x0000, "protobuf.type", "-> fromJSON");
     var type = new Type(name, json.options);
     type.extensions = json.extensions;
     type.reserved = json.reserved;
@@ -281,6 +284,7 @@ Type.fromJSON = function fromJSON(name, json) {
  * @returns {IType} Message type descriptor
  */
 Type.prototype.toJSON = function toJSON(toJSONOptions) {
+    hilog.info(0x0000, "protobuf.type", "-> toJSON");
     var inherited = Namespace.prototype.toJSON.call(this, toJSONOptions);
     var keepComments = toJSONOptions ? Boolean(toJSONOptions.keepComments) : false;
     return util.toObject([
@@ -326,7 +330,7 @@ Type.prototype.get = function get(name) {
  * @throws {Error} If there is already a nested object with this name or, if a field, when there is already a field with this id
  */
 Type.prototype.add = function add(object) {
-
+    hilog.info(0x0000, "protobuf.type", "-> add");
     if (this.get(object.name))
         throw Error("duplicate name '" + object.name + "' in " + this);
 
@@ -368,6 +372,7 @@ Type.prototype.add = function add(object) {
  * @throws {Error} If `object` is not a member of this type
  */
 Type.prototype.remove = function remove(object) {
+    hilog.info(0x0000, "protobuf.type", "-> remove");
     if (object instanceof Field && object.extend === undefined) {
         // See Type#add for the reason why extension fields are excluded here.
 
@@ -400,6 +405,7 @@ Type.prototype.remove = function remove(object) {
  * @returns {boolean} `true` if reserved, otherwise `false`
  */
 Type.prototype.isReservedId = function isReservedId(id) {
+    hilog.info(0x0000, "protobuf.type", "-> isReservedId");
     return Namespace.isReservedId(this.reserved, id);
 };
 
@@ -409,6 +415,7 @@ Type.prototype.isReservedId = function isReservedId(id) {
  * @returns {boolean} `true` if reserved, otherwise `false`
  */
 Type.prototype.isReservedName = function isReservedName(name) {
+    hilog.info(0x0000, "protobuf.type", "-> isReservedName");
     return Namespace.isReservedName(this.reserved, name);
 };
 
@@ -418,6 +425,7 @@ Type.prototype.isReservedName = function isReservedName(name) {
  * @returns {Message<{}>} Message instance
  */
 Type.prototype.create = function create(properties) {
+    hilog.info(0x0000, "protobuf.type", "-> create");
     return new this.ctor(properties);
 };
 
@@ -426,6 +434,7 @@ Type.prototype.create = function create(properties) {
  * @returns {Type} `this`
  */
 Type.prototype.setup = function setup() {
+    hilog.info(0x0000, "protobuf.type", "-> setup");
     // Sets up everything at once so that the prototype chain does not have to be re-evaluated
     // multiple times (V8, soft-deopt prototype-check).
 
@@ -482,6 +491,7 @@ Type.prototype.setup = function setup() {
  * @returns {Writer} writer
  */
 Type.prototype.encode = function encode_setup(message, writer) {
+    hilog.info(0x0000, "protobuf.type", "-> encode");
     return this.setup().encode(message, writer); // overrides this method
 };
 
@@ -492,6 +502,7 @@ Type.prototype.encode = function encode_setup(message, writer) {
  * @returns {Writer} writer
  */
 Type.prototype.encodeDelimited = function encodeDelimited(message, writer) {
+    hilog.info(0x0000, "protobuf.type", "-> encodeDelimited");
     return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
 };
 
@@ -504,6 +515,7 @@ Type.prototype.encodeDelimited = function encodeDelimited(message, writer) {
  * @throws {util.ProtocolError<{}>} If required fields are missing
  */
 Type.prototype.decode = function decode_setup(reader, length) {
+    hilog.info(0x0000, "protobuf.type", "-> decode");
     return this.setup().decode(reader, length); // overrides this method
 };
 
@@ -515,6 +527,7 @@ Type.prototype.decode = function decode_setup(reader, length) {
  * @throws {util.ProtocolError} If required fields are missing
  */
 Type.prototype.decodeDelimited = function decodeDelimited(reader) {
+    hilog.info(0x0000, "protobuf.type", "-> decodeDelimited");
     if (!(reader instanceof Reader))
         reader = Reader.create(reader);
     return this.decode(reader, reader.uint32());
@@ -526,6 +539,7 @@ Type.prototype.decodeDelimited = function decodeDelimited(reader) {
  * @returns {null|string} `null` if valid, otherwise the reason why it is not
  */
 Type.prototype.verify = function verify_setup(message) {
+    hilog.info(0x0000, "protobuf.type", "-> verify");
     return this.setup().verify(message); // overrides this method
 };
 
@@ -535,6 +549,7 @@ Type.prototype.verify = function verify_setup(message) {
  * @returns {Message<{}>} Message instance
  */
 Type.prototype.fromObject = function fromObject(object) {
+    hilog.info(0x0000, "protobuf.type", "-> fromObject");
     return this.setup().fromObject(object);
 };
 
@@ -564,6 +579,7 @@ Type.prototype.fromObject = function fromObject(object) {
  * @returns {Object.<string,*>} Plain object
  */
 Type.prototype.toObject = function toObject(message, options) {
+    hilog.info(0x0000, "protobuf.type", "-> toObject");
     return this.setup().toObject(message, options);
 };
 

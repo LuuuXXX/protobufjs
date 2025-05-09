@@ -1,5 +1,6 @@
 "use strict";
 module.exports = Method;
+import hilog from '@ohos.hilog';
 
 // extends ReflectionObject
 var ReflectionObject = require("./object");
@@ -122,6 +123,7 @@ function Method(name, type, requestType, responseType, requestStream, responseSt
  * @throws {TypeError} If arguments are invalid
  */
 Method.fromJSON = function fromJSON(name, json) {
+    hilog.info(0x0000, "protobuf.method", "-> fromJSON");
     return new Method(name, json.type, json.requestType, json.responseType, json.requestStream, json.responseStream, json.options, json.comment, json.parsedOptions);
 };
 
@@ -131,6 +133,7 @@ Method.fromJSON = function fromJSON(name, json) {
  * @returns {IMethod} Method descriptor
  */
 Method.prototype.toJSON = function toJSON(toJSONOptions) {
+    hilog.info(0x0000, "protobuf.method", "-> toJSON");
     var keepComments = toJSONOptions ? Boolean(toJSONOptions.keepComments) : false;
     return util.toObject([
         "type"           , this.type !== "rpc" && /* istanbul ignore next */ this.type || undefined,

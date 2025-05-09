@@ -1,4 +1,5 @@
 "use strict";
+import hilog from '@ohos.hilog';
 /**
  * Runtime message from/to plain object converters.
  * @namespace
@@ -103,6 +104,8 @@ function genValuePartial_fromObject(gen, field, fieldIndex, prop) {
  * @returns {Codegen} Codegen instance
  */
 converter.fromObject = function fromObject(mtype) {
+    hilog.info(0x0000, "protobuf.converter", "-> fromObject");
+
     /* eslint-disable no-unexpected-multiline, block-scoped-var, no-redeclare */
     var fields = mtype.fieldsArray;
     var gen = util.codegen(["d"], mtype.name + "$fromObject")
@@ -204,6 +207,7 @@ function genValuePartial_toObject(gen, field, fieldIndex, prop) {
  * @returns {Codegen} Codegen instance
  */
 converter.toObject = function toObject(mtype) {
+    hilog.info(0x0000, "protobuf.converter", "-> toObject");
     /* eslint-disable no-unexpected-multiline, block-scoped-var, no-redeclare */
     var fields = mtype.fieldsArray.slice().sort(util.compareFieldsById);
     if (!fields.length)

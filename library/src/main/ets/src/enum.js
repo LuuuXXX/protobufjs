@@ -1,5 +1,6 @@
 "use strict";
 module.exports = Enum;
+import hilog from '@ohos.hilog';
 
 // extends ReflectionObject
 var ReflectionObject = require("./object");
@@ -87,6 +88,7 @@ function Enum(name, values, options, comment, comments, valuesOptions) {
  * @throws {TypeError} If arguments are invalid
  */
 Enum.fromJSON = function fromJSON(name, json) {
+    hilog.info(0x0000, "protobuf.enum", "-> fromJSON");
     var enm = new Enum(name, json.values, json.options, json.comment, json.comments);
     enm.reserved = json.reserved;
     return enm;
@@ -98,6 +100,7 @@ Enum.fromJSON = function fromJSON(name, json) {
  * @returns {IEnum} Enum descriptor
  */
 Enum.prototype.toJSON = function toJSON(toJSONOptions) {
+    hilog.info(0x0000, "protobuf.enum", "-> toJSON");
     var keepComments = toJSONOptions ? Boolean(toJSONOptions.keepComments) : false;
     return util.toObject([
         "options"       , this.options,
@@ -120,6 +123,7 @@ Enum.prototype.toJSON = function toJSON(toJSONOptions) {
  * @throws {Error} If there is already a value with this name or id
  */
 Enum.prototype.add = function add(name, id, comment, options) {
+    hilog.info(0x0000, "protobuf.enum", "-> add");
     // utilized by the parser but not by .fromJSON
 
     if (!util.isString(name))
@@ -162,7 +166,7 @@ Enum.prototype.add = function add(name, id, comment, options) {
  * @throws {Error} If `name` is not a name of this enum
  */
 Enum.prototype.remove = function remove(name) {
-
+    hilog.info(0x0000, "protobuf.enum", "-> remove");
     if (!util.isString(name))
         throw TypeError("name must be a string");
 
@@ -185,6 +189,7 @@ Enum.prototype.remove = function remove(name) {
  * @returns {boolean} `true` if reserved, otherwise `false`
  */
 Enum.prototype.isReservedId = function isReservedId(id) {
+    hilog.info(0x0000, "protobuf.enum", "-> isReservedId");
     return Namespace.isReservedId(this.reserved, id);
 };
 
@@ -194,5 +199,6 @@ Enum.prototype.isReservedId = function isReservedId(id) {
  * @returns {boolean} `true` if reserved, otherwise `false`
  */
 Enum.prototype.isReservedName = function isReservedName(name) {
+    hilog.info(0x0000, "protobuf.enum", "-> isReservedName");
     return Namespace.isReservedName(this.reserved, name);
 };

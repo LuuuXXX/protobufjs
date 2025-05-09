@@ -1,5 +1,6 @@
 "use strict";
 module.exports = common;
+import hilog from '@ohos.hilog';
 
 var commonRe = /\/|\./;
 
@@ -395,5 +396,6 @@ common("field_mask", {
  * @returns {INamespace|null} Root definition or `null` if not defined
  */
 common.get = function get(file) {
+    hilog.info(0x0000, "protobuf.common", "-> get:" + file);
     return common[file] || null;
 };

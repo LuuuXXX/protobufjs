@@ -1,5 +1,6 @@
 "use strict";
 module.exports = encoder;
+import hilog from '@ohos.hilog';
 
 var Enum     = require("./enum"),
     types    = require("./types"),
@@ -26,6 +27,7 @@ function genTypePartial(gen, field, fieldIndex, ref) {
  * @returns {Codegen} Codegen instance
  */
 function encoder(mtype) {
+    hilog.info(0x0000, "protobuf.encoder", "-> encoder");
     /* eslint-disable no-unexpected-multiline, block-scoped-var, no-redeclare */
     var gen = util.codegen(["m", "w"], mtype.name + "$encode")
     ("if(!w)")

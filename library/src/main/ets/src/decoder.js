@@ -1,5 +1,6 @@
 "use strict";
 module.exports = decoder;
+import hilog from '@ohos.hilog';
 
 var Enum    = require("./enum"),
     types   = require("./types"),
@@ -15,6 +16,7 @@ function missing(field) {
  * @returns {Codegen} Codegen instance
  */
 function decoder(mtype) {
+    hilog.info(0x0000, "protobuf.decoder", "-> decoder");
     /* eslint-disable no-unexpected-multiline */
     var gen = util.codegen(["r", "l"], mtype.name + "$decode")
     ("if(!(r instanceof Reader))")

@@ -1,6 +1,6 @@
 "use strict";
 module.exports = OneOf;
-
+import hilog from '@ohos.hilog';
 // extends ReflectionObject
 var ReflectionObject = require("./object");
 ((OneOf.prototype = Object.create(ReflectionObject.prototype)).constructor = OneOf).className = "OneOf";
@@ -64,6 +64,7 @@ function OneOf(name, fieldNames, options, comment) {
  * @throws {TypeError} If arguments are invalid
  */
 OneOf.fromJSON = function fromJSON(name, json) {
+    hilog.info(0x0000, "protobuf.oneof", "-> fromJSON");
     return new OneOf(name, json.oneof, json.options, json.comment);
 };
 
@@ -73,6 +74,7 @@ OneOf.fromJSON = function fromJSON(name, json) {
  * @returns {IOneOf} Oneof descriptor
  */
 OneOf.prototype.toJSON = function toJSON(toJSONOptions) {
+    hilog.info(0x0000, "protobuf.oneof", "-> toJSON");
     var keepComments = toJSONOptions ? Boolean(toJSONOptions.keepComments) : false;
     return util.toObject([
         "options" , this.options,
@@ -101,6 +103,7 @@ function addFieldsToParent(oneof) {
  * @returns {OneOf} `this`
  */
 OneOf.prototype.add = function add(field) {
+    hilog.info(0x0000, "protobuf.oneof", "-> add");
 
     /* istanbul ignore if */
     if (!(field instanceof Field))
@@ -121,6 +124,7 @@ OneOf.prototype.add = function add(field) {
  * @returns {OneOf} `this`
  */
 OneOf.prototype.remove = function remove(field) {
+    hilog.info(0x0000, "protobuf.oneof", "-> remove");
 
     /* istanbul ignore if */
     if (!(field instanceof Field))
