@@ -312,9 +312,14 @@ Reader.prototype.bytes = function read_bytes() {
     this.pos += length;
     if (Array.isArray(this.buf)) // plain array
         return this.buf.slice(start, end);
-    return start === end // fix for IE 10/Win8 and others' subarray returning array of size 1
-        ? new this.buf.constructor(0)
-        : this._slice.call(this.buf, start, end);
+
+    if (start === end) { // fix for IE 10/Win8 and others' subarray returning array of size 1
+        var nativeBuffer = util.Buffer;
+        return nativeBuffer
+            ? nativeBuffer.alloc(0)
+            : new this.buf.constructor(0);
+    }
+    return this._slice.call(this.buf, start, end);
 };
 
 /**
@@ -379,18 +384,12 @@ Reader.prototype.skipType = function(wireType) {
     return this;
 };
 
-Reader._configure = function (BufferReader_) {
+Reader._configure = function(BufferReader_) {
     BufferReader = BufferReader_;
     Reader.create = create();
     BufferReader._configure();
-    let fn = '';
-    if (util$5.Long) {
-        fn = "toLong";
-    } else if (util$5.BigInt) {
-        fn = "toBigInt";
-    } else {
-        fn = "toNumber";
-    }
+
+    var fn = util.Long ? "toLong" : /* istanbul ignore next */ "toNumber";
     util.merge(Reader.prototype, {
 
         int64: function read_int64() {
