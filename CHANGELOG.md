@@ -1,5 +1,5 @@
 ### 3.0.1-rc.0
-- 修复了Reader，Writer不兼容导入问题
+- Fixed the incompatibility issue with Reader and Writer imports
 ### 3.0.0
 - Support BigInt type
 
