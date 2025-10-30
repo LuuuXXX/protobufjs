@@ -8089,5 +8089,12 @@ var protobufjs = srcExports;
 
 var index = /*@__PURE__*/getDefaultExportFromCjs(protobufjs);
 
-export { index as default };
+export {
+	index as default,
+	Enum,
+	Reader,
+	BufferReader,
+	Writer,
+	BufferWriter
+};
 //# sourceMappingURL=protobuf.js.map
