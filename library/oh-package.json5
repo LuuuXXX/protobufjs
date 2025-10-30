@@ -13,7 +13,7 @@
   },
   "main": "src/main/ets/dist/protobuf.js",
   "type": "module",
-  "version": "3.0.0",
+  "version": "3.0.1-rc.0",
   "tags": [
     "protobufjs",
     "OpenHarmony",
