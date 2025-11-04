@@ -18,7 +18,7 @@ OpenHarmony ohpm环境配置等更多内容，请参考 [如何安装OpenHarmony
 
 2.proto文件
 
-按照.proto文件格式定义消息体结构，如：userproto.proto文件。
+按照.proto文件格式定义消息体结构，如：user.proto文件。
 
 ```
 syntax = "proto3";
@@ -61,6 +61,7 @@ import Long from 'long';
 $protobuf.util.Long=Long
 $protobuf.configure()
 ```
+注意：本demo的user.d.ts代码文件，formatTimestamp属性支持的BigInt类型是当手动添加，并非通过任何命令生成。
 
 5.在entry目录下安装long
 
