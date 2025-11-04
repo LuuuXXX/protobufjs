@@ -83,6 +83,7 @@ let msg = user.UserLoginResponse.create({
    formatTimestamp: BigInt("9223372036854775807")
 );
 ```
+注意：本demo的user.d.ts代码文件，formatTimestamp属性支持的BigInt类型是当手动添加，并非通过任何命令生成。
 
 7.将生成js和.d.ts文件复制到工程中
 

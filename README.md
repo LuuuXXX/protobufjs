@@ -84,6 +84,8 @@ let msg = user.UserLoginResponse.create({
    formatTimestamp: BigInt("9223372036854775807"),
 );
 ```
+Note: In the user.d.ts code file of this demo, the BigInt type supported by the formatTimestamp property is manually 
+added and not generated through any command.
 
 7. Copy the generated .js and .d.ts files to the project.
 
