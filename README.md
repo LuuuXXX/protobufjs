@@ -18,7 +18,7 @@ For details about the OpenHarmony ohpm environment configuration, see [OpenHarmo
 
 2. Define a message body struct in a .proto file.
 
-For example, define a message body struct in the **userproto.proto** file.
+For example, define a message body struct in the **user.proto** file.
 
 ```
 syntax = "proto3";
@@ -61,6 +61,7 @@ import Long from 'long';
 $protobuf.util.Long=Long
 $protobuf.configure()
 ```
+Note: In the user.d.ts code file of this demo, the BigInt type supported by the formatTimestamp property is manually added and not generated through any command.
 
 5. Install long in the **entry** directory.
 
