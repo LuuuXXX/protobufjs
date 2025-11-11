@@ -59,6 +59,10 @@
     {
       "name": "reset_display",
       "value": "重置显示"
+    },
+    {
+      "name": "Reader_Writer_object",
+      "value": "使用reader和writer对象"
     }
   ]
 }

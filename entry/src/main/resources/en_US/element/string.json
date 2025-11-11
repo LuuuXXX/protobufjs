@@ -59,6 +59,10 @@
     {
       "name": "reset_display",
       "value": "reset display"
+    },
+    {
+      "name": "Reader_Writer_object",
+      "value": "Using reader and writer objects"
     }
   ]
 }
