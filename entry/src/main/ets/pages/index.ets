@@ -18,6 +18,12 @@ import Long from 'long';
 import { user } from './user.js'
 import buffer from '@ohos.buffer'
 import util from '@ohos.util';
+import { Reader, Writer } from '@ohos/protobufjs'
+
+interface IFeedCursor {
+    rankTime?: bigint;
+    id?: bigint
+}
 
 @Entry
 @Component
@@ -27,6 +33,38 @@ struct Index {
     scroller: Scroller = new Scroller();
     controller: TextInputController = new TextInputController();
     bigInt:string='9223372036854775807'
+
+  decode($data: Uint8Array, $l?: number):IFeedCursor {
+    const $r = $data instanceof Reader ? $data : Reader.create($data);
+    let rankTime: bigint | undefined;
+    let id: bigint | undefined;
+    const $c = $l === undefined ? $r.len : $r.pos + $l;
+    while ($r.pos < $c) {
+      let t = $r.uint32();
+      switch (t >>> 3) {
+        case 1:
+          (rankTime) = Long.fromValue($r.int64()).high as ESObject;
+          break;
+        case 2:
+          (id) = Long.fromValue($r.int64()).high as ESObject;
+          break;
+        default:
+          $r.skipType(t & 7);
+          break;
+      }
+    }
+    return {
+      rankTime: rankTime,
+      id: id
+    } as IFeedCursor;
+  }
+
+  encode(rankTime: bigint, id: bigint, $w?: Writer): Writer {
+    const $writer = $w ?? Writer.create();
+    $writer.uint32(8).int64(rankTime as ESObject);
+    $writer.uint32(16).int64(id as ESObject);
+    return $writer
+  }
 
     getResourceString(res: Resource) {
         return getContext().resourceManager.getStringSync(res.id)
@@ -195,6 +233,20 @@ struct Index {
                                 formatTimestamp: "8976796"
                             })
                             this.result = JSON.stringify(msg)
+                        });
+
+                    Text($r('app.string.Reader_Writer_object'))
+                        .width('90%')
+                        .height(60)
+                        .backgroundColor(0xFFFFFF)
+                        .borderRadius(15)
+                        .fontSize(16)
+                        .textAlign(TextAlign.Center)
+                        .margin({ top: 10 })
+                        .onClick(event => {
+                            const arrayBuffer: Uint8Array = this.encode(11234567788n, 44455666n).finish();
+                            let res = this.decode(arrayBuffer)
+                            this.result = JSON.stringify(res);
                         });
 
                     Text(this.getResourceString($r('app.string.result'))+" :\r\n  " + this.result)
