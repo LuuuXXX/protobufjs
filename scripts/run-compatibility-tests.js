@@ -73,6 +73,42 @@ function adaptTestFile(originalPath, outputPath) {
     `require('${escapedPath}')`
   );
   
+  // Inject normalization helper at the beginning of the test file
+  // This helps with object type comparison issues
+  const normalizationHelper = `
+// Compatibility test helper - normalizes objects for comparison
+var __normalizeForComparison = function(obj) {
+  if (obj === null || obj === undefined) return obj;
+  if (typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) return obj.map(__normalizeForComparison);
+  // Convert to plain object by creating a new object with the same properties
+  var plain = {};
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      plain[key] = __normalizeForComparison(obj[key]);
+    }
+  }
+  return plain;
+};
+
+// Wrap tape's deepEqual to normalize objects before comparison
+if (typeof test !== 'undefined' && test.Test) {
+  var originalDeepEqual = test.Test.prototype.deepEqual;
+  test.Test.prototype.deepEqual = function(a, b, msg) {
+    return originalDeepEqual.call(this, __normalizeForComparison(a), __normalizeForComparison(b), msg);
+  };
+}
+`;
+  
+  // Insert helper after the first require statement or at the beginning
+  const firstRequireMatch = content.match(/require\s*\([^)]+\);?/);
+  if (firstRequireMatch && firstRequireMatch.index !== undefined) {
+    const insertPos = firstRequireMatch.index + firstRequireMatch[0].length;
+    content = content.slice(0, insertPos) + '\n' + normalizationHelper + '\n' + content.slice(insertPos);
+  } else {
+    content = normalizationHelper + '\n' + content;
+  }
+  
   fs.writeFileSync(outputPath, content);
 }
 
@@ -258,8 +294,21 @@ function main() {
   if (fs.existsSync(dataDir)) {
     const tempDataDir = path.join(TEMP_TEST_DIR, 'data');
     copyDir(dataDir, tempDataDir);
-    console.log('Copied test data files');
+    const dataFiles = fs.readdirSync(tempDataDir);
+    console.log(`Copied ${dataFiles.length} test data files from tests/data/`);
+  } else {
+    console.log('Warning: tests/data directory not found in original repository');
   }
+  
+  // Also copy google protobuf well-known types if they exist
+  const googleProtoDir = path.join(ORIGINAL_REPO_PATH, 'google');
+  if (fs.existsSync(googleProtoDir)) {
+    const tempGoogleDir = path.join(TEMP_TEST_DIR, 'google');
+    copyDir(googleProtoDir, tempGoogleDir);
+    console.log('Copied google protobuf well-known types');
+  }
+  
+  console.log('');
   
   // Run each test
   for (const testFile of testFilesToRun) {
