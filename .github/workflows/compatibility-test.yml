@@ -11,6 +11,8 @@ on:
 jobs:
   compatibility-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout current repository
