@@ -3,7 +3,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execSync, spawnSync } = require('child_process');
 
 // Configuration
 const ORIGINAL_REPO_PATH = path.resolve(__dirname, '../../protobuf-original');
@@ -57,17 +57,20 @@ function shouldIncludeTest(filename) {
 function adaptTestFile(originalPath, outputPath) {
   let content = fs.readFileSync(originalPath, 'utf8');
   
+  // Escape backslashes in path for Windows compatibility
+  const escapedPath = HARMONYOS_ENTRY_POINT.replace(/\\/g, '/');
+  
   // Replace require("..") with the HarmonyOS entry point
   // This pattern matches require("..") or require('..')
   content = content.replace(
     /require\s*\(\s*['"]\.\.["']\s*\)/g,
-    `require('${HARMONYOS_ENTRY_POINT}')`
+    `require('${escapedPath}')`
   );
   
   // Also handle require("../..") patterns for nested test directories
   content = content.replace(
     /require\s*\(\s*['"]\.\.\/\.\.["']\s*\)/g,
-    `require('${HARMONYOS_ENTRY_POINT}')`
+    `require('${escapedPath}')`
   );
   
   fs.writeFileSync(outputPath, content);
@@ -103,20 +106,25 @@ function runTest(testFile) {
   console.log(`Running test: ${testName}`);
   
   try {
-    // Run the test using tape
-    execSync(`node ${testFile}`, {
+    // Run the test using tape - use spawnSync to prevent command injection
+    const result = spawnSync('node', [testFile], {
       cwd: TEMP_TEST_DIR,
       stdio: 'pipe',
-      timeout: 30000 // 30 seconds timeout
+      timeout: 30000, // 30 seconds timeout
+      encoding: 'utf8'
     });
     
-    results.passed++;
-    results.details.push({ name: testName, status: 'PASSED', error: null });
-    console.log(`✓ ${testName} passed`);
-    return true;
+    if (result.status === 0) {
+      results.passed++;
+      results.details.push({ name: testName, status: 'PASSED', error: null });
+      console.log(`✓ ${testName} passed`);
+      return true;
+    } else {
+      throw new Error(result.stderr || result.stdout || 'Test failed');
+    }
   } catch (error) {
     results.failed++;
-    const errorMsg = error.stderr ? error.stderr.toString() : error.message;
+    const errorMsg = error.stderr || error.message;
     results.details.push({ name: testName, status: 'FAILED', error: errorMsg });
     console.log(`✗ ${testName} failed`);
     console.error(errorMsg);
