@@ -73,41 +73,69 @@ function adaptTestFile(originalPath, outputPath) {
     `require('${escapedPath}')`
   );
   
-  // Inject normalization helper at the beginning of the test file
-  // This helps with object type comparison issues
+  // Inject normalization helper that wraps tape module
+  // This approach intercepts the tape require to wrap deepEqual
   const normalizationHelper = `
 // Compatibility test helper - normalizes objects for comparison
-var __normalizeForComparison = function(obj) {
-  if (obj === null || obj === undefined) return obj;
-  if (typeof obj !== 'object') return obj;
-  if (Array.isArray(obj)) return obj.map(__normalizeForComparison);
-  // Convert to plain object by creating a new object with the same properties
-  var plain = {};
-  for (var key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      plain[key] = __normalizeForComparison(obj[key]);
+(function() {
+  var Module = require('module');
+  var originalRequire = Module.prototype.require;
+  
+  var __normalizeForComparison = function(obj) {
+    if (obj === null || obj === undefined) return obj;
+    if (typeof obj !== 'object') return obj;
+    if (Array.isArray(obj)) return obj.map(__normalizeForComparison);
+    // Convert to plain object by JSON round-trip (handles nested objects and prototypes)
+    try {
+      return JSON.parse(JSON.stringify(obj));
+    } catch (e) {
+      // Fallback for non-serializable objects
+      var plain = {};
+      for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          plain[key] = __normalizeForComparison(obj[key]);
+        }
+      }
+      return plain;
     }
-  }
-  return plain;
-};
-
-// Wrap tape's deepEqual to normalize objects before comparison
-if (typeof test !== 'undefined' && test.Test) {
-  var originalDeepEqual = test.Test.prototype.deepEqual;
-  test.Test.prototype.deepEqual = function(a, b, msg) {
-    return originalDeepEqual.call(this, __normalizeForComparison(a), __normalizeForComparison(b), msg);
   };
-}
+  
+  Module.prototype.require = function(id) {
+    var module = originalRequire.apply(this, arguments);
+    
+    // Intercept tape module to wrap test methods
+    if (id === 'tape' || id.endsWith('/tape')) {
+      var originalTape = module;
+      var wrappedTape = function(name, cb) {
+        return originalTape(name, function(t) {
+          // Wrap deepEqual and similar methods
+          var originalDeepEqual = t.deepEqual;
+          var originalDeepEquals = t.deepEquals;
+          var originalSame = t.same;
+          
+          t.deepEqual = t.deepEquals = t.same = function(a, b, msg) {
+            return originalDeepEqual.call(this, __normalizeForComparison(a), __normalizeForComparison(b), msg);
+          };
+          
+          return cb(t);
+        });
+      };
+      // Copy properties from original tape
+      for (var key in originalTape) {
+        if (originalTape.hasOwnProperty(key)) {
+          wrappedTape[key] = originalTape[key];
+        }
+      }
+      return wrappedTape;
+    }
+    
+    return module;
+  };
+})();
 `;
   
-  // Insert helper after the first require statement or at the beginning
-  const firstRequireMatch = content.match(/require\s*\([^)]+\);?/);
-  if (firstRequireMatch && firstRequireMatch.index !== undefined) {
-    const insertPos = firstRequireMatch.index + firstRequireMatch[0].length;
-    content = content.slice(0, insertPos) + '\n' + normalizationHelper + '\n' + content.slice(insertPos);
-  } else {
-    content = normalizationHelper + '\n' + content;
-  }
+  // Insert helper at the very beginning, before any requires
+  content = normalizationHelper + '\n' + content;
   
   fs.writeFileSync(outputPath, content);
 }
