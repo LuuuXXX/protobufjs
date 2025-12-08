@@ -16,3 +16,7 @@
 /oh_modules
 /entry/oh_modules
 /oh-package-lock.json5
+
+# Compatibility test artifacts
+/temp-tests
+/test-results.txt

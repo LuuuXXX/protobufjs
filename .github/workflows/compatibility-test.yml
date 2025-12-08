@@ -1,0 +1,50 @@
+name: Compatibility Test
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  compatibility-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v4
+        with:
+          path: protobufjs-harmonyos
+      
+      - name: Checkout original protobuf.js repository
+        uses: actions/checkout@v4
+        with:
+          repository: protobufjs/protobuf.js
+          path: protobuf-original
+          ref: 7.2.4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Install test dependencies
+        run: |
+          npm install -g tape
+          npm install -g long
+          cd protobuf-original
+          npm install
+      
+      - name: Run compatibility tests
+        run: |
+          cd protobufjs-harmonyos
+          node scripts/run-compatibility-tests.js
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: compatibility-test-results
+          path: protobufjs-harmonyos/test-results.txt
