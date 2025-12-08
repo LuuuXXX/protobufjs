@@ -3,7 +3,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync, spawnSync } = require('child_process');
+const { spawnSync } = require('child_process');
 
 // Configuration
 const ORIGINAL_REPO_PATH = path.resolve(__dirname, '../../protobuf-original');
