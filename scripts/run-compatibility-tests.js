@@ -106,12 +106,21 @@ function runTest(testFile) {
   console.log(`Running test: ${testName}`);
   
   try {
+    // Set up environment to include node_modules from original repo
+    const env = { ...process.env };
+    const originalNodeModules = path.join(ORIGINAL_REPO_PATH, 'node_modules');
+    const globalNodeModules = process.execPath.replace(/\/bin\/node$/, '/lib/node_modules');
+    
+    // Set NODE_PATH to include both original repo and global node_modules
+    env.NODE_PATH = [originalNodeModules, globalNodeModules].join(path.delimiter);
+    
     // Run the test using tape - use spawnSync to prevent command injection
     const result = spawnSync('node', [testFile], {
       cwd: TEMP_TEST_DIR,
       stdio: 'pipe',
       timeout: 30000, // 30 seconds timeout
-      encoding: 'utf8'
+      encoding: 'utf8',
+      env: env
     });
     
     if (result.status === 0) {
