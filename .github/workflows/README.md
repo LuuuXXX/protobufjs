@@ -4,7 +4,7 @@ This directory contains scripts for testing API compatibility between this Harmo
 
 ## Overview
 
-The compatibility test workflow validates that the HarmonyOS-adapted version of protobufjs maintains API compatibility with the original protobuf.js library (version 7.2.4).
+The compatibility test workflow validates that the HarmonyOS-adapted version of protobufjs maintains API compatibility with the original protobuf.js library (master branch).
 
 ## Files
 
@@ -39,7 +39,7 @@ To run compatibility tests locally:
 
 ```bash
 # Clone the original protobuf.js repository
-git clone --branch 7.2.4 https://github.com/protobufjs/protobuf.js.git ../protobuf-original
+git clone https://github.com/protobufjs/protobuf.js.git ../protobuf-original
 
 # Install dependencies
 npm install -g tape long
