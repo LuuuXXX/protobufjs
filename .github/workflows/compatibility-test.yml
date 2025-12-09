@@ -42,7 +42,7 @@ jobs:
       - name: Run compatibility tests
         run: |
           cd protobufjs-harmonyos
-          node scripts/run-compatibility-tests.js
+          node scripts/simple-compatibility-test.js
 
       - name: Upload test results
         if: always()

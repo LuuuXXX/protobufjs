@@ -4,22 +4,33 @@ This directory contains scripts for testing API compatibility between this Harmo
 
 ## Overview
 
-The compatibility test workflow validates that the HarmonyOS-adapted version of protobufjs maintains API compatibility with the original protobuf.js library (master branch).
+The compatibility test workflow validates that the HarmonyOS-adapted version of protobufjs maintains API compatibility with the original protobuf.js library (master branch) using a simplified, non-intrusive testing approach.
 
 ## Files
 
 - **compatibility-test.yml**: GitHub Actions workflow that automatically runs compatibility tests
-- **../scripts/run-compatibility-tests.js**: Test runner script that adapts and runs tests from the original repository
+- **../scripts/simple-compatibility-test.js**: Simplified test runner that runs upstream tests against HarmonyOS implementation
 
 ## How It Works
 
-1. The workflow checks out both this repository and the original protobuf.js repository
+### Simplified Approach
+
+The new test runner uses a minimal, non-intrusive approach:
+
+1. **No Test Modification**: Tests from the upstream repository run unmodified
+2. **Module Resolution Override**: Uses Node.js Module system to redirect `require('..')` calls to the HarmonyOS implementation
+3. **Clean Execution**: Each test runs in isolation with proper environment setup
+4. **Direct Reporting**: Reports pass/fail status without attempting to "fix" compatibility differences
+
+### Workflow Steps
+
+1. The workflow checks out both this repository and the original protobuf.js repository (master branch)
 2. It installs necessary dependencies (tape, long, and npm packages)
-3. The test runner script:
+3. The test runner:
    - Scans the original repository's test directory
    - Filters tests to include only API and compatibility tests (`api_*.js`, `comp_*.js`)
-   - Skips CLI tests and library tests (`cli.js`, `lib_*.js`)
-   - Modifies test imports to point to this repository's entry point
+   - Skips CLI tests, library tests, and other non-API tests
+   - Creates a minimal wrapper for each test that redirects module requires
    - Runs each test and collects results
    - Generates a detailed compatibility report
 
@@ -32,6 +43,7 @@ The compatibility test workflow validates that the HarmonyOS-adapted version of 
 ### Excluded Tests
 - `cli.js` - CLI functionality (not included in HarmonyOS adaptation)
 - `lib_*.js` - Library-specific tests (handled through npm dependencies)
+- `other_*.js`, `docs_*.js`, `feature_*.js` - Non-API tests
 
 ## Running Locally
 
@@ -46,7 +58,7 @@ npm install -g tape long
 cd ../protobuf-original && npm install && cd -
 
 # Run the tests
-node scripts/run-compatibility-tests.js
+node scripts/simple-compatibility-test.js
 ```
 
 ## Workflow Triggers
@@ -66,7 +78,15 @@ Test results are:
 ## Report Format
 
 The compatibility report includes:
-- Summary statistics (total, passed, failed, skipped)
+- Summary statistics (total, passed, failed, skipped) with percentages
 - List of passed tests
-- List of failed tests with error messages
+- List of failed tests with brief error messages
 - List of skipped tests with reasons
+
+## Design Philosophy
+
+The simplified test approach prioritizes:
+- **Reliability**: Minimal intervention reduces points of failure
+- **Transparency**: Reports actual compatibility without hiding differences
+- **Maintainability**: Simple code is easier to understand and modify
+- **Accuracy**: Shows real compatibility status without artificial fixes
