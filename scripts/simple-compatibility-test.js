@@ -2,10 +2,10 @@
 "use strict";
 
 /**
- * Simplified Compatibility Test Runner
+ * Ultra-Simplified Compatibility Test Runner
  * 
- * This script runs upstream protobuf.js tests against the HarmonyOS implementation
- * using a minimal, non-intrusive approach.
+ * Strategy: Directly replace upstream source files with HarmonyOS implementation,
+ * then run upstream tests normally. This is much simpler than module interception.
  */
 
 const fs = require('fs');
@@ -14,247 +14,184 @@ const { spawnSync } = require('child_process');
 
 // Configuration
 const ORIGINAL_REPO_PATH = path.resolve(__dirname, '../../protobuf-original');
-const HARMONYOS_ENTRY_POINT = path.resolve(__dirname, '../library/src/main/ets/index.js');
+const HARMONYOS_SRC_PATH = path.resolve(__dirname, '../library/src/main/ets/src');
+const UPSTREAM_SRC_PATH = path.join(ORIGINAL_REPO_PATH, 'src');
 const RESULTS_FILE = path.resolve(__dirname, '../test-results.txt');
-
-// Test patterns
-const INCLUDE_PATTERNS = [
-  /^api_.*\.js$/,
-  /^comp_.*\.js$/
-];
-
-const SKIP_PATTERNS = [
-  /^cli\.js$/,
-  /^lib_.*\.js$/,
-  /^other_.*\.js$/,
-  /^docs_.*\.js$/,
-  /^gen_.*\.js$/,
-  /^feature_.*\.js$/,
-  /^comment_.*\.js$/
-];
+const BACKUP_PATH = path.join(ORIGINAL_REPO_PATH, 'src-backup');
 
 // Results tracking
 const results = {
   total: 0,
   passed: 0,
-  failed: 0,
-  skipped: 0,
-  details: []
+  failed: 0
 };
 
 /**
- * Check if a test file should be included
+ * Copy directory recursively
  */
-function shouldIncludeTest(filename) {
-  if (SKIP_PATTERNS.some(pattern => pattern.test(filename))) {
-    return false;
+function copyDir(src, dest) {
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
   }
-  return INCLUDE_PATTERNS.some(pattern => pattern.test(filename));
-}
-
-/**
- * Create a test runner script that intercepts module loading
- */
-function createTestRunner(testFilename) {
-  const testPath = path.join(ORIGINAL_REPO_PATH, 'tests', testFilename);
   
-  const runnerContent = `
-// Test runner with module interception
-const Module = require('module');
-const path = require('path');
-
-// HarmonyOS implementation path
-const harmonyOSPath = ${JSON.stringify(HARMONYOS_ENTRY_POINT)};
-
-// Load HarmonyOS implementation
-const harmonyOSProtobuf = require(harmonyOSPath);
-
-// Intercept module resolution
-const originalResolveFilename = Module._resolveFilename;
-Module._resolveFilename = function(request, parent, isMain) {
-  // Intercept '..' requires from test files
-  if (request === '..' && parent && parent.filename) {
-    const parentPath = parent.filename;
-    // If this is being required from the tests directory, redirect to HarmonyOS
-    if (parentPath.includes('/tests/') || parentPath.includes('\\\\tests\\\\')) {
-      return harmonyOSPath;
+  const entries = fs.readdirSync(src, { withFileTypes: true });
+  
+  for (const entry of entries) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+    
+    if (entry.isDirectory()) {
+      copyDir(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
     }
   }
-  
-  // For all other requests, use original resolution
-  return originalResolveFilename.call(this, request, parent, isMain);
-};
-
-// Change to tests directory for relative path resolution
-process.chdir(${JSON.stringify(path.join(ORIGINAL_REPO_PATH, 'tests'))});
-
-// Now require the test file
-require(${JSON.stringify(testPath)});
-`;
-  
-  return runnerContent;
 }
 
 /**
- * Run a single test file
+ * Remove directory recursively
  */
-function runTest(testFile) {
-  console.log(`Running: ${testFile}...`);
-  
-  // Create test runner script in temp location
-  const tempDir = path.join(__dirname, '../temp-test-runner');
-  if (!fs.existsSync(tempDir)) {
-    fs.mkdirSync(tempDir, { recursive: true });
-  }
-  
-  const runnerPath = path.join(tempDir, `runner_${testFile}`);
-  const runnerContent = createTestRunner(testFile);
-  fs.writeFileSync(runnerPath, runnerContent);
-  
-  // Set up environment
-  const env = {
-    ...process.env,
-    NODE_PATH: [
-      path.join(ORIGINAL_REPO_PATH, 'node_modules'),
-      process.env.NODE_PATH || ''
-    ].filter(Boolean).join(path.delimiter)
-  };
-  
-  // Run the test runner
-  const result = spawnSync('node', [runnerPath], {
-    env,
-    timeout: 30000,
-    encoding: 'utf8'
-  });
-  
-  // Clean up runner
-  try {
-    fs.unlinkSync(runnerPath);
-  } catch (e) {
-    // Ignore cleanup errors
-  }
-  
-  const passed = result.status === 0;
-  
-  results.total++;
-  if (passed) {
-    results.passed++;
-    results.details.push({ file: testFile, status: 'passed' });
-    console.log(`✓ ${testFile} passed`);
-  } else {
-    results.failed++;
-    const error = result.stderr || result.stdout || 'Unknown error';
-    results.details.push({ file: testFile, status: 'failed', error: error.slice(0, 500) });
-    console.log(`✗ ${testFile} failed`);
-    if (error) {
-      console.log(`  Error: ${error.slice(0, 200)}...`);
+function removeDir(dir) {
+  if (fs.existsSync(dir)) {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      
+      if (entry.isDirectory()) {
+        removeDir(fullPath);
+      } else {
+        fs.unlinkSync(fullPath);
+      }
     }
+    
+    fs.rmdirSync(dir);
   }
-  
-  return passed;
 }
 
 /**
- * Main execution
+ * Main test execution
  */
-function main() {
-  console.log('=== Protobuf.js Compatibility Test Runner ===\n');
-  console.log(`Original repo: ${ORIGINAL_REPO_PATH}`);
-  console.log(`HarmonyOS entry: ${HARMONYOS_ENTRY_POINT}\n`);
+function runTests() {
+  console.log('=== HarmonyOS Compatibility Test ===\n');
   
-  // Verify paths exist
+  // Step 1: Verify paths
+  console.log('Verifying paths...');
   if (!fs.existsSync(ORIGINAL_REPO_PATH)) {
-    console.error(`Error: Original repository not found at ${ORIGINAL_REPO_PATH}`);
+    console.error(`Error: Original repo not found at ${ORIGINAL_REPO_PATH}`);
     process.exit(1);
   }
   
-  if (!fs.existsSync(HARMONYOS_ENTRY_POINT)) {
-    console.error(`Error: HarmonyOS entry point not found at ${HARMONYOS_ENTRY_POINT}`);
+  if (!fs.existsSync(HARMONYOS_SRC_PATH)) {
+    console.error(`Error: HarmonyOS source not found at ${HARMONYOS_SRC_PATH}`);
     process.exit(1);
   }
   
-  const testsDir = path.join(ORIGINAL_REPO_PATH, 'tests');
-  if (!fs.existsSync(testsDir)) {
-    console.error(`Error: Tests directory not found at ${testsDir}`);
+  if (!fs.existsSync(UPSTREAM_SRC_PATH)) {
+    console.error(`Error: Upstream source not found at ${UPSTREAM_SRC_PATH}`);
     process.exit(1);
   }
   
-  // Get all test files
-  const allFiles = fs.readdirSync(testsDir).filter(f => f.endsWith('.js'));
+  console.log('✓ All paths verified\n');
   
-  // Separate included and skipped tests
-  const testFiles = allFiles.filter(f => shouldIncludeTest(f));
-  const skippedFiles = allFiles.filter(f => !shouldIncludeTest(f));
+  // Step 2: Backup original source
+  console.log('Backing up original source...');
+  if (fs.existsSync(BACKUP_PATH)) {
+    removeDir(BACKUP_PATH);
+  }
+  copyDir(UPSTREAM_SRC_PATH, BACKUP_PATH);
+  console.log('✓ Backup complete\n');
   
-  console.log(`Found ${testFiles.length} tests to run, ${skippedFiles.length} to skip\n`);
+  // Step 3: Replace with HarmonyOS implementation
+  console.log('Replacing with HarmonyOS implementation...');
+  removeDir(UPSTREAM_SRC_PATH);
+  copyDir(HARMONYOS_SRC_PATH, UPSTREAM_SRC_PATH);
+  console.log('✓ Source files replaced\n');
   
-  // Run each test
-  testFiles.forEach(testFile => {
-    try {
-      runTest(testFile);
-    } catch (error) {
-      results.total++;
-      results.failed++;
-      results.details.push({ 
-        file: testFile, 
-        status: 'failed', 
-        error: error.message 
-      });
-      console.log(`✗ ${testFile} crashed: ${error.message}`);
+  // Step 4: Run tests
+  console.log('Running upstream tests...\n');
+  
+  const testResult = spawnSync('npm', ['test'], {
+    cwd: ORIGINAL_REPO_PATH,
+    stdio: 'pipe',
+    encoding: 'utf-8',
+    env: {
+      ...process.env,
+      NODE_ENV: 'test'
     }
   });
+  
+  // Step 5: Restore original source
+  console.log('\nRestoring original source...');
+  removeDir(UPSTREAM_SRC_PATH);
+  copyDir(BACKUP_PATH, UPSTREAM_SRC_PATH);
+  removeDir(BACKUP_PATH);
+  console.log('✓ Restore complete\n');
+  
+  // Step 6: Parse results
+  const output = testResult.stdout + '\n' + testResult.stderr;
+  console.log('=== Test Output ===');
+  console.log(output);
+  console.log('=== End Test Output ===\n');
+  
+  // Parse tape output format
+  // Tape outputs lines like: "# tests 46", "# pass 26", "# fail 20"
+  const testsMatch = output.match(/# tests\s+(\d+)/);
+  const passMatch = output.match(/# pass\s+(\d+)/);
+  const failMatch = output.match(/# fail\s+(\d+)/);
+  
+  if (testsMatch) results.total = parseInt(testsMatch[1], 10);
+  if (passMatch) results.passed = parseInt(passMatch[1], 10);
+  if (failMatch) results.failed = parseInt(failMatch[1], 10);
+  
+  // If parsing failed, try alternative format
+  if (results.total === 0 && output.includes('ok') || output.includes('not ok')) {
+    const lines = output.split('\n');
+    results.total = lines.filter(l => l.match(/^(ok|not ok)/)).length;
+    results.passed = lines.filter(l => l.match(/^ok/)).length;
+    results.failed = lines.filter(l => l.match(/^not ok/)).length;
+  }
   
   // Generate report
-  console.log('\n=== Test Results ===');
-  console.log(`Total: ${results.total}`);
-  console.log(`Passed: ${results.passed} (${Math.round(results.passed/results.total*100)}%)`);
-  console.log(`Failed: ${results.failed} (${Math.round(results.failed/results.total*100)}%)`);
-  console.log(`Skipped: ${skippedFiles.length}`);
+  console.log('=== Test Results Summary ===');
+  console.log(`Total: ${results.total || 0}`);
+  console.log(`Passed: ${results.passed || 0} (${Math.round((results.passed || 0) / (results.total || 1) * 100)}%)`);
+  console.log(`Failed: ${results.failed || 0} (${Math.round((results.failed || 0) / (results.total || 1) * 100)}%)`);
   
   // Save detailed report
   let report = '=== Compatibility Test Report ===\n\n';
-  report += `Total: ${results.total} tests\n`;
-  report += `Passed: ${results.passed} tests (${Math.round(results.passed/results.total*100)}%)\n`;
-  report += `Failed: ${results.failed} tests (${Math.round(results.failed/results.total*100)}%)\n`;
-  report += `Skipped: ${skippedFiles.length} tests\n\n`;
+  report += `Total: ${results.total || 0} tests\n`;
+  report += `Passed: ${results.passed || 0} tests (${Math.round((results.passed || 0) / (results.total || 1) * 100)}%)\n`;
+  report += `Failed: ${results.failed || 0} tests (${Math.round((results.failed || 0) / (results.total || 1) * 100)}%)\n\n`;
+  report += '=== Full Test Output ===\n\n';
+  report += output;
   
-  if (results.passed > 0) {
-    report += 'Passed Tests:\n';
-    results.details.filter(d => d.status === 'passed').forEach(d => {
-      report += `- ${d.file} ✓\n`;
-    });
-    report += '\n';
-  }
+  fs.writeFileSync(RESULTS_FILE, report, 'utf-8');
+  console.log(`\n✓ Report saved to ${RESULTS_FILE}`);
   
-  if (results.failed > 0) {
-    report += 'Failed Tests:\n';
-    results.details.filter(d => d.status === 'failed').forEach(d => {
-      report += `- ${d.file} ✗\n`;
-      if (d.error) {
-        report += `  Error: ${d.error.split('\n')[0]}\n`;
-      }
-    });
-    report += '\n';
-  }
-  
-  if (skippedFiles.length > 0) {
-    report += 'Skipped Tests:\n';
-    skippedFiles.forEach(f => {
-      const reason = SKIP_PATTERNS.find(p => p.test(f));
-      let reasonStr = 'Not an API/compatibility test';
-      if (/^cli\.js$/.test(f) || /^lib_/.test(f)) {
-        reasonStr = 'CLI/lib test excluded';
-      }
-      report += `- ${f} (${reasonStr})\n`;
-    });
-  }
-  
-  fs.writeFileSync(RESULTS_FILE, report);
-  console.log(`\nReport saved to: ${RESULTS_FILE}`);
-  
-  // Exit with error if any tests failed
+  // Exit with appropriate code
   process.exit(results.failed > 0 ? 1 : 0);
 }
 
-// Run main function
-main();
+// Run tests
+try {
+  runTests();
+} catch (error) {
+  console.error('Error running tests:', error.message);
+  console.error(error.stack);
+  
+  // Try to restore backup if it exists
+  if (fs.existsSync(BACKUP_PATH)) {
+    console.log('\nAttempting to restore original source...');
+    try {
+      removeDir(UPSTREAM_SRC_PATH);
+      copyDir(BACKUP_PATH, UPSTREAM_SRC_PATH);
+      removeDir(BACKUP_PATH);
+      console.log('✓ Source restored after error');
+    } catch (restoreError) {
+      console.error('Failed to restore source:', restoreError.message);
+    }
+  }
+  
+  process.exit(1);
+}

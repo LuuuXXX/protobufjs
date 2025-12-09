@@ -4,46 +4,45 @@ This directory contains scripts for testing API compatibility between this Harmo
 
 ## Overview
 
-The compatibility test workflow validates that the HarmonyOS-adapted version of protobufjs maintains API compatibility with the original protobuf.js library (master branch) using a simplified, non-intrusive testing approach.
+The compatibility test workflow validates that the HarmonyOS-adapted version of protobufjs maintains API compatibility with the original protobuf.js library (master branch) using an **ultra-simplified direct source replacement approach**.
 
 ## Files
 
 - **compatibility-test.yml**: GitHub Actions workflow that automatically runs compatibility tests
-- **../scripts/simple-compatibility-test.js**: Simplified test runner that runs upstream tests against HarmonyOS implementation
+- **../scripts/simple-compatibility-test.js**: Ultra-simplified test runner using direct file replacement
 
 ## How It Works
 
-### Simplified Approach
+### Ultra-Simplified Direct Replacement Approach
 
-The new test runner uses a minimal, non-intrusive approach:
+The test runner uses the simplest possible approach:
 
-1. **No Test Modification**: Tests from the upstream repository run unmodified
-2. **Module Resolution Override**: Uses Node.js Module system to redirect `require('..')` calls to the HarmonyOS implementation
-3. **Clean Execution**: Each test runs in isolation with proper environment setup
-4. **Direct Reporting**: Reports pass/fail status without attempting to "fix" compatibility differences
+1. **Backup Original**: Save upstream's original source files to a backup directory
+2. **Replace Source**: Copy HarmonyOS implementation files directly to upstream's `src/` directory
+3. **Run Tests**: Execute upstream tests normally with `npm test`
+4. **Restore**: Put original files back after testing
+
+**Why This Works**:
+- HarmonyOS implementation uses the same directory structure as upstream (`src/` folder)
+- Tests import using `require('..')` which loads from the replaced source files
+- No complex module interception or modification needed
+- Just swap the implementation files and run the tests
 
 ### Workflow Steps
 
 1. The workflow checks out both this repository and the original protobuf.js repository (master branch)
 2. It installs necessary dependencies (tape, long, and npm packages)
 3. The test runner:
-   - Scans the original repository's test directory
-   - Filters tests to include only API and compatibility tests (`api_*.js`, `comp_*.js`)
-   - Skips CLI tests, library tests, and other non-API tests
-   - Creates a minimal wrapper for each test that redirects module requires
-   - Runs each test and collects results
-   - Generates a detailed compatibility report
+   - Verifies all required paths exist
+   - Backs up upstream's original `src/` directory
+   - Copies HarmonyOS `library/src/main/ets/src/` to upstream's `src/`
+   - Runs upstream's complete test suite with `npm test`
+   - Restores the original source files
+   - Parses test output and generates compatibility report
 
 ## Test Coverage
 
-### Included Tests
-- `api_*.js` - Core API functionality tests
-- `comp_*.js` - Compatibility tests
-
-### Excluded Tests
-- `cli.js` - CLI functionality (not included in HarmonyOS adaptation)
-- `lib_*.js` - Library-specific tests (handled through npm dependencies)
-- `other_*.js`, `docs_*.js`, `feature_*.js` - Non-API tests
+The test runner executes the complete upstream test suite, which includes all tests that pass/fail based on the implementation compatibility.
 
 ## Running Locally
 
@@ -78,7 +77,8 @@ Test results are:
 ## Report Format
 
 The compatibility report includes:
-- Summary statistics (total, passed, failed, skipped) with percentages
+- Summary statistics (total, passed, failed) with percentages
+- Full test output from upstream test suite
 - List of passed tests
 - List of failed tests with brief error messages
 - List of skipped tests with reasons
