@@ -20,4 +20,5 @@
 # Compatibility test artifacts
 /temp-tests
 /temp-test-wrapper
+/temp-test-runner
 /test-results.txt

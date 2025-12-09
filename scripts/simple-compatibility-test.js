@@ -53,56 +53,63 @@ function shouldIncludeTest(filename) {
 }
 
 /**
- * Create a temporary wrapper that redirects requires to HarmonyOS implementation
+ * Create a test runner script that intercepts module loading
  */
-function createTestWrapper(originalTestPath) {
-  const wrapperContent = `
-// Wrapper to redirect protobufjs requires to HarmonyOS implementation
-const harmonyOSProtobuf = require(${JSON.stringify(HARMONYOS_ENTRY_POINT)});
-
-// Override the module cache to return HarmonyOS implementation
-const originalRequire = require.cache[require.resolve('..')];
-require.cache[require.resolve('..')] = {
-  id: require.resolve('..'),
-  exports: harmonyOSProtobuf,
-  loaded: true
-};
-
-// Also try to intercept direct .. requires
+function createTestRunner(testFilename) {
+  const testPath = path.join(ORIGINAL_REPO_PATH, 'tests', testFilename);
+  
+  const runnerContent = `
+// Test runner with module interception
 const Module = require('module');
+const path = require('path');
+
+// HarmonyOS implementation path
+const harmonyOSPath = ${JSON.stringify(HARMONYOS_ENTRY_POINT)};
+
+// Load HarmonyOS implementation
+const harmonyOSProtobuf = require(harmonyOSPath);
+
+// Intercept module resolution
 const originalResolveFilename = Module._resolveFilename;
 Module._resolveFilename = function(request, parent, isMain) {
-  if (request === '..' && parent && parent.filename && parent.filename.includes('tests')) {
-    // Return path that resolves to our HarmonyOS implementation
-    return ${JSON.stringify(HARMONYOS_ENTRY_POINT)};
+  // Intercept '..' requires from test files
+  if (request === '..' && parent && parent.filename) {
+    const parentPath = parent.filename;
+    // If this is being required from the tests directory, redirect to HarmonyOS
+    if (parentPath.includes('/tests/') || parentPath.includes('\\\\tests\\\\')) {
+      return harmonyOSPath;
+    }
   }
+  
+  // For all other requests, use original resolution
   return originalResolveFilename.call(this, request, parent, isMain);
 };
 
-// Now run the actual test
-require(${JSON.stringify(originalTestPath)});
+// Change to tests directory for relative path resolution
+process.chdir(${JSON.stringify(path.join(ORIGINAL_REPO_PATH, 'tests'))});
+
+// Now require the test file
+require(${JSON.stringify(testPath)});
 `;
   
-  return wrapperContent;
+  return runnerContent;
 }
 
 /**
  * Run a single test file
  */
 function runTest(testFile) {
-  const testPath = path.join(ORIGINAL_REPO_PATH, 'tests', testFile);
-  
   console.log(`Running: ${testFile}...`);
   
-  // Create wrapper script in temp location
-  const tempDir = path.join(__dirname, '../temp-test-wrapper');
+  // Create test runner script in temp location
+  const tempDir = path.join(__dirname, '../temp-test-runner');
   if (!fs.existsSync(tempDir)) {
     fs.mkdirSync(tempDir, { recursive: true });
   }
   
-  const wrapperPath = path.join(tempDir, `wrapper_${testFile}`);
-  const wrapperContent = createTestWrapper(testPath);
-  fs.writeFileSync(wrapperPath, wrapperContent);
+  const runnerPath = path.join(tempDir, `runner_${testFile}`);
+  const runnerContent = createTestRunner(testFile);
+  fs.writeFileSync(runnerPath, runnerContent);
   
   // Set up environment
   const env = {
@@ -113,17 +120,16 @@ function runTest(testFile) {
     ].filter(Boolean).join(path.delimiter)
   };
   
-  // Run the wrapper
-  const result = spawnSync('node', [wrapperPath], {
+  // Run the test runner
+  const result = spawnSync('node', [runnerPath], {
     env,
-    cwd: path.join(ORIGINAL_REPO_PATH, 'tests'),
     timeout: 30000,
     encoding: 'utf8'
   });
   
-  // Clean up wrapper
+  // Clean up runner
   try {
-    fs.unlinkSync(wrapperPath);
+    fs.unlinkSync(runnerPath);
   } catch (e) {
     // Ignore cleanup errors
   }
